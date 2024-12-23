@@ -2,15 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-interface FormData {
-  username: string;
-  user_id: string;
-  password: string;
-  password_confirm: string;
-  phone_number: string;
-  email: string;
-}
+import { BASEURL } from '@/constants/apiUrls';
+import { FormData } from "@/types/types";
 
 const LocalSignUpPage = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -21,19 +14,72 @@ const LocalSignUpPage = () => {
     phone_number: "",
     email: "",
   });
-  const [authenticateEmail, setAuthenticateEmail] = useState<string>("")
+  const [email, setEmail] = useState("")
+  const [verificationCode, setVerificationCode] = useState<string>("")
+
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({...formData,
-      [e.target.name]: e.target.value});
+    const { name, value } = e.target;
+
+    if (name === "email") {
+      setEmail(value);
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
+
+  const sendEmailVerificationCode  = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`${BASEURL}/api/users/request-email-verification`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          "email": email
+        })
+      })
+
+      if (response.ok) {
+        alert("입력하신 이메일로 인증번호를 보냈습니다.");
+      } 
+    } catch (error) {
+      alert(`인증번호 전송 실패: ${error}`);
+    }
+  }
+
+  const verifyEmailVerificationCode  = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`${BASEURL}/api/users/verify-email`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          {
+            "email": email,
+            "code": verificationCode
+          }
+        )
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data)
+        alert("이메일 인증을 완료했습니다.");
+      } 
+    } catch (error) {
+      alert(`이메일 인증에 실패했습니다.: ${error}`);
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/users/signup', {
+      const response = await fetch(`${BASEURL}/api/users/signup`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -107,15 +153,17 @@ const LocalSignUpPage = () => {
           onChange={handleChange}
           className="border border-black"
         />
+        <button onClick={sendEmailVerificationCode }>이메일 인증</button>
         <label htmlFor="authenticateEmail">이메일 인증번호</label>
         <input
           id="authenticateEmail"
           name="authenticateEmail"
           type="number"
-          value={authenticateEmail}
-          onChange={(e) => setAuthenticateEmail(e.target.value)}
+          value={verificationCode}
+          onChange={(e) => setVerificationCode(e.target.value)}
           className="border border-black"
         />
+        <button onClick={verifyEmailVerificationCode}>인증번호 확인</button>
         <button type="submit">회원가입</button>
       </form>
     </div>
