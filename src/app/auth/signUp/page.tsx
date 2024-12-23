@@ -10,7 +10,6 @@ interface FormData {
   confirmPassword: string;
   mobile: number;
   email: string;
-  authenticateEmail: number;
 }
 
 const LocalSignUpPage = () => {
@@ -21,8 +20,8 @@ const LocalSignUpPage = () => {
     confirmPassword: "",
     mobile: 0,
     email: "",
-    authenticateEmail: 0,
   });
+  const [authenticateEmail, setAuthenticateEmail] = useState<number>(0)
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,8 +120,8 @@ const LocalSignUpPage = () => {
           id="authenticateEmail"
           name="authenticateEmail"
           type="number"
-          value={formData.authenticateEmail}
-          onChange={handleChange}
+          value={authenticateEmail}
+          onChange={(e) => setAuthenticateEmail(parseInt(e.target.value))}
           className="border border-black"
         />
         <button type="submit">회원가입</button>
