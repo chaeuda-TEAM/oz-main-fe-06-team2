@@ -4,44 +4,34 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface FormData {
-  name: string;
-  userId: string;
+  username: string;
+  user_id: string;
   password: string;
-  confirmPassword: string;
-  mobile: number;
+  password_confirm: string;
+  phone_number: string;
   email: string;
 }
 
 const LocalSignUpPage = () => {
   const [formData, setFormData] = useState<FormData>({
-    name: "",
-    userId: "",
+    username: "",
+    user_id: "",
     password: "",
-    confirmPassword: "",
-    mobile: 0,
+    password_confirm: "",
+    phone_number: "",
     email: "",
   });
-  const [authenticateEmail, setAuthenticateEmail] = useState<number>(0)
+  const [authenticateEmail, setAuthenticateEmail] = useState<string>("")
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevData) => {
-      if (e.target.name === "mobile") {
-        return {
-          ...prevData,
-          mobile: parseInt(e.target.value), // "mobile"은 정수로 변환
-        };
-      } else {
-        return {
-          ...prevData,
-          [e.target.name]: e.target.value, // 나머지 값은 그대로
-        };
-      }
-    });
+    setFormData({...formData,
+      [e.target.name]: e.target.value});
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       const response = await fetch('/api/users/signup', {
         method: 'POST',
@@ -50,6 +40,8 @@ const LocalSignUpPage = () => {
       })
 
       if (response.ok) {
+        const data = await response.json();
+        console.log(data)
         alert("회원가입 성공! 로그인 페이지로 이동합니다.");
         router.push("/");
       } 
@@ -61,21 +53,21 @@ const LocalSignUpPage = () => {
   return (
     <div>
       <form onSubmit={handleSubmit} className="flex flex-col w-[300px]">
-        <label htmlFor="name">이름</label>
+        <label htmlFor="username">이름</label>
         <input
-          id="name"
-          name='name'
+          id="username"
+          name='username'
           type="text"
-          value={formData.name}
+          value={formData.username}
           onChange={handleChange}
           className="border border-black"
         />
-        <label htmlFor="userId">아이디</label>
+        <label htmlFor="user_id">아이디</label>
         <input
-          id="userId"
-          name="userId"
+          id="user_id"
+          name="user_id"
           type="text"
-          value={formData.userId}
+          value={formData.user_id}
           onChange={handleChange}
           className="border border-black"
         />
@@ -88,21 +80,21 @@ const LocalSignUpPage = () => {
           onChange={handleChange}
           className="border border-black"
         />
-        <label htmlFor="confirmPassword">비밀번호 확인</label>
+        <label htmlFor="password_confirm">비밀번호 확인</label>
         <input
-          id="confirmPassword"
-          name="confirmPassword"
+          id="password_confirm"
+          name="password_confirm"
           type="password"
-          value={formData.confirmPassword}
+          value={formData.password_confirm}
           onChange={handleChange}
           className="border border-black"
         />
-        <label htmlFor="mobile">휴대폰번호</label>
+        <label htmlFor="phone_number">휴대폰번호</label>
         <input
-          id="mobile"
-          name="mobile"
+          id="phone_number"
+          name="phone_number"
           type="number"
-          value={formData.mobile}
+          value={formData.phone_number}
           onChange={handleChange}
           className="border border-black"
         />
@@ -121,7 +113,7 @@ const LocalSignUpPage = () => {
           name="authenticateEmail"
           type="number"
           value={authenticateEmail}
-          onChange={(e) => setAuthenticateEmail(parseInt(e.target.value))}
+          onChange={(e) => setAuthenticateEmail(e.target.value)}
           className="border border-black"
         />
         <button type="submit">회원가입</button>
