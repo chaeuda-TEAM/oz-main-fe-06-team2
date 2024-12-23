@@ -10,15 +10,14 @@ const LocalSignUpPage = () => {
     username: "",
     user_id: "",
     password: "",
-    password_confirm: "",
     phone_number: "",
     email: "",
   });
   const [email, setEmail] = useState("")
   const [verificationCode, setVerificationCode] = useState<string>("")
-
   const router = useRouter();
 
+  // 인풋에 값 넣을 때 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -30,19 +29,21 @@ const LocalSignUpPage = () => {
     }
   };
 
+  // 인증번호 이메일로 전송
   const sendEmailVerificationCode  = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const response = await fetch(`${BASEURL}/api/users/request-email-verification`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          "email": email
+          email: email
         })
       })
 
       if (response.ok) {
+        const data = await response.json();
+        console.log(data)
         alert("입력하신 이메일로 인증번호를 보냈습니다.");
       } 
     } catch (error) {
@@ -50,6 +51,7 @@ const LocalSignUpPage = () => {
     }
   }
 
+  // 인증번호 확인
   const verifyEmailVerificationCode  = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -59,8 +61,8 @@ const LocalSignUpPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
           {
-            "email": email,
-            "code": verificationCode
+            email: email,
+            code: verificationCode
           }
         )
       })
@@ -75,9 +77,9 @@ const LocalSignUpPage = () => {
     }
   }
 
+  // 최종 회원가입
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const response = await fetch(`${BASEURL}/api/users/signup`, {
         method: 'POST',
@@ -131,7 +133,7 @@ const LocalSignUpPage = () => {
           id="password_confirm"
           name="password_confirm"
           type="password"
-          value={formData.password_confirm}
+          // value={formData.password_confirm}
           onChange={handleChange}
           className="border border-black"
         />
