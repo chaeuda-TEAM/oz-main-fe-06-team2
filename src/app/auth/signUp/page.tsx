@@ -1,129 +1,164 @@
-"use client"
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-interface FormData {
-  name: string;
-  userId: string;
-  password: string;
-  confirmPassword: string;
-  mobile: number;
-  email: string;
-}
+import { useRouter } from 'next/navigation';
+import { BASEURL } from '@/constants/apiUrls';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SignupFormData, signupSchema } from '@/schemas/formSchemas';
 
 const LocalSignUpPage = () => {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    userId: "",
-    password: "",
-    confirmPassword: "",
-    mobile: 0,
-    email: "",
-  });
-  const [authenticateEmail, setAuthenticateEmail] = useState<number>(0)
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevData) => {
-      if (e.target.name === "mobile") {
-        return {
-          ...prevData,
-          mobile: parseInt(e.target.value), // "mobile"은 정수로 변환
-        };
-      } else {
-        return {
-          ...prevData,
-          [e.target.name]: e.target.value, // 나머지 값은 그대로
-        };
-      }
-    });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const sendEmailVerificationCode = async (e: React.FormEvent) => {
     e.preventDefault();
+    const email = e.target.email.value;
+
     try {
-      const response = await fetch('/api/users/signup', {
+      const response = await fetch(`${BASEURL}/api/users/request-email-verification`, {
         method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
 
       if (response.ok) {
-        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
-        router.push("/");
-      } 
+        const data = await response.json();
+        console.log(data);
+        alert('입력하신 이메일로 인증번호를 보냈습니다.');
+      }
+    } catch (error) {
+      alert(`인증번호 전송 실패: ${error}`);
+    }
+  };
+
+  const verifyEmailVerificationCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const verificationCode = e.target.authenticateEmail.value;
+    const email = e.target.email.value;
+
+    try {
+      const response = await fetch(`${BASEURL}/api/users/verify-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: verificationCode }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        alert('이메일 인증을 완료했습니다.');
+      }
+    } catch (error) {
+      alert(`이메일 인증에 실패했습니다.: ${error}`);
+    }
+  };
+
+  const onSubmit = async (data: SignupFormData) => {
+    // 모든 입력된 데이터가 콘솔에 출력됩니다.
+    console.log(data);
+
+    if (data.password !== data.password_confirm) {
+      alert(`비밀번호가 `)
+      return;
+    }
+
+    try {
+      const response = await fetch(`${BASEURL}/api/users/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log(responseData);
+        alert('회원가입 성공! 로그인 페이지로 이동합니다.');
+        router.push('/');
+      }
     } catch (error) {
       alert(`회원가입 실패: ${error}`);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="flex flex-col w-[300px]">
-        <label htmlFor="name">이름</label>
+    <div className="p-[100px]">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[300px]">
+        <label htmlFor="username">이름</label>
         <input
-          id="name"
-          name='name'
+          id="username"
           type="text"
-          value={formData.name}
-          onChange={handleChange}
+          {...register('username')}
           className="border border-black"
         />
-        <label htmlFor="userId">아이디</label>
+        {errors.username && <p>{errors.username.message}</p>}
+
+        <label htmlFor="user_id">아이디</label>
         <input
-          id="userId"
-          name="userId"
+          id="user_id"
           type="text"
-          value={formData.userId}
-          onChange={handleChange}
+          {...register('user_id')}
           className="border border-black"
         />
+        {errors.user_id && <p>{errors.user_id.message}</p>}
+
         <label htmlFor="password">비밀번호</label>
         <input
           id="password"
-          name="password"
           type="password"
-          value={formData.password}
-          onChange={handleChange}
+          {...register('password')}
           className="border border-black"
         />
-        <label htmlFor="confirmPassword">비밀번호 확인</label>
+        {errors.password && <p>{errors.password.message}</p>}
+
+        <label htmlFor="password_confirm">비밀번호 확인</label>
         <input
-          id="confirmPassword"
-          name="confirmPassword"
+          id="password_confirm"
           type="password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
+          {...register('password_confirm')}
           className="border border-black"
         />
-        <label htmlFor="mobile">휴대폰번호</label>
+        {errors.password_confirm && <p>{errors.password_confirm.message}</p>}
+
+        <label htmlFor="phone_number">휴대폰번호</label>
         <input
-          id="mobile"
-          name="mobile"
+          id="phone_number"
           type="number"
-          value={formData.mobile}
-          onChange={handleChange}
+          {...register('phone_number')}
           className="border border-black"
         />
+        {errors.phone_number && <p>{errors.phone_number.message}</p>}
+
         <label htmlFor="email">이메일 주소</label>
         <input
           id="email"
-          name="email"
           type="email"
-          value={formData.email}
-          onChange={handleChange}
+          {...register('email')}
           className="border border-black"
         />
+        {errors.email && <p>{errors.email.message}</p>}
+        <button type="button" onClick={sendEmailVerificationCode}>
+          이메일 인증
+        </button>
+
         <label htmlFor="authenticateEmail">이메일 인증번호</label>
         <input
           id="authenticateEmail"
-          name="authenticateEmail"
           type="number"
-          value={authenticateEmail}
-          onChange={(e) => setAuthenticateEmail(parseInt(e.target.value))}
+          {...register('email_verificationCode')}
           className="border border-black"
         />
+        {errors.email_verificationCode && <p>{errors.email_verificationCode.message}</p>}
+        <button type="button" onClick={verifyEmailVerificationCode}>
+          인증번호 확인
+        </button>
+
         <button type="submit">회원가입</button>
       </form>
     </div>
