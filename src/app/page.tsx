@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import NaverMap from './components/NaverMap';
-import SearchModal from './components/SearchModal';
+import NaverMap from '../components/NaverMap';
+import SearchModal from '../components/SearchModal';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
