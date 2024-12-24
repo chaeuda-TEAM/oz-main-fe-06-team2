@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface FormData {
   name: string;
@@ -14,19 +14,19 @@ interface FormData {
 
 const LocalSignUpPage = () => {
   const [formData, setFormData] = useState<FormData>({
-    name: "",
-    userId: "",
-    password: "",
-    confirmPassword: "",
+    name: '',
+    userId: '',
+    password: '',
+    confirmPassword: '',
     mobile: 0,
-    email: "",
+    email: '',
   });
-  const [authenticateEmail, setAuthenticateEmail] = useState<number>(0)
+  const [authenticateEmail, setAuthenticateEmail] = useState<number>(0);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevData) => {
-      if (e.target.name === "mobile") {
+    setFormData(prevData => {
+      if (e.target.name === 'mobile') {
         return {
           ...prevData,
           mobile: parseInt(e.target.value), // "mobile"은 정수로 변환
@@ -45,14 +45,14 @@ const LocalSignUpPage = () => {
     try {
       const response = await fetch('/api/users/signup', {
         method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
       if (response.ok) {
-        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
-        router.push("/");
-      } 
+        alert('회원가입 성공! 로그인 페이지로 이동합니다.');
+        router.push('/');
+      }
     } catch (error) {
       alert(`회원가입 실패: ${error}`);
     }
@@ -64,7 +64,7 @@ const LocalSignUpPage = () => {
         <label htmlFor="name">이름</label>
         <input
           id="name"
-          name='name'
+          name="name"
           type="text"
           value={formData.name}
           onChange={handleChange}
@@ -121,7 +121,7 @@ const LocalSignUpPage = () => {
           name="authenticateEmail"
           type="number"
           value={authenticateEmail}
-          onChange={(e) => setAuthenticateEmail(parseInt(e.target.value))}
+          onChange={e => setAuthenticateEmail(parseInt(e.target.value))}
           className="border border-black"
         />
         <button type="submit">회원가입</button>

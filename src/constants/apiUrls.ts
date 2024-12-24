@@ -1,1 +1,1 @@
-export const BASEURL = "https://api.chaeuda.shop"
+export const BASEURL = 'https://api.chaeuda.shop';

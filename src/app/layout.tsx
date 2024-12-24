@@ -4,7 +4,6 @@ import '../styles/globals.css';
 import NavContainer from '@/containers/NavContainer/NavContainer';
 import Footer from '@/components/Footer';
 
-
 export const metadata: Metadata = {
   title: '채우다',
   description: '전국 빈집을 채워보자',

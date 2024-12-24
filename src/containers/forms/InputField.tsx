@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface InputFieldProps {
   label: string;
@@ -9,14 +9,7 @@ interface InputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const InputField = ({
-  label,
-  name,
-  type,
-  value,
-  error,
-  onChange,
-}: InputFieldProps) => (
+const InputField = ({ label, name, type, value, error, onChange }: InputFieldProps) => (
   <div>
     <label htmlFor={name} className="mb-2">
       {label}
