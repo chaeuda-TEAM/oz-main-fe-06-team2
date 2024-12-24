@@ -1,62 +1,33 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
+import NaverMap from './components/NaverMap';
+import SearchModal from './components/SearchModal';
 
-declare global {
-  interface Window {
-    naver: any;
-  }
-}
+const Home = () => {
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [topSearchInput, setTopSearchInput] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-interface NaverMapProps {
-  width?: string;
-  height?: string;
-  initialCenter?: { lat: number; lng: number };
-  initialZoom?: number;
-}
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTopSearchInput(true);
+  };
 
-const Home = ({
-  width = '100%',
-  height = '700px',
-  initialCenter = { lat: 37.5656, lng: 126.9769 },
-  initialZoom = 13,
-}: NaverMapProps) => {
-  const mapRef = useRef<HTMLDivElement>(null);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
-  useEffect(() => {
-    const initializeMap = () => {
-      if (!window.naver) return;
-
-      const mapOptions = {
-        center: new window.naver.maps.LatLng(initialCenter.lat, initialCenter.lng),
-        zoom: initialZoom,
-        zoomControl: true,
-        zoomControlOptions: {
-          position: window.naver.maps.Position.TOP_RIGHT,
-        },
-      };
-
-      const map = new window.naver.maps.Map(mapRef.current, mapOptions);
-
-      new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(initialCenter.lat, initialCenter.lng),
-        map: map,
-        title: 'Marker Test',
-      });
-    };
-
-    const script = document.createElement('script');
-    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}`;
-    script.async = true;
-    script.onload = initializeMap;
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, [initialCenter, initialZoom]);
-
-  return <div ref={mapRef} style={{ width, height }} />;
+  return (
+    <div className="relative">
+      <NaverMap
+        topSearchInput={topSearchInput}
+        searchQuery={searchQuery}
+        handleSearchChange={handleSearchChange}
+      />
+      <SearchModal isOpen={isModalOpen} onClose={handleCloseModal} />
+    </div>
+  );
 };
 
 export default Home;
