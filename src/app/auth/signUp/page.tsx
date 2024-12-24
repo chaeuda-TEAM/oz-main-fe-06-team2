@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BASEURL } from '@/constants/apiUrls';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FormData } from "@/types/types";
+import { signupSchema, SignupFormData } from "@/schemas/formSchemas";
+import { z } from "zod";
 
 const LocalSignUpPage = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -15,19 +19,41 @@ const LocalSignUpPage = () => {
   });
   const [email, setEmail] = useState("")
   const [verificationCode, setVerificationCode] = useState<string>("")
+  // const [errors, setErrors] = useState<Partial<Record<keyof SignupFormData, string>>>({});
+
   const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+  });
 
   // 인풋에 값 넣을 때 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
+  
     if (name === "email") {
       setEmail(value);
       setFormData((prev) => ({ ...prev, [name]: value }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+  
+    try {
+      signupSchema.parse({ ...formData, [name]: value });  // 전체 데이터를 넘겨서 현재 입력 필드만 검사
+      // setErrors((prev) => ({ ...prev, [name]: "" }));  // 유효성 검증 통과 시 오류 메시지 제거
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorField = error.errors.find((err) => err.path[0] === name);
+        const message = errorField ? errorField.message : "";
+        // setErrors((prev) => ({ ...prev, [name]: message }));  // 오류 발생 시 오류 메시지 설정
+      }
+    }
   };
+  
 
   // 인증번호 이메일로 전송
   const sendEmailVerificationCode  = async (e: React.FormEvent) => {
@@ -77,8 +103,8 @@ const LocalSignUpPage = () => {
     }
   }
 
-  // 최종 회원가입
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 회원가입
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await fetch(`${BASEURL}/api/users/signup`, {
@@ -99,44 +125,56 @@ const LocalSignUpPage = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="flex flex-col w-[300px]">
+    <div className="p-[100px]">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[300px]">
         <label htmlFor="username">이름</label>
         <input
           id="username"
           name='username'
           type="text"
           value={formData.username}
+          {...register("username")}
           onChange={handleChange}
           className="border border-black"
         />
+         {errors.username && <p>{errors.username.message}</p>}
+
         <label htmlFor="user_id">아이디</label>
         <input
           id="user_id"
           name="user_id"
           type="text"
           value={formData.user_id}
+          {...register("user_id")}
           onChange={handleChange}
           className="border border-black"
         />
+        {errors.user_id && <p>{errors.user_id.message}</p>}
+
         <label htmlFor="password">비밀번호</label>
         <input
           id="password"
           name="password"
           type="password"
           value={formData.password}
+          {...register("password")}
           onChange={handleChange}
           className="border border-black"
         />
+        {errors.password && <p>{errors.password.message}</p>}
+
         <label htmlFor="password_confirm">비밀번호 확인</label>
         <input
           id="password_confirm"
           name="password_confirm"
           type="password"
           // value={formData.password_confirm}
+          {...register("password_confirm")}
           onChange={handleChange}
           className="border border-black"
         />
+        {errors.password && <p>{errors.password.message}</p>}
+
         <label htmlFor="phone_number">휴대폰번호</label>
         <input
           id="phone_number"
@@ -146,6 +184,8 @@ const LocalSignUpPage = () => {
           onChange={handleChange}
           className="border border-black"
         />
+        {errors.phone_number && <p>{errors.phone_number.message}</p>}
+
         <label htmlFor="email">이메일 주소</label>
         <input
           id="email"
@@ -155,7 +195,9 @@ const LocalSignUpPage = () => {
           onChange={handleChange}
           className="border border-black"
         />
-        <button onClick={sendEmailVerificationCode }>이메일 인증</button>
+        {errors.email && <p>{errors.email.message}</p>}
+        <button type="button" onClick={sendEmailVerificationCode }>이메일 인증</button>
+
         <label htmlFor="authenticateEmail">이메일 인증번호</label>
         <input
           id="authenticateEmail"
@@ -165,7 +207,9 @@ const LocalSignUpPage = () => {
           onChange={(e) => setVerificationCode(e.target.value)}
           className="border border-black"
         />
-        <button onClick={verifyEmailVerificationCode}>인증번호 확인</button>
+        {errors.email_verificationCode && <p>{errors.email_verificationCode.message}</p>}
+        <button type="button" onClick={verifyEmailVerificationCode}>인증번호 확인</button>
+
         <button type="submit">회원가입</button>
       </form>
     </div>

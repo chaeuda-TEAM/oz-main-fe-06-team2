@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import '../styles/globals.css';
+import NavContainer from '@/containers/NavContainer/NavContainer';
 import Footer from '@/components/Footer';
+
 
 export const metadata: Metadata = {
   title: '채우다',
@@ -23,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="kr" className={`${pretendard.variable}`}>
       <body className={`${pretendard.className}`}>
+        <NavContainer />
         {children}
         <Footer />
       </body>
