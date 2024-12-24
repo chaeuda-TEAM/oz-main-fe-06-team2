@@ -4,7 +4,6 @@ import '../styles/globals.css';
 import NavContainer from '@/containers/NavContainer/NavContainer';
 import Footer from '@/components/Footer';
 
-
 export const metadata: Metadata = {
   title: '채우다',
   description: '전국 빈집을 채워보자',
@@ -26,7 +25,7 @@ export default function RootLayout({
     <html lang="kr" className={`${pretendard.variable}`}>
       <body className={`${pretendard.className}`}>
         <NavContainer />
-        {children}
+        <main className="pt-[80px]">{children}</main>
         <Footer />
       </body>
     </html>
