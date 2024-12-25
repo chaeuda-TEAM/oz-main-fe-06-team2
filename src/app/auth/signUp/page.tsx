@@ -1,26 +1,31 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BASEURL } from '@/constants/apiUrls';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignupFormData, signupSchema } from '@/schemas/formSchemas';
+import { SignupFormData, FormSchema } from '@/schemas/formSchemas';
 
 const LocalSignUpPage = () => {
   const router = useRouter();
+  const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 여부 관리
+  const [emailVerificationSent, setEmailVerificationSent] = useState(false);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(FormSchema),
+    mode: "onBlur"
   });
 
-  const sendEmailVerificationCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const email = e.target.email.value;
+  const email = watch("email");
 
+  // 이메일 인증 코드 전송
+  const sendEmailVerificationCode = async () => {
     try {
       const response = await fetch(`${BASEURL}/api/users/request-email-verification`, {
         method: 'POST',
@@ -29,19 +34,19 @@ const LocalSignUpPage = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log(data);
+        setEmailVerificationSent(true);
         alert('입력하신 이메일로 인증번호를 보냈습니다.');
+      } else {
+        throw new Error('전송 실패');
       }
     } catch (error) {
       alert(`인증번호 전송 실패: ${error}`);
     }
   };
 
-  const verifyEmailVerificationCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const verificationCode = e.target.authenticateEmail.value;
-    const email = e.target.email.value;
+  // 이메일 인증 코드 검증
+  const verifyEmailVerificationCode = async () => {
+    const verificationCode = watch("email_verificationCode");
 
     try {
       const response = await fetch(`${BASEURL}/api/users/verify-email`, {
@@ -51,21 +56,20 @@ const LocalSignUpPage = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log(data);
+        setIsEmailVerified(true);
         alert('이메일 인증을 완료했습니다.');
+      } else {
+        throw new Error('인증 실패');
       }
     } catch (error) {
-      alert(`이메일 인증에 실패했습니다.: ${error}`);
+      alert(`이메일 인증 실패: ${error}`);
     }
   };
 
+  // 최종 회원가입
   const onSubmit = async (data: SignupFormData) => {
-    // 모든 입력된 데이터가 콘솔에 출력됩니다.
-    console.log(data);
-
-    if (data.password !== data.password_confirm) {
-      alert(`비밀번호가 `)
+    if (!isEmailVerified) {
+      alert('이메일 인증을 완료해주세요.');
       return;
     }
 
@@ -77,10 +81,10 @@ const LocalSignUpPage = () => {
       });
 
       if (response.ok) {
-        const responseData = await response.json();
-        console.log(responseData);
         alert('회원가입 성공! 로그인 페이지로 이동합니다.');
         router.push('/');
+      } else {
+        throw new Error('회원가입 실패');
       }
     } catch (error) {
       alert(`회원가입 실패: ${error}`);
@@ -126,15 +130,6 @@ const LocalSignUpPage = () => {
         />
         {errors.password_confirm && <p>{errors.password_confirm.message}</p>}
 
-        <label htmlFor="phone_number">휴대폰번호</label>
-        <input
-          id="phone_number"
-          type="number"
-          {...register('phone_number')}
-          className="border border-black"
-        />
-        {errors.phone_number && <p>{errors.phone_number.message}</p>}
-
         <label htmlFor="email">이메일 주소</label>
         <input
           id="email"
@@ -143,7 +138,11 @@ const LocalSignUpPage = () => {
           className="border border-black"
         />
         {errors.email && <p>{errors.email.message}</p>}
-        <button type="button" onClick={sendEmailVerificationCode}>
+        <button
+          type="button"
+          onClick={sendEmailVerificationCode}
+          disabled={!email || emailVerificationSent}
+        >
           이메일 인증
         </button>
 
@@ -153,11 +152,25 @@ const LocalSignUpPage = () => {
           type="number"
           {...register('email_verificationCode')}
           className="border border-black"
+          disabled={!emailVerificationSent}
         />
         {errors.email_verificationCode && <p>{errors.email_verificationCode.message}</p>}
-        <button type="button" onClick={verifyEmailVerificationCode}>
+        <button
+          type="button"
+          onClick={verifyEmailVerificationCode}
+          disabled={!emailVerificationSent}
+        >
           인증번호 확인
         </button>
+
+        <label htmlFor="phone_number">휴대폰번호</label>
+        <input
+          id="phone_number"
+          type="number"
+          {...register('phone_number')}
+          className="border border-black"
+        />
+        {errors.phone_number && <p>{errors.phone_number.message}</p>}
 
         <button type="submit">회원가입</button>
       </form>

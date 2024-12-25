@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const signupSchema = z.object({
+export const FormSchema = z.object({
   username: z
     .string()
     .min(2, '이름은 최소 2자 이상이어야 합니다.')
@@ -39,4 +39,4 @@ export const signupSchema = z.object({
   path: ["password_confirm"]  // 에러를 표시할 필드 지정
 });
 
-export type SignupFormData = z.infer<typeof signupSchema>;
+export type SignupFormData = z.infer<typeof FormSchema>;
