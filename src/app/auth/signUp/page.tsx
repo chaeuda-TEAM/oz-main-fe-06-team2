@@ -9,8 +9,10 @@ import { SignupFormData, FormSchema } from '@/schemas/formSchemas';
 
 const LocalSignUpPage = () => {
   const router = useRouter();
-  const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 여부 관리
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState('');
+  const [verificationMessage2, setVerificationMessage2] = useState('');
 
   const {
     register,
@@ -19,10 +21,10 @@ const LocalSignUpPage = () => {
     formState: { errors },
   } = useForm<SignupFormData>({
     resolver: zodResolver(FormSchema),
-    mode: "onBlur"
+    mode: 'onBlur',
   });
 
-  const email = watch("email");
+  const email = watch('email');
 
   // 이메일 인증 코드 전송
   const sendEmailVerificationCode = async () => {
@@ -34,10 +36,9 @@ const LocalSignUpPage = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
         setEmailVerificationSent(true);
-        alert('입력하신 이메일로 인증번호를 보냈습니다.');
-      } else {
-        throw new Error('전송 실패');
+        setVerificationMessage(data.message);
       }
     } catch (error) {
       alert(`인증번호 전송 실패: ${error}`);
@@ -46,7 +47,7 @@ const LocalSignUpPage = () => {
 
   // 이메일 인증 코드 검증
   const verifyEmailVerificationCode = async () => {
-    const verificationCode = watch("email_verificationCode");
+    const verificationCode = watch('email_verificationCode');
 
     try {
       const response = await fetch(`${BASEURL}/api/users/verify-email`, {
@@ -56,10 +57,17 @@ const LocalSignUpPage = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
+
+        if (data.message === '유효하지 않은 인증번호입니다.') {
+          setVerificationMessage2('인증번호를 다시 입력해주세요.');
+          return;
+        } else {
+          setVerificationMessage2('');
+          setVerificationMessage('');
+        }
+
         setIsEmailVerified(true);
-        alert('이메일 인증을 완료했습니다.');
-      } else {
-        throw new Error('인증 실패');
       }
     } catch (error) {
       alert(`이메일 인증 실패: ${error}`);
@@ -83,8 +91,6 @@ const LocalSignUpPage = () => {
       if (response.ok) {
         alert('회원가입 성공! 로그인 페이지로 이동합니다.');
         router.push('/');
-      } else {
-        throw new Error('회원가입 실패');
       }
     } catch (error) {
       alert(`회원가입 실패: ${error}`);
@@ -104,12 +110,7 @@ const LocalSignUpPage = () => {
         {errors.username && <p>{errors.username.message}</p>}
 
         <label htmlFor="user_id">아이디</label>
-        <input
-          id="user_id"
-          type="text"
-          {...register('user_id')}
-          className="border border-black"
-        />
+        <input id="user_id" type="text" {...register('user_id')} className="border border-black" />
         {errors.user_id && <p>{errors.user_id.message}</p>}
 
         <label htmlFor="password">비밀번호</label>
@@ -131,12 +132,8 @@ const LocalSignUpPage = () => {
         {errors.password_confirm && <p>{errors.password_confirm.message}</p>}
 
         <label htmlFor="email">이메일 주소</label>
-        <input
-          id="email"
-          type="email"
-          {...register('email')}
-          className="border border-black"
-        />
+        <input id="email" type="email" {...register('email')} className="border border-black" />
+        {verificationMessage && <p>{verificationMessage}</p>}
         {errors.email && <p>{errors.email.message}</p>}
         <button
           type="button"
@@ -154,6 +151,7 @@ const LocalSignUpPage = () => {
           className="border border-black"
           disabled={!emailVerificationSent}
         />
+        {verificationMessage2 && <p>{verificationMessage2}</p>}
         {errors.email_verificationCode && <p>{errors.email_verificationCode.message}</p>}
         <button
           type="button"
