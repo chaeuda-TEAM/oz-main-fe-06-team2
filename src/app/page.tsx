@@ -25,7 +25,11 @@ const Home = () => {
         searchQuery={searchQuery}
         handleSearchChange={handleSearchChange}
       />
-      <SearchModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <SearchModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        handleSearchChange={handleSearchChange}
+      />
     </div>
   );
 };

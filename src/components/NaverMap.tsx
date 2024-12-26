@@ -9,11 +9,9 @@ declare global {
 }
 
 interface NaverMapProps {
-  topSearchInput: boolean;
-  searchQuery: string;
-  handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  width?: string;
-  height?: string;
+  topSearchInput?: boolean;
+  searchQuery?: string;
+  handleSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   initialCenter?: { lat: number; lng: number };
   initialZoom?: number;
 }
@@ -22,8 +20,6 @@ const NaverMap = ({
   topSearchInput,
   searchQuery,
   handleSearchChange,
-  width = '100%',
-  height = '700px',
   initialCenter = { lat: 37.5656, lng: 126.9769 },
   initialZoom = 13,
 }: NaverMapProps) => {
@@ -75,7 +71,7 @@ const NaverMap = ({
           />
         </div>
       )}
-      <div ref={mapRef} style={{ width, height }}></div>
+      <div ref={mapRef} className="w-full h-[700px]"></div>
     </div>
   );
 };

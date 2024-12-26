@@ -10,10 +10,10 @@ const NavContainer: React.FC = () => {
         </div>
         <ul className="flex space-x-8">
           <li className="hover:text-kick">
-            <a href="#">지도 보기</a>
+            <a href={'/'}>지도 보기</a>
           </li>
           <li className="hover:text-kick">
-            <a href="#">매물 보기</a>
+            <a href={'/search'}>매물 보기</a>
           </li>
           <li className="hover:text-kick">
             <a href="#">매물 올리기</a>
