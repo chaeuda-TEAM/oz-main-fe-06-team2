@@ -5,14 +5,15 @@ import { useRouter } from 'next/navigation';
 import { BASEURL } from '@/constants/apiUrls';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignupFormData } from '../schemas/FormSchema';
+import { SignupFormData, FormSchema } from '../schemas/FormSchema';
+import FormInput from '@/components/form/FormInput';
 
 const LocalSignUpPage = () => {
   const router = useRouter();
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
-  const [verificationMessage, setVerificationMessage] = useState('');
-  const [verificationMessage2, setVerificationMessage2] = useState('');
+  const [verificationEmailMessage, setVerificationEmailMessage] = useState('');
+  const [verificationCodeMessage, setVerificationCodeMessage] = useState('');
 
   const {
     register,
@@ -23,6 +24,39 @@ const LocalSignUpPage = () => {
     resolver: zodResolver(FormSchema),
     mode: 'onBlur',
   });
+
+  const inputField = [
+    {
+      label: '이름',
+      id: 'username',
+      type: 'text',
+      name: 'username',
+    },
+    // {
+    //   label: '아이디',
+    //   id: 'user_id',
+    //   type: 'text',
+    //   name: 'user_id',
+    // },
+    {
+      label: '비밀번호',
+      id: 'password',
+      type: 'password',
+      name: 'password',
+    },
+    {
+      label: '비밀번호 확인',
+      id: 'password_confirm',
+      type: 'password',
+      name: 'password_confirm',
+    },
+    {
+      label: '휴대폰번호',
+      id: 'phone_number',
+      type: 'number',
+      name: 'phone_number',
+    },
+  ];
 
   const email = watch('email');
 
@@ -38,7 +72,7 @@ const LocalSignUpPage = () => {
       if (response.ok) {
         const data = await response.json();
         setEmailVerificationSent(true);
-        setVerificationMessage(data.message);
+        setVerificationEmailMessage(data.message);
       }
     } catch (error) {
       alert(`인증번호 전송 실패: ${error}`);
@@ -60,11 +94,11 @@ const LocalSignUpPage = () => {
         const data = await response.json();
 
         if (data.message === '유효하지 않은 인증번호입니다.') {
-          setVerificationMessage2('인증번호를 다시 입력해주세요.');
+          setVerificationCodeMessage('인증번호를 다시 입력해주세요.');
           return;
         } else {
-          setVerificationMessage2('');
-          setVerificationMessage('');
+          setVerificationCodeMessage('');
+          setVerificationEmailMessage('');
         }
         setIsEmailVerified(true);
       }
@@ -97,79 +131,71 @@ const LocalSignUpPage = () => {
   };
 
   return (
-    <div className="p-[100px]">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[300px]">
-        <label htmlFor="username">이름</label>
-        <input
-          id="username"
-          type="text"
-          {...register('username')}
-          className="border border-black"
-        />
-        {errors.username && <p>{errors.username.message}</p>}
+    <div className="p-[50px] w-[100%] h-[100%] flex justify-center items-center">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[300px] space-y-3.5">
+        {inputField.map(item => (
+          <FormInput
+            key={item.id}
+            {...item}
+            register={register}
+            errorMessage={errors[item.name]?.message}
+          />
+        ))}
 
-        <label htmlFor="user_id">아이디</label>
-        <input id="user_id" type="text" {...register('user_id')} className="border border-black" />
-        {errors.user_id && <p>{errors.user_id.message}</p>}
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="email">이메일 주소</label>
+          <div className="flex space-x-2">
+            <input
+              id="email"
+              type="email"
+              {...register('email')}
+              className="border border-gray-400 w-[350px] h-[35px]"
+            />
+            <button
+              type="button"
+              onClick={sendEmailVerificationCode}
+              disabled={!email || emailVerificationSent}
+              className="bg-gray-300 w-[90px] h-[35px] text-[15px] cursor-pointer"
+            >
+              이메일 인증
+            </button>
+          </div>
+          {verificationEmailMessage && (
+            <p className="text-green-600 text-sm">{verificationEmailMessage}</p>
+          )}
+          {errors.email && <p className="text-kick text-sm">{errors.email.message}</p>}
+        </div>
 
-        <label htmlFor="password">비밀번호</label>
-        <input
-          id="password"
-          type="password"
-          {...register('password')}
-          className="border border-black"
-        />
-        {errors.password && <p>{errors.password.message}</p>}
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="authenticateEmail">이메일 인증번호</label>
+          <div className="flex space-x-2">
+            <input
+              id="authenticateEmail"
+              type="number"
+              {...register('email_verificationCode')}
+              className="border border-gray-400 w-[350px] h-[35px]"
+              disabled={!emailVerificationSent}
+            />
+            <button
+              type="button"
+              onClick={verifyEmailVerificationCode}
+              disabled={!emailVerificationSent}
+              className="bg-gray-300 w-[90px] h-[35px] text-[15px] cursor-pointer"
+            >
+              인증번호 확인
+            </button>
+          </div>
+          {verificationCodeMessage && (
+            <p className="text-green-600 text-sm">{verificationCodeMessage}</p>
+          )}
+          {errors.email_verificationCode && (
+            <p className="text-kick text-sm">{errors.email_verificationCode.message}</p>
+          )}
+        </div>
 
-        <label htmlFor="password_confirm">비밀번호 확인</label>
-        <input
-          id="password_confirm"
-          type="password"
-          {...register('password_confirm')}
-          className="border border-black"
-        />
-        {errors.password_confirm && <p>{errors.password_confirm.message}</p>}
-
-        <label htmlFor="email">이메일 주소</label>
-        <input id="email" type="email" {...register('email')} className="border border-black" />
-        {verificationMessage && <p>{verificationMessage}</p>}
-        {errors.email && <p>{errors.email.message}</p>}
-        <button
-          type="button"
-          onClick={sendEmailVerificationCode}
-          disabled={!email || emailVerificationSent}
-        >
-          이메일 인증
+        <button type="submit" className="bg-kick w-[350px] h-[40px] text-white mt-[340px]">
+          회원가입
         </button>
-
-        <label htmlFor="authenticateEmail">이메일 인증번호</label>
-        <input
-          id="authenticateEmail"
-          type="number"
-          {...register('email_verificationCode')}
-          className="border border-black"
-          disabled={!emailVerificationSent}
-        />
-        {verificationMessage2 && <p>{verificationMessage2}</p>}
-        {errors.email_verificationCode && <p>{errors.email_verificationCode.message}</p>}
-        <button
-          type="button"
-          onClick={verifyEmailVerificationCode}
-          disabled={!emailVerificationSent}
-        >
-          인증번호 확인
-        </button>
-
-        <label htmlFor="phone_number">휴대폰번호</label>
-        <input
-          id="phone_number"
-          type="number"
-          {...register('phone_number')}
-          className="border border-black"
-        />
-        {errors.phone_number && <p>{errors.phone_number.message}</p>}
-
-        <button type="submit">회원가입</button>
       </form>
     </div>
   );
