@@ -1,6 +1,6 @@
-interface ChatListProps {
+type ChatListProps = {
   chats: { id: string; name: string }[];
-}
+};
 
 const ChatList: React.FC<ChatListProps> = ({ chats }) => {
   return (
