@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { BASEURL } from '@/constants/apiUrls';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignupFormData, FormSchema } from '@/schemas/formSchemas';
+import { SignupFormData } from '../schemas/FormSchema';
 
 const LocalSignUpPage = () => {
   const router = useRouter();
@@ -27,7 +27,7 @@ const LocalSignUpPage = () => {
   const email = watch('email');
 
   // 이메일 인증 코드 전송
-  const sendEmailVerificationCode = async () => {
+  const sendEmailVerificationCode = async (): Promise<void> => {
     try {
       const response = await fetch(`${BASEURL}/api/users/request-email-verification`, {
         method: 'POST',
@@ -46,7 +46,7 @@ const LocalSignUpPage = () => {
   };
 
   // 이메일 인증 코드 검증
-  const verifyEmailVerificationCode = async () => {
+  const verifyEmailVerificationCode = async (): Promise<void> => {
     const verificationCode = watch('email_verificationCode');
 
     try {
@@ -66,7 +66,6 @@ const LocalSignUpPage = () => {
           setVerificationMessage2('');
           setVerificationMessage('');
         }
-
         setIsEmailVerified(true);
       }
     } catch (error) {
@@ -75,7 +74,7 @@ const LocalSignUpPage = () => {
   };
 
   // 최종 회원가입
-  const onSubmit = async (data: SignupFormData) => {
+  const onSubmit = async (data: SignupFormData): Promise<void> => {
     if (!isEmailVerified) {
       alert('이메일 인증을 완료해주세요.');
       return;
