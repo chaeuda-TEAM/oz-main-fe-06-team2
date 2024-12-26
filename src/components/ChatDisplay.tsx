@@ -1,21 +1,20 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Send } from 'lucide-react';
 
-interface Message {
+type Message = {
   id: string;
   user: string;
   content: string;
-}
+};
 
-interface MessageDisplayProps {
+type MessageDisplayProps = {
   messages: Message[];
-}
+};
 
 const ChatDisplay: React.FC<MessageDisplayProps> = ({ messages }) => {
   const myName = '주민재';
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
