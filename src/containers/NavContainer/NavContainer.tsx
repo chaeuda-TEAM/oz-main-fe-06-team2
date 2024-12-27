@@ -22,7 +22,7 @@ const NavContainer: React.FC = () => {
 
         <div className="flex items-center space-x-4 ml-auto">
           <button className="hover:text-kick">
-            <Link href={'/'}>채팅</Link>
+            <Link href="/chat">채팅</Link>
           </button>
           <span className="text-gray-500">|</span>
           <button className="hover:text-kick">
