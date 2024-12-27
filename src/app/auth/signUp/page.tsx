@@ -137,7 +137,10 @@ const LocalSignUpPage = () => {
         {inputField.map(item => (
           <FormInput
             key={item.id}
-            {...item}
+            name={item.name as keyof SignupFormData}
+            label={item.label}
+            id={item.id}
+            type={item.type}
             register={register}
             errorMessage={errors[item.name as keyof SignupFormData]?.message}
           />
