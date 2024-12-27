@@ -19,8 +19,19 @@ const SignIn = () => {
     const data = await sendLoginRequest(email, password);
 
     if (data.success) {
-      console.log('로그인 성공:', data);
-      // TODO : Token을 쿠키에 저장?
+      console.log('로그인 성공');
+
+      const cookieResponse = await fetch('/api/auth/setToken', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accessToken: data.tokens?.access,
+          refreshToken: data.tokens?.refresh,
+        }),
+      });
+
+      if (cookieResponse.ok) console.log('쿠기 설정 성공');
+      else console.error('쿠키 설정 실패');
     } else {
       console.error('로그인 실패:', data);
       setErrorMessages(data.message);
