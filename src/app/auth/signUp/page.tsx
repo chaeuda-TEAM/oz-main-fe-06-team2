@@ -11,7 +11,9 @@ import FormInput from '@/components/form/FormInput';
 const LocalSignUpPage = () => {
   const router = useRouter();
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  // 버튼 비활성화화
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
+  // 이메일 인증 버튼 클릭 후 문구구
   const [verificationEmailMessage, setVerificationEmailMessage] = useState('');
   const [verificationCodeMessage, setVerificationCodeMessage] = useState('');
 
@@ -71,6 +73,7 @@ const LocalSignUpPage = () => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         setEmailVerificationSent(true);
         setVerificationEmailMessage(data.message);
       }
@@ -97,7 +100,7 @@ const LocalSignUpPage = () => {
           setVerificationCodeMessage('인증번호를 다시 입력해주세요.');
           return;
         } else {
-          setVerificationCodeMessage('');
+          setVerificationCodeMessage('인증이 완료되었습니다.');
           setVerificationEmailMessage('');
         }
         setIsEmailVerified(true);
@@ -122,6 +125,8 @@ const LocalSignUpPage = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        console.log(data)
         alert('회원가입 성공! 로그인 페이지로 이동합니다.');
         router.push('/');
       }
@@ -131,31 +136,33 @@ const LocalSignUpPage = () => {
   };
 
   return (
-    <div className="p-[50px] w-[100%] h-[100%] flex justify-center items-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[300px] space-y-3.5">
+    <div className="p-[50px] w-full h-full flex justify-center items-center">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[460px] space-y-3.5">
+        {/* 이메일, 인증번호 제외 인풋들 */}
         {inputField.map(item => (
           <FormInput
             key={item.id}
             {...item}
             register={register}
-            errorMessage={errors[item.name]?.message}
+            errorMessage={errors[item.name as keyof SignupFormData]?.message}
           />
         ))}
 
-        <div className="flex flex-col space-y-2">
+        {/* 이메일 주소 인풋 */}
+        <div className="flex flex-col space-y-1.5">
           <label htmlFor="email">이메일 주소</label>
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 w-full">
             <input
               id="email"
               type="email"
               {...register('email')}
-              className="border border-gray-400 w-[350px] h-[35px]"
+              className="flex-grow border border-gray-400 w-[350px] h-[35px] p-2"
             />
             <button
               type="button"
               onClick={sendEmailVerificationCode}
               disabled={!email || emailVerificationSent}
-              className="bg-gray-300 w-[90px] h-[35px] text-[15px] cursor-pointer"
+              className="border border-gray-500 w-[100px] h-[35px] text-[15px] cursor-pointer"
             >
               이메일 인증
             </button>
@@ -166,21 +173,22 @@ const LocalSignUpPage = () => {
           {errors.email && <p className="text-kick text-sm">{errors.email.message}</p>}
         </div>
 
-        <div className="flex flex-col space-y-2">
+        {/* 이메일 인증번호 인풋 */}
+        <div className="flex flex-col space-y-1.5">
           <label htmlFor="authenticateEmail">이메일 인증번호</label>
           <div className="flex space-x-2">
             <input
               id="authenticateEmail"
               type="number"
               {...register('email_verificationCode')}
-              className="border border-gray-400 w-[350px] h-[35px]"
+              className="border border-gray-400 w-[350px] h-[35px] p-2"
               disabled={!emailVerificationSent}
             />
             <button
               type="button"
               onClick={verifyEmailVerificationCode}
               disabled={!emailVerificationSent}
-              className="bg-gray-300 w-[90px] h-[35px] text-[15px] cursor-pointer"
+              className="border border-gray-500 w-[100px] h-[35px] text-[15px] cursor-pointer"
             >
               인증번호 확인
             </button>

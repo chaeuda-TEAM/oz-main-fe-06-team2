@@ -1,13 +1,15 @@
 import React from 'react';
-import { UseFormRegister, FieldValues } from 'react-hook-form';
+import { UseFormRegister, FieldErrors  } from 'react-hook-form';
+import { SignupFormData } from '@/app/auth/schemas/FormSchema';
 
 interface InputFieldProps {
   label: string;
   id: string;
   type: string;
-  register: UseFormRegister<FieldValues>;
-  name: string;
+  register: UseFormRegister<SignupFormData>;
+  name: keyof SignupFormData;
   errorMessage?: string;
+  errors?: FieldErrors<SignupFormData>;
   disabled?: boolean;
 }
 
@@ -27,7 +29,7 @@ const Input = ({
         id={id}
         type={type}
         {...register(name)}
-        className="border border-gray-400 w-[350px] h-[35px]"
+        className="border border-gray-400 w-[350px] h-[35px] p-2"
         disabled={disabled}
       />
       {errorMessage && <p className="text-kick text-sm">{errorMessage}</p>}
