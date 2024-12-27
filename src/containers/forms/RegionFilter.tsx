@@ -11,7 +11,7 @@ const RegionFilterForm = () => {
   const selectedOptions = SecondSelectRegion[selectedCategory] || [];
 
   return (
-    <form className=" mb-3 space-x-3">
+    <form className="mb-3 space-x-3">
       <select
         className="w-[140px] p-[10px] text-[0.8rem] bg-[#f4f4f4]"
         onChange={e => handleCategoryChange(e.target.value)}

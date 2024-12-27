@@ -1,4 +1,9 @@
-export const FirstSelectRegion = [
+interface Region {
+  value: string;
+  name: string;
+}
+
+export const FirstSelectRegion: Region[] = [
   { value: 'default', name: '시/도' },
   { value: '강원', name: '강원' },
   { value: '경기', name: '경기' },
@@ -18,7 +23,9 @@ export const FirstSelectRegion = [
   { value: '충북', name: '충북' },
 ];
 
-export const SecondSelectRegion = {
+type SecondSelectRegionType = Record<string, Region[]>;
+
+export const SecondSelectRegion: SecondSelectRegionType = {
   부산: [
     { value: '강서구', name: '강서구' },
     { value: '금정구', name: '금정구' },
