@@ -7,14 +7,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignupFormData, FormSchema } from '../schemas/FormSchema';
 import FormInput from '@/components/form/FormInput';
+import FormButton from '@/components/form/FormButton';
 
 const LocalSignUpPage = () => {
   const router = useRouter();
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  // 버튼 비활성화화
+  // 버튼 비활성화
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
-  // 이메일 인증 버튼 클릭 후 문구구
+  // 이메일 인증 버튼 클릭 후 문구
   const [verificationEmailMessage, setVerificationEmailMessage] = useState('');
+  // 인증버튼 확인 클릭 후 문구
   const [verificationCodeMessage, setVerificationCodeMessage] = useState('');
 
   const {
@@ -34,12 +36,6 @@ const LocalSignUpPage = () => {
       type: 'text',
       name: 'username',
     },
-    // {
-    //   label: '아이디',
-    //   id: 'user_id',
-    //   type: 'text',
-    //   name: 'user_id',
-    // },
     {
       label: '비밀번호',
       id: 'password',
@@ -73,7 +69,7 @@ const LocalSignUpPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
+        console.log(data);
         setEmailVerificationSent(true);
         setVerificationEmailMessage(data.message);
       }
@@ -95,7 +91,6 @@ const LocalSignUpPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-
         if (data.message === '유효하지 않은 인증번호입니다.') {
           setVerificationCodeMessage('인증번호를 다시 입력해주세요.');
           return;
@@ -126,7 +121,7 @@ const LocalSignUpPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
+        console.log(data);
         alert('회원가입 성공! 로그인 페이지로 이동합니다.');
         router.push('/');
       }
@@ -136,8 +131,8 @@ const LocalSignUpPage = () => {
   };
 
   return (
-    <div className="p-[50px] w-full h-full flex justify-center items-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[460px] space-y-3.5">
+    <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
         {/* 이메일, 인증번호 제외 인풋들 */}
         {inputField.map(item => (
           <FormInput
@@ -151,18 +146,18 @@ const LocalSignUpPage = () => {
         {/* 이메일 주소 인풋 */}
         <div className="flex flex-col space-y-1.5">
           <label htmlFor="email">이메일 주소</label>
-          <div className="flex space-x-2 w-full">
+          <div className="flex flex-col sm:flex-row sm:space-x-2 w-full">
             <input
               id="email"
               type="email"
               {...register('email')}
-              className="flex-grow border border-gray-400 w-[350px] h-[35px] p-2"
+              className="border border-gray-400 w-full h-9 text-4 cursor-pointer p-2"
             />
             <button
               type="button"
               onClick={sendEmailVerificationCode}
               disabled={!email || emailVerificationSent}
-              className="border border-gray-500 w-[100px] h-[35px] text-[15px] cursor-pointer"
+              className={`w-full sm:w-28 h-9 text-[14px] cursor-pointer ${emailVerificationSent ? "bg-gray-200 text-gray-500" : "border border-gray-900" }`}
             >
               이메일 인증
             </button>
@@ -176,19 +171,19 @@ const LocalSignUpPage = () => {
         {/* 이메일 인증번호 인풋 */}
         <div className="flex flex-col space-y-1.5">
           <label htmlFor="authenticateEmail">이메일 인증번호</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row sm:space-x-2">
             <input
               id="authenticateEmail"
               type="number"
               {...register('email_verificationCode')}
-              className="border border-gray-400 w-[350px] h-[35px] p-2"
+              className="border border-gray-400 w-full h-9 text-4 cursor-pointer p-2"
               disabled={!emailVerificationSent}
             />
             <button
               type="button"
               onClick={verifyEmailVerificationCode}
               disabled={!emailVerificationSent}
-              className="border border-gray-500 w-[100px] h-[35px] text-[15px] cursor-pointer"
+              className={`w-full sm:w-28 h-9 text-[14px] cursor-pointer ${verificationCodeMessage === '인증이 완료되었습니다.' ? "bg-gray-200 text-gray-500" : "border border-gray-900" }`}
             >
               인증번호 확인
             </button>
@@ -201,9 +196,7 @@ const LocalSignUpPage = () => {
           )}
         </div>
 
-        <button type="submit" className="bg-kick w-[350px] h-[40px] text-white mt-[340px]">
-          회원가입
-        </button>
+        <FormButton>회원가입</FormButton>
       </form>
     </div>
   );

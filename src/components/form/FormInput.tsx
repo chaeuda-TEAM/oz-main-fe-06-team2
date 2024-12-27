@@ -29,7 +29,7 @@ const Input = ({
         id={id}
         type={type}
         {...register(name)}
-        className="border border-gray-400 w-[350px] h-[35px] p-2"
+        className="border border-gray-400 w-full h-9 text-4 cursor-pointer p-2"
         disabled={disabled}
       />
       {errorMessage && <p className="text-kick text-sm">{errorMessage}</p>}
