@@ -136,7 +136,7 @@ const LocalSignUpPage = () => {
         {/* 이메일, 인증번호 제외 인풋들 */}
         {inputField.map(item => (
           <FormInput
-            key={item.id}
+            key={item.id} 
             name={item.name as keyof SignupFormData}
             label={item.label}
             id={item.id}
