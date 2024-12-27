@@ -26,7 +26,7 @@ const NavContainer: React.FC = () => {
           </button>
           <span className="text-gray-500">|</span>
           <button className="hover:text-kick">
-            <Link href={'/auth/signUp'}>로그인/회원가입</Link>
+            <Link href={'/auth/signIn'}>로그인/회원가입</Link>
           </button>
         </div>
       </nav>
