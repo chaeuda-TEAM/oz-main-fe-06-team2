@@ -133,16 +133,6 @@ const LocalSignUpPage = () => {
   return (
     <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
-        {/* 이메일, 인증번호 제외 인풋들 */}
-        {inputField.map(item => (
-          <FormInput
-            key={item.id}
-            {...item}
-            register={register}
-            errorMessage={errors[item.name as keyof SignupFormData]?.message}
-          />
-        ))}
-
         {/* 이메일 주소 인풋 */}
         <div className="flex flex-col space-y-1.5">
           <label htmlFor="email">이메일 주소</label>
@@ -195,6 +185,18 @@ const LocalSignUpPage = () => {
             <p className="text-kick text-sm">{errors.email_verificationCode.message}</p>
           )}
         </div>
+        {/* 이메일, 인증번호 제외 인풋들 */}
+        {inputField.map(item => (
+          <FormInput
+            key={item.id} 
+            name={item.name as keyof SignupFormData}
+            label={item.label}
+            id={item.id}
+            type={item.type}
+            register={register}
+            errorMessage={errors[item.name as keyof SignupFormData]?.message}
+          />
+        ))}
 
         <FormButton>회원가입</FormButton>
       </form>
