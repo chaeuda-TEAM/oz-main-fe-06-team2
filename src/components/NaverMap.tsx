@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
-    naver: any;
+    naver: typeof naver;
   }
 }
 
@@ -31,7 +31,7 @@ const NaverMap = ({
 
   useEffect(() => {
     const initializeMap = () => {
-      if (!window.naver) return;
+      if (!window.naver || !mapRef.current) return;
 
       const mapOptions = {
         center: new window.naver.maps.LatLng(initialCenter.lat, initialCenter.lng),
@@ -51,15 +51,20 @@ const NaverMap = ({
       });
     };
 
-    const script = document.createElement('script');
-    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}`;
-    script.async = true;
-    script.onload = initializeMap;
-    document.head.appendChild(script);
+    const existingScript = document.querySelector('script[src*="maps.js"]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}`;
+      script.async = true;
+      script.onload = initializeMap;
+      document.head.appendChild(script);
 
-    return () => {
-      document.head.removeChild(script);
-    };
+      return () => {
+        document.head.removeChild(script);
+      };
+    } else {
+      initializeMap;
+    }
   }, [initialCenter, initialZoom]);
 
   return (
