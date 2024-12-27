@@ -1,35 +1,18 @@
-import NextAuth from 'next-auth/next';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 
-const handler = NextAuth({
-  providers: [
-    CredentialsProvider({
-      //이름, 아이디, 비번, 비번확인, 휴대폰번호, 이메일 이메일 인증번호
-      credentials: {
-        userName: { label: '이름', type: 'text', placeholder: '이름을 입력하세요' },
-        userId: { label: '아이디', type: 'text', placeholder: '아이디를 입력하세요' },
-        userPassword: { label: '비밀번호', type: 'password', placeholder: '비밀번호를 입력하세요' },
-        userMobile: { label: '휴대폰번호', type: 'number', placeholder: '휴대폰번호를 입력하세요' },
-        userEmail: { label: '이메일', type: 'email', placeholder: '이메일을 입력하세요' },
-        // userId: { label: "아이디", type: "text", placeholder: "이메일을 입력하세요"},
-        // username: { label: "이메일", type: "text", placeholder: "이메일 입력" },
-        // password: { label: "비밀번호", type: "password" },
-      },
+const handler = NextAuth();
 
-      // 이메일, 패스워드 부분을 체크해서
-      // 맞으면 user 객체 리턴
-      // 틀리면 null 리턴
-      async authorize(credentials, req) {
-        const user = { id: '1', name: 'J Smith', email: 'jsmith@example.com' };
+export { handler as GET  };
 
-        if (user) {
-          return user;
-        } else {
-          return null;
-        }
-      },
-    }),
-  ],
-});
+const authOptions: any = {
+  provider: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    })
+  ]
+}
+const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST };
+export { authOptions, handler as GET };
