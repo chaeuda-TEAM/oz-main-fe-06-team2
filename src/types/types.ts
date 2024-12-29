@@ -22,3 +22,14 @@ export type LoginResponse = {
   tokens?: Tokens;
   user?: User;
 };
+
+export type RefreshResponse = {
+  success: boolean;
+  message: string;
+  tokens?: Tokens;
+};
+
+export type LogoutResponse = {
+  success: boolean;
+  message: string;
+};
