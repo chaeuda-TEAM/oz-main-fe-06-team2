@@ -1,12 +1,13 @@
 'use client';
 
-import { sendLoginRequest } from '@/api/auth';
+import { sendLoginRequest, sendLogoutRequest } from '@/api/auth';
 import FormButton from '@/components/form/FormButton';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
+import { deleteCookie, getCookie } from 'cookies-next';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,6 +47,30 @@ const SignIn = () => {
       setErrorMessages(response.message);
     }
     setLoading(false);
+  };
+
+  const handleLogout = async () => {
+    const refreshToken = await getCookie('refreshToken');
+
+    if (!refreshToken) {
+      console.error('로그아웃 실패: refreshToken이 존재하지 않습니다.');
+      return;
+    }
+
+    try {
+      const response = await sendLogoutRequest(refreshToken);
+
+      if (response.success) {
+        console.log('로그아웃 성공');
+        deleteCookie('accessToken');
+        deleteCookie('refreshToken');
+        window.location.href = '/';
+      } else {
+        console.error('로그아웃 실패');
+      }
+    } catch (error) {
+      console.error('로그아웃 요청 오류:', error);
+    }
   };
 
   return (
@@ -92,6 +117,9 @@ const SignIn = () => {
             </Link>
           </p>
         </div>
+        <button className="bg-slate-400" onClick={handleLogout}>
+          임시 로그아웃 버튼
+        </button>
       </div>
     </div>
   );
