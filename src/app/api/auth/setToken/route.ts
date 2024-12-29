@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   response.cookies.set({
     name: 'accessToken',
     value: accessToken,
-    httpOnly: true,
+    // httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: 60 * 30, // 30분
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   response.cookies.set({
     name: 'refreshToken',
     value: refreshToken,
-    httpOnly: true,
+    // httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: 60 * 60 * 24 * 7, // 7일
