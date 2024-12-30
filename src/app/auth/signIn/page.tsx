@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
 import { deleteCookie, getCookie } from 'cookies-next';
-import GoogleBtn from '@/app/auth/signIn/social/GoogleBtn'
+import GoogleBtn from '@/components/GoogleBtn';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
