@@ -1,12 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/navigation';
 
-const page = () => {
-  const loginWithGoogle = async (): Promise<void> => {
-    console.log(1)
-  }
+const BASEURL = process.env.NEXT_PUBLIC_BASEURL;
+
+const SocialSignInPage = () => {
+  const router = useRouter();
+
+  const signInWithGoogle = () => {
+    const signInUrl = `${BASEURL}/api/auth/google/login/dev`;
+    router.push(signInUrl);
+  };
 
   return (
     <div className="">
@@ -15,10 +20,10 @@ const page = () => {
           <p>회원이 아니신가요?</p>&nbsp;
           <Link href={'/auth/signUp'}>회원가입</Link>
         </div>
-        <button onClick={loginWithGoogle}>구글로 시작하기</button>
+        <button onClick={signInWithGoogle}>구글로 시작하기</button>
       </div>
     </div>
   );
 };
 
-export default page;
+export default SocialSignInPage;
