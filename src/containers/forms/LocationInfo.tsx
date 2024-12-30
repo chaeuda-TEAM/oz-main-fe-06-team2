@@ -11,11 +11,12 @@ declare global {
 
 interface PostcodeData {
   roadAddress: string;
-  zonecode: number;
+  zonecode: string;
 }
 
 const LocationInfoForm = () => {
   const addressRef = useRef<HTMLInputElement>(null);
+  const zonecodeRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
@@ -33,8 +34,9 @@ const LocationInfoForm = () => {
 
     const postcode = new window.daum.Postcode({
       oncomplete: (data: PostcodeData) => {
-        if (addressRef.current) {
+        if (addressRef.current && zonecodeRef.current) {
           addressRef.current.value = data.roadAddress;
+          zonecodeRef.current.value = data.zonecode;
         }
       },
     });
@@ -43,18 +45,17 @@ const LocationInfoForm = () => {
   };
 
   return (
-    <div>
+    <div className="w-[500px]">
       <h2 className="text-lg font-semibold mb-4">위치 정보</h2>
       <div className="">
         <label className="text-[0.95rem] flex-1">
-          소재지
+          주소
           <div className="flex items-center space-x-2">
             <input
-              ref={addressRef}
+              ref={zonecodeRef}
               id="address1"
-              type="text"
-              placeholder="주소를 검색해주세요."
-              className="w-full border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
+              placeholder="우편번호를 입력해주세요."
+              className="w-[250px] border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
               readOnly
             />
             <button
@@ -65,6 +66,13 @@ const LocationInfoForm = () => {
               주소 검색하기
             </button>
           </div>
+          <input
+            ref={addressRef}
+            type="text"
+            placeholder="주소를 입력해주세요."
+            className="w-full border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
+            readOnly
+          ></input>
         </label>
 
         <PostDetailInput1
