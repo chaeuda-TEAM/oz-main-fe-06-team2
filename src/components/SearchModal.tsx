@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface SearchModalProps {
@@ -8,7 +10,11 @@ interface SearchModalProps {
 }
 
 const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, handleSearchChange }) => {
+  const [mounted, setMounted] = useState<boolean>(false);
+
   useEffect(() => {
+    setMounted(true);
+
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -19,7 +25,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, handleSearch
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">

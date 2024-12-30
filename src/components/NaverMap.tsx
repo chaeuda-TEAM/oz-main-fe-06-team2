@@ -26,6 +26,9 @@ const NaverMap = ({
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 클라이언트 환경에서만 실행
+    if (typeof window === 'undefined' || !mapRef.current) return;
+
     const initializeMap = () => {
       if (!window.naver || !mapRef.current) return;
 
@@ -66,7 +69,7 @@ const NaverMap = ({
   return (
     <div className="relative">
       {topSearchInput && (
-        <div className=" absolute right-10 z-30 w-[250px] p-2">
+        <div className="absolute right-10 z-30 w-[250px] p-2">
           <input
             type="text"
             placeholder="지역명을 검색하세요."
