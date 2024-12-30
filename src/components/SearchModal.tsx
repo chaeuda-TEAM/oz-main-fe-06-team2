@@ -28,7 +28,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, handleSearch
   if (!mounted || !isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+    <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-30">
       <div className="relative w-4/5 max-w-xl p-4">
         <input
           type="text"
