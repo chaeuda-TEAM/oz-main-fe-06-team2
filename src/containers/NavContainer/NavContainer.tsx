@@ -2,9 +2,35 @@
 
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import useAuthStore from '@/stores/authStore';
+import { Menu } from 'lucide-react';
 
 const NavContainer: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
+  const { isAuthenticated, logout } = useAuthStore();
+
+  const handleChatClick = () => {
+    if (isAuthenticated) {
+      router.push('/chat');
+    } else {
+      router.push('/auth/signIn');
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
+
+  const handleMyPageClick = () => {
+    if (isAuthenticated) {
+      router.push('/mypage');
+    } else {
+      router.push('/auth/signIn');
+    }
+  };
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -42,26 +68,38 @@ const NavContainer: React.FC = () => {
           </ul>
 
           <div className="hidden md:flex items-center space-x-4 ml-auto">
-            <button className="hover:text-kick">
-              <Link href={'/chat'}>채팅</Link>
+            <button onClick={handleChatClick} className="hover:text-kick">
+              채팅
             </button>
             <span className="text-gray-500">|</span>
-            <button className="hover:text-kick">
-              <Link href={'/auth/signIn'}>로그인/회원가입</Link>
-            </button>
+            {isAuthenticated ? (
+              <div className="items-center space-x-4 ml-auto">
+                <button onClick={handleMyPageClick} className="hover:text-kick">
+                  마이페이지
+                </button>
+                <span className="text-gray-500">|</span>
+                <button onClick={handleLogout} className="hover:text-kick">
+                  로그아웃
+                </button>
+              </div>
+            ) : (
+              <button className="hover:text-kick">
+                <Link href={'/auth/signIn'}>로그인/회원가입</Link>
+              </button>
+            )}
           </div>
 
           <button
             className="md:hidden flex items-center text-2xl text-kick ml-auto"
             onClick={toggleModal}
           >
-            ☰
+            <Menu />
           </button>
         </nav>
       </header>
 
       {isModalOpen && (
-        <div className="fixed end-0 md:hidden z-50 top-[80px] bg-gray-50 w-[200px] p-6 shadow-md">
+        <div className="fixed right-0 md:hidden z-50 top-[80px] bg-gray-50 w-[200px] p-6 shadow-md">
           <button className="absolute top-4 right-4 text-gray-700" onClick={toggleModal}>
             ✕
           </button>
@@ -71,11 +109,26 @@ const NavContainer: React.FC = () => {
                 채팅
               </Link>
             </li>
-            <li className="hover:text-kick">
-              <Link href={'/auth/signIn'} onClick={toggleModal}>
-                로그인/회원가입
-              </Link>
-            </li>
+            {isAuthenticated ? (
+              <>
+                <li className="hover:text-kick">
+                  <button onClick={handleMyPageClick} className="w-full text-left">
+                    마이페이지
+                  </button>
+                </li>
+                <li className="hover:text-kick">
+                  <button onClick={handleLogout} className="w-full text-left">
+                    로그아웃
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li className="hover:text-kick">
+                <Link href={'/auth/signIn'} onClick={toggleModal}>
+                  로그인/회원가입
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       )}
