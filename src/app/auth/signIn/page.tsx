@@ -8,10 +8,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessages, setErrorMessages] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -54,7 +56,7 @@ const SignIn = () => {
         console.log('로그아웃 성공');
         deleteCookie('accessToken');
         deleteCookie('refreshToken');
-        window.location.href = '/';
+        router.push('/');
       } else {
         console.error('로그아웃 실패');
       }
