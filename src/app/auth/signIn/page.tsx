@@ -1,19 +1,21 @@
 'use client';
 
-import { sendLoginRequest, sendLogoutRequest } from '@/api/auth';
+import React, { useState } from 'react';
+import { sendLoginRequest } from '@/api/auth';
 import FormButton from '@/components/form/FormButton';
 import Link from 'next/link';
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
-import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
+import useAuthStore from '@/stores/authStore';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessages, setErrorMessages] = useState<string | null>(null);
   const router = useRouter();
+  const { login } = useAuthStore();
 
   const {
     register,
@@ -34,35 +36,19 @@ const SignIn = () => {
       // httpOnly: true 옵션을 사용하면 클라이언트에서 쿠키를 읽을 수 없습니다.
       setCookie('accessToken', response.tokens?.access, { path: '/', maxAge: 60 * 30 });
       setCookie('refreshToken', response.tokens?.refresh, { path: '/', maxAge: 60 * 30 * 24 * 7 });
+
+      if (response.user) {
+        login(response.user, {
+          access: response.tokens?.access || '',
+          refresh: response.tokens?.refresh || '',
+        });
+      }
+      router.push('/');
     } else {
       console.error('로그인 실패:', data);
       setErrorMessages(response.message);
     }
     setLoading(false);
-  };
-
-  const handleLogout = async () => {
-    const refreshToken = await getCookie('refreshToken');
-
-    if (!refreshToken) {
-      console.error('로그아웃 실패: refreshToken이 존재하지 않습니다.');
-      return;
-    }
-
-    try {
-      const response = await sendLogoutRequest(refreshToken);
-
-      if (response.success) {
-        console.log('로그아웃 성공');
-        deleteCookie('accessToken');
-        deleteCookie('refreshToken');
-        router.push('/');
-      } else {
-        console.error('로그아웃 실패');
-      }
-    } catch (error) {
-      console.error('로그아웃 요청 오류:', error);
-    }
   };
 
   return (
@@ -109,9 +95,6 @@ const SignIn = () => {
             </Link>
           </p>
         </div>
-        <button className="bg-slate-400" onClick={handleLogout}>
-          임시 로그아웃 버튼
-        </button>
       </div>
     </div>
   );
