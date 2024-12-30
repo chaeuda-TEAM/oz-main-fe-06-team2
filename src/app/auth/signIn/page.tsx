@@ -7,11 +7,13 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
-import { deleteCookie, getCookie } from 'cookies-next';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessages, setErrorMessages] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -29,19 +31,9 @@ const SignIn = () => {
     const response = await sendLoginRequest(email, password);
 
     if (response.success) {
-      console.log('로그인 성공');
-
-      const cookieResponse = await fetch('/api/auth/setToken', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          accessToken: response.tokens?.access,
-          refreshToken: response.tokens?.refresh,
-        }),
-      });
-
-      if (cookieResponse.ok) console.log('쿠기 설정 성공');
-      else console.error('쿠키 설정 실패');
+      // httpOnly: true 옵션을 사용하면 클라이언트에서 쿠키를 읽을 수 없습니다.
+      setCookie('accessToken', response.tokens?.access, { path: '/', maxAge: 60 * 30 });
+      setCookie('refreshToken', response.tokens?.refresh, { path: '/', maxAge: 60 * 30 * 24 * 7 });
     } else {
       console.error('로그인 실패:', data);
       setErrorMessages(response.message);
@@ -64,7 +56,7 @@ const SignIn = () => {
         console.log('로그아웃 성공');
         deleteCookie('accessToken');
         deleteCookie('refreshToken');
-        window.location.href = '/';
+        router.push('/');
       } else {
         console.error('로그아웃 실패');
       }
