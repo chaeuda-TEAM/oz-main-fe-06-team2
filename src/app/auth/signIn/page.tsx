@@ -10,6 +10,7 @@ import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/authStore';
 import { setAuthCookie } from '@/utils/cookieUtils';
+import GoogleBtn from '@/components/GoogleBtn';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -94,6 +95,7 @@ const SignIn = () => {
             </Link>
           </p>
         </div>
+        <GoogleBtn />
       </div>
     </div>
   );
