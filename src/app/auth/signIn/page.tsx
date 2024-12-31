@@ -7,9 +7,10 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
-import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/authStore';
+import { setAuthCookie } from '@/utils/cookieUtils';
+import GoogleBtn from '@/components/GoogleBtn';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,9 +34,8 @@ const SignIn = () => {
     const response = await sendLoginRequest(email, password);
 
     if (response.success) {
-      // httpOnly: true 옵션을 사용하면 클라이언트에서 쿠키를 읽을 수 없습니다.
-      setCookie('accessToken', response.tokens?.access, { path: '/', maxAge: 60 * 30 });
-      setCookie('refreshToken', response.tokens?.refresh, { path: '/', maxAge: 60 * 30 * 24 * 7 });
+      setAuthCookie('accessToken', response.tokens?.access || '');
+      setAuthCookie('refreshToken', response.tokens?.refresh || '');
 
       if (response.user) {
         login(response.user, {
@@ -95,6 +95,7 @@ const SignIn = () => {
             </Link>
           </p>
         </div>
+        <GoogleBtn />
       </div>
     </div>
   );
