@@ -1,18 +1,22 @@
 'use client';
 
-import { sendLoginRequest, sendLogoutRequest } from '@/api/auth';
+import React, { useState } from 'react';
+import { sendLoginRequest } from '@/api/auth';
 import FormButton from '@/components/form/FormButton';
 import Link from 'next/link';
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SigninForm, SigninSchema } from '../schemas/SignInSchema';
-import { deleteCookie, getCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
+import useAuthStore from '@/stores/authStore';
+import { setAuthCookie } from '@/utils/cookieUtils';
 import GoogleBtn from '@/components/GoogleBtn';
 
 const SignIn = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessages, setErrorMessages] = useState<string | null>(null);
+  const router = useRouter();
+  const { login } = useAuthStore();
 
   const {
     register,
@@ -30,48 +34,21 @@ const SignIn = () => {
     const response = await sendLoginRequest(email, password);
 
     if (response.success) {
-      console.log('로그인 성공');
+      setAuthCookie('accessToken', response.tokens?.access || '');
+      setAuthCookie('refreshToken', response.tokens?.refresh || '');
 
-      const cookieResponse = await fetch('/api/auth/setToken', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          accessToken: response.tokens?.access,
-          refreshToken: response.tokens?.refresh,
-        }),
-      });
-
-      if (cookieResponse.ok) console.log('쿠기 설정 성공');
-      else console.error('쿠키 설정 실패');
+      if (response.user) {
+        login(response.user, {
+          access: response.tokens?.access || '',
+          refresh: response.tokens?.refresh || '',
+        });
+      }
+      router.push('/');
     } else {
       console.error('로그인 실패:', data);
       setErrorMessages(response.message);
     }
     setLoading(false);
-  };
-
-  const handleLogout = async () => {
-    const refreshToken = await getCookie('refreshToken');
-
-    if (!refreshToken) {
-      console.error('로그아웃 실패: refreshToken이 존재하지 않습니다.');
-      return;
-    }
-
-    try {
-      const response = await sendLogoutRequest(refreshToken);
-
-      if (response.success) {
-        console.log('로그아웃 성공');
-        deleteCookie('accessToken');
-        deleteCookie('refreshToken');
-        window.location.href = '/';
-      } else {
-        console.error('로그아웃 실패');
-      }
-    } catch (error) {
-      console.error('로그아웃 요청 오류:', error);
-    }
   };
 
   return (
@@ -119,9 +96,6 @@ const SignIn = () => {
           </p>
         </div>
         <GoogleBtn />
-        <button className="bg-slate-400" onClick={handleLogout}>
-          임시 로그아웃 버튼
-        </button>
       </div>
     </div>
   );
