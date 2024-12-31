@@ -4,10 +4,6 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const code = searchParams.get('code');
-    console.log('Received code:', code);
-    
-    // API 요청 전 로그
-    console.log('Attempting to call backend API with code');
     
     if (!code) {
       return NextResponse.json({ error: 'No code provided' }, { status: 400 });
@@ -19,9 +15,6 @@ export async function GET(req: NextRequest) {
         'Content-Type': 'application/json',
       }
     });
-
-    // 응답 상태 로그
-    console.log('Backend response status:', response.status);
     
     if (!response.ok) {
       console.error('Backend request failed with status:', response.status);
@@ -29,7 +22,6 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('Received data from backend:', data);
     
     if (data.success) {
       // is_active가 false일 경우 회원가입 페이지로, true일 경우 원래 리다이렉트 URL로 이동
