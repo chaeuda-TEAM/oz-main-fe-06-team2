@@ -51,12 +51,15 @@ export async function GET(req: NextRequest) {
     
     return NextResponse.json(data);
     
-  } catch (error) {
-    // 더 자세한 에러 로깅
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack
-    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack
+      });
+    } else {
+      console.error('Unknown error:', error);
+    }
     return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
   }
 }
