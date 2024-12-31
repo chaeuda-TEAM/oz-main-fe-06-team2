@@ -61,7 +61,6 @@ export const sendLogoutRequest = async (refresh: string): Promise<LogoutResponse
     }
 
     const data: LogoutResponse = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error('로그아웃 요청 오류:', error);
