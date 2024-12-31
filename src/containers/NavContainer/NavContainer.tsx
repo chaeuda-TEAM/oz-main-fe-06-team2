@@ -58,7 +58,7 @@ const NavContainer: React.FC = () => {
 
   return (
     <>
-      <header className="fixed w-full bg-white z-40 shadow-md">
+      <header className="fixed w-full bg-white z-40">
         <nav className="flex items-center justify-between h-[80px] md:px-10 px-8">
           <div className="mr-10 text-kick text-2xl font-bold">
             <Link href="/" onClick={closeModal}>
