@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
 export async function GET(req: NextRequest) {
   try {
@@ -22,12 +23,12 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    
     if (data.success) {
       // is_active가 false일 경우 회원가입 페이지로, true일 경우 원래 리다이렉트 URL로 이동
+      console.log(data);
       const redirectUrl = data.is_active 
         ? data.redirect_url 
-        : `http://localhost:3000/auth/signUp`;
+        : `${DEV_API_URL}/auth/signIn`;
       
       const responseObj = NextResponse.redirect(redirectUrl);
       
