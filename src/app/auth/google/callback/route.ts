@@ -24,11 +24,12 @@ export async function GET(req: NextRequest) {
 
     const data = await response.json();
     if (data.success) {
-      // is_active가 false일 경우 회원가입 페이지로, true일 경우 원래 리다이렉트 URL로 이동
       console.log(data);
+      console.log(`정보 확인`, { name: data.user.username, email: data.user.email});
+      // is_active가 false일 경우 회원가입 페이지로, true일 경우 원래 리다이렉트 URL로 이동
       const redirectUrl = data.is_active 
         ? data.redirect_url 
-        : `${DEV_API_URL}/auth/signIn`;
+        : `${DEV_API_URL}/auth/signUp/social`;
       
       const responseObj = NextResponse.redirect(redirectUrl);
       
