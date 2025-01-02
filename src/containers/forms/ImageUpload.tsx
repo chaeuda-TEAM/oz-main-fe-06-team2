@@ -1,40 +1,55 @@
 import { useState } from 'react';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import DraggableMedia from './DraggableMedia';
+
+const MAX_IMG_COUNT = 10;
+
+interface FileData {
+  id: string; // 고유 ID
+  file: File; // 원본 파일
+  url: string; // 미리보기 URL
+}
 
 const ImageUploadForm = () => {
-  const [previews, setPreviews] = useState<(string | File)[]>([]);
+  const [files, setFiles] = useState<FileData[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newPreviews: (string | File)[] = [];
-      let imgCount = 0;
+    const selectedFiles = e.target.files;
+    if (selectedFiles) {
+      const newFiles: FileData[] = [];
+      let imgCount = files.length;
 
-      Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            newPreviews.push(reader.result as string);
-            setPreviews(prev => [...prev, reader.result as string]);
-          };
-          reader.readAsDataURL(file);
-          imgCount++;
-          if (imgCount > 15) {
-            setErrorMessage('사진은 최대 10장까지 등록 가능합니다.');
+      Array.from(selectedFiles).forEach(file => {
+        if (imgCount >= MAX_IMG_COUNT) {
+          setErrorMessage('사진은 최대 10장까지 등록 가능합니다.');
+          return;
+        }
+
+        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+          const isDuplicate = files.some(fileData => fileData.file.name === file.name);
+          if (isDuplicate) {
+            setErrorMessage('이미 같은 파일이 존재합니다.');
             return;
           }
-        } else if (file.type.startsWith('video/')) {
+
+          const id = crypto.randomUUID();
           const reader = new FileReader();
+
           reader.onloadend = () => {
-            newPreviews.push(reader.result as string);
-            setPreviews(prev => [...prev, reader.result as string]);
+            const url = reader.result as string;
+            newFiles.push({ id, file, url });
+
+            setFiles(prev => [...prev, { id, file, url }]);
           };
+
           reader.readAsDataURL(file);
           imgCount++;
         }
       });
 
-      if (imgCount === 0 || previews.length === 0) {
+      if (imgCount === 0) {
         setErrorMessage('최소 1장 이상의 사진을 등록해야 합니다.');
       } else {
         setErrorMessage('');
@@ -42,73 +57,78 @@ const ImageUploadForm = () => {
     }
   };
 
-  const handleDelete = (index: number) => {
-    setPreviews(prev => prev.filter((_, i) => i !== index));
+  //preview 내 삭제 기능
+  const handleDelete = (id: string) => {
+    setFiles(prev => prev.filter(file => file.id !== id));
+  };
+
+  //drag and drop 기능
+  const moveItem = (fromIndex: number, toIndex: number) => {
+    setFiles(prev => {
+      const updatedFiles = [...prev];
+      const [movedFile] = updatedFiles.splice(fromIndex, 1);
+      updatedFiles.splice(toIndex, 0, movedFile);
+      return updatedFiles;
+    });
   };
 
   return (
-    <div>
-      <h2 className="text-lg font-semibold mb-2">이미지, 영상</h2>
-      <p className="text-sm text-gray-500 mb-4">
-        - 최소 1장 이상의 사진을 등록해야 하며, 최대 10장까지 등록이 가능합니다. (한 장당 10MB 이하)
-        <br />
-        - 첫번째 사진이 대표 이미지로 보여지며, 순서를 변경할 수 있습니다.
-        <br />
-        - 영상은 1개 이하로 등록하실 수 있습니다.
-        <br />- 매물과 관련없는 이미지, 홍보성 이미지, 워터마크 이미지는 등록하실 수 없습니다.
-      </p>
-      {!previews.length ? (
-        <div className="border-2 border-dashed border-gray-300 hover:border-blue-400 p-4 text-center">
-          <label className="cursor-pointer">
-            <span className="block text-gray-500">Upload Additional File</span>
-            <input
-              type="file"
-              multiple
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/*,video/*"
-            />
-          </label>
-        </div>
-      ) : (
-        <div className="mt-4 border-2 border-gray-300 space-y-3 p-4">
-          <label className="cursor-pointer">
-            <span className="block border w-[90px] bg-gray-300 hover:bg-gray-400 text-white text-[0.9rem] text-center rounded-md">
-              Add File
-            </span>
-            <input
-              type="file"
-              multiple
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/*,video/*"
-            />
-          </label>
-          <div className="grid grid-cols-3 gap-4">
-            {previews.map((preview, index) => (
-              <div key={index} className="w-full relative">
-                {typeof preview === 'string' ? (
-                  preview.startsWith('data:image/') ? (
-                    <img src={preview} alt={`Preview ${index}`} className="h-[140px]" />
-                  ) : (
-                    <video controls className="h-[135px]">
-                      <source src={preview} type="video/mp4" />
-                    </video>
-                  )
-                ) : null}
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="absolute top-1 right-1 bg-gray-100 bg-opacity-60 text-xs px-1"
-                >
-                  ✖
-                </button>
-              </div>
-            ))}
+    <DndProvider backend={HTML5Backend}>
+      <div>
+        <h2 className="text-lg font-semibold mb-2">이미지, 영상</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          - 최소 1장 이상의 사진을 등록해야 하며, 최대 10장까지 등록이 가능합니다. (한 장당 10MB
+          이하)
+          <br />
+          - 첫번째 사진이 대표 이미지로 보여지며, 순서를 변경할 수 있습니다.
+          <br />
+          - 영상은 1개 이하로 등록하실 수 있습니다.
+          <br />- 매물과 관련없는 이미지, 홍보성 이미지, 워터마크 이미지는 등록하실 수 없습니다.
+        </p>
+        {!files.length ? (
+          <div className="border-2 border-dashed border-gray-300 hover:border-blue-400 p-4 text-center">
+            <label className="cursor-pointer">
+              <span className="block text-gray-500">Upload Additional File</span>
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleFileChange}
+                accept="image/*,video/*"
+              />
+            </label>
           </div>
-        </div>
-      )}
-      {errorMessage && <p className="text-kick text-sm">{errorMessage}</p>}
-    </div>
+        ) : (
+          <div className="mt-4 border-2 border-gray-300 space-y-3 p-4">
+            <label className="cursor-pointer">
+              <span className="block border w-[90px] bg-gray-300 hover:bg-gray-400 text-white text-[0.9rem] text-center rounded-md">
+                Add File
+              </span>
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleFileChange}
+                accept="image/*,video/*"
+              />
+            </label>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              {files.map((fileData, index) => (
+                <DraggableMedia
+                  key={fileData.id}
+                  id={fileData.id}
+                  preview={fileData.url}
+                  index={index}
+                  moveItem={moveItem}
+                  handleDelete={() => handleDelete(fileData.id)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        {errorMessage && <p className="text-kick text-sm">{errorMessage}</p>}
+      </div>
+    </DndProvider>
   );
 };
 

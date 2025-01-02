@@ -17,10 +17,10 @@ export const FormSchema = z
           const hasLowerCase = /[a-z]/.test(password);
           const hasNumber = /\d/.test(password);
           const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-          return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+          return hasUpperCase && hasLowerCase && (hasNumber || hasSpecialChar);
         },
         {
-          message: '비밀번호는 대문자, 소문자, 숫자, 특수문자를 반드시 포함해야 합니다.',
+          message: '비밀번호는 대문자, 소문자, 숫자 또는 특수문자를 반드시 포함해야 합니다.',
         },
       ),
 
