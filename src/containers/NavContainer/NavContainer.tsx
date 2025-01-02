@@ -7,6 +7,7 @@ import useAuthStore from '@/stores/authStore';
 import { Menu, X } from 'lucide-react';
 import { sendLogoutRequest } from '@/api/auth';
 import { clearAuthCookies } from '@/utils/cookieUtils';
+import { getCookie } from 'cookies-next';
 
 const NavContainer: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,9 +25,12 @@ const NavContainer: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      const { token, logout } = useAuthStore.getState();
-      if (token?.refresh) {
-        const response = await sendLogoutRequest(token.refresh);
+      const { logout } = useAuthStore.getState();
+      const refreshToken = await getCookie('refreshToken');
+      console.log(refreshToken);
+
+      if (refreshToken) {
+        const response = await sendLogoutRequest(refreshToken);
         if (response.success) {
           logout();
           clearAuthCookies();
