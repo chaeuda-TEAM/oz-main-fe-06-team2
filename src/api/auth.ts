@@ -27,7 +27,6 @@ export const sendRefreshTokenRequest = async (refresh: string): Promise<RefreshR
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/refresh`, {
       method: 'POST',
-      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh }),
     });
@@ -51,7 +50,6 @@ export const sendLogoutRequest = async (refresh: string): Promise<LogoutResponse
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/logout`, {
       method: 'POST',
-      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh_token: refresh }),
     });

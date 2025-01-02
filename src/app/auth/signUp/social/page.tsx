@@ -9,15 +9,19 @@ import FormInput from '@/components/form/FormInput';
 import FormButton from '@/components/form/FormButton';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+
 import useAuthStore from '@/stores/authStore';
 
 const SocialSignUpPage = () => {
   const router = useRouter();
+//   const socialUser = useAuthStore(state => state.socialUser);
   
-  useEffect(() => {
-    const socialUser = useAuthStore.getState().socialUser;
-    console.log('소셜 로그인 유저 정보:', socialUser);
-}, []);
+//   useEffect(() => {
+//     const socialUser = useAuthStore.getState().socialUser;
+//     console.log(`정보 확인2222222`,useAuthStore.getState().socialUser);
+// }, [socialUser]);
+
+console.log(`정보 확인2222222`,useAuthStore.getState().socialUser);
 
   const {
     register,
