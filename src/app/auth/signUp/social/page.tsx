@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,9 +9,15 @@ import FormInput from '@/components/form/FormInput';
 import FormButton from '@/components/form/FormButton';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+import useAuthStore from '@/stores/authStore';
 
-const LocalSignUpPage = () => {
+const SocialSignUpPage = () => {
   const router = useRouter();
+  
+  useEffect(() => {
+    const socialUser = useAuthStore.getState().socialUser;
+    console.log('소셜 로그인 유저 정보:', socialUser);
+}, []);
 
   const {
     register,
@@ -90,4 +96,4 @@ const LocalSignUpPage = () => {
   );
 };
 
-export default LocalSignUpPage;
+export default SocialSignUpPage;

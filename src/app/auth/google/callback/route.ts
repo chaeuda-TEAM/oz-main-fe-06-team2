@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import useAuthStore from '@/stores/authStore';
+
 const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
 export async function GET(req: NextRequest) {
@@ -24,9 +26,11 @@ export async function GET(req: NextRequest) {
 
     const data = await response.json();
     if (data.success) {
-      console.log(data);
-      console.log(`정보 확인`, { name: data.user.username, email: data.user.email});
-      // is_active가 false일 경우 회원가입 페이지로, true일 경우 원래 리다이렉트 URL로 이동
+
+      // 사용자 정보를 zustand 스토어에 저장
+      useAuthStore.getState().setSocialUser(data.user);
+      console.log(`정보 확인2222222`,useAuthStore.getState().socialUser);
+
       const redirectUrl = data.is_active 
         ? data.redirect_url 
         : `${DEV_API_URL}/auth/signUp/social`;
