@@ -7,7 +7,9 @@ export const SocialSignUpSchema = z
       .min(2, '이름은 최소 2자 이상이어야 합니다.')
       .max(30, '이름은 최대 30자까지만 허용됩니다.'),
 
-    phone_number: z.string().regex(/^\d{10,11}$/, '휴대폰 번호는 10~11자리 숫자로 입력해주세요.'),
+    phone_number: z
+      .string()
+      .regex(/^01[0-9]\d{7,8}$/, '휴대폰 번호를 다시 입력해주세요.'),
 
     email: z
       .string()

@@ -11,7 +11,7 @@ interface InputFieldProps {
   name: keyof SocialSignupFormData;
   errorMessage?: string;
   disabled?: boolean;
-  placeholder: string;
+  placeholder: string | undefined;
 }
 
 const Input = ({ 
