@@ -38,24 +38,28 @@ const LocalSignUpPage = () => {
       id: 'username',
       type: 'text',
       name: 'username',
+      placeholder: '이름을 입력하세요',
     },
     {
       label: '비밀번호',
       id: 'password',
       type: 'password',
       name: 'password',
+      placeholder: '비밀번호를 입력하세요',
     },
     {
       label: '비밀번호 확인',
       id: 'password_confirm',
       type: 'password',
       name: 'password_confirm',
+      placeholder: '비밀번호를 한번 더 입력하세요',
     },
     {
       label: '휴대폰번호',
       id: 'phone_number',
       type: 'number',
       name: 'phone_number',
+      placeholder: '휴대폰번호를 입력하세요',
     },
   ];
 
@@ -119,6 +123,7 @@ const LocalSignUpPage = () => {
 
   // 최종 회원가입
   const onSubmit = async (data: SignupFormData): Promise<void> => {
+    console.log(data);
     if (!isEmailVerified) {
       alert('이메일 인증을 완료해주세요.');
       return;
@@ -134,7 +139,6 @@ const LocalSignUpPage = () => {
       if (response.status !== 200) return;
 
       if (response.status === 200) {
-        const data = await response.json();
         alert('회원가입 성공! 로그인 페이지로 이동합니다.');
         router.push(`${DEV_API_URL}/auth/signIn`);
       }
@@ -155,7 +159,8 @@ const LocalSignUpPage = () => {
               id="email"
               type="email"
               {...register('email')}
-              className="border border-gray-400 w-full h-9 text-4 cursor-pointer p-2"
+              placeholder="이메일을 입력하세요"
+              className="border border-gray-400 w-full h-9 text-4 p-2"
             />
             <button
               type="button"
@@ -180,8 +185,9 @@ const LocalSignUpPage = () => {
               id="authenticateEmail"
               type="number"
               {...register('email_verificationCode')}
-              className="border border-gray-400 w-full h-9 text-4 cursor-pointer p-2"
+              className="border border-gray-400 w-full h-9 text-4 p-2"
               disabled={!emailVerificationSent}
+              placeholder="이메일 인증번호를 입력하세요"
             />
             <button
               type="button"
@@ -210,6 +216,7 @@ const LocalSignUpPage = () => {
             type={item.type}
             register={register}
             errorMessage={errors[item.name as keyof SignupFormData]?.message}
+            placeholder={item.placeholder}
           />
         ))}
 

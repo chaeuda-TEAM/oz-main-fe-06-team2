@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import useAuthStore from '@/stores/authStore';
 
 const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
@@ -30,11 +29,8 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    if (data.success) {
 
-      // 사용자 정보를 zustand 스토어에 저장
-      useAuthStore.getState().setSocialUser(data.user);
-      console.log(`정보 확인2222222`,useAuthStore.getState().socialUser);
+    if (data.success) {
 
       const redirectUrl = data.is_active 
         ? data.redirect_url 
@@ -54,6 +50,13 @@ export async function GET(req: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 7, // 7일
+      });
+
+      responseObj.cookies.set('user', JSON.stringify(data.user), {
+        httpOnly: false, 
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'lax', 
         maxAge: 60 * 60 * 24 * 7, // 7일
       });
 
