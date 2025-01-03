@@ -29,7 +29,9 @@ export const FormSchema = z
       .min(6, '비밀번호는 최소 6자 이상이어야 합니다.')
       .max(20, '비밀번호는 최대 20자까지만 허용됩니다.'),
 
-    phone_number: z.string().regex(/^\d{10,11}$/, '휴대폰 번호는 10~11자리 숫자로 입력해주세요.'),
+      phone_number: z
+      .string()
+      .regex(/^010\d{7,8}$/, '휴대폰 번호는 010으로 시작하고 10~11자리 숫자로 입력해주세요.'),    
 
     email: z
       .string()
