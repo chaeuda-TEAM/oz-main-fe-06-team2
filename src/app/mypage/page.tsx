@@ -1,9 +1,28 @@
 'use client';
 
+import { sendWithdrawRequest } from '@/api/auth';
 import useAuthStore from '@/stores/authStore';
+import { useRouter } from 'next/navigation';
 
 const MyPage = () => {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
+  const router = useRouter();
+
+  // TODO: confirm 컴포넌트 제작
+  // sendWithdrawRequest 요청시 password 받아오기. modal ? prompt?
+  const handleWithdraw = async () => {
+    const confirmed = confirm('정말로 회원 탈퇴를 진행하시겠습니까?');
+    if (!confirmed) return;
+
+    try {
+      await sendWithdrawRequest('Qq11@@');
+      console.log('회원 탈퇴 성공');
+      logout();
+      router.push('/');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto p-6">
@@ -25,7 +44,9 @@ const MyPage = () => {
 
       <button className="w-full py-2 bg-kick text-white font-semibold">정보 수정</button>
       <hr className="my-6 border-gray-300" />
-      <button className="float-end text-kick">회원 탈퇴</button>
+      <button className="float-end text-kick" onClick={handleWithdraw}>
+        회원 탈퇴
+      </button>
     </div>
   );
 };
