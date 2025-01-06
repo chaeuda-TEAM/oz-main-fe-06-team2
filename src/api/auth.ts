@@ -11,7 +11,7 @@ export const sendLoginRequest = async (email: string, password: string): Promise
     if (!response.ok) {
       throw new Error('API 요청 실패');
     }
-
+    
     const data: LoginResponse = await response.json();
     return data;
   } catch (error) {

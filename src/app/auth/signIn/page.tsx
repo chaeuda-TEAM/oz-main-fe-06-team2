@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/authStore';
 import { setAuthCookie } from '@/utils/cookieUtils';
-import GoogleBtn from '@/components/GoogleBtn';
 import SocialBtnContainer from '@/containers/SocialBtnContainer/SocialBtnContainer';
 
 const SignIn = () => {
@@ -32,6 +31,7 @@ const SignIn = () => {
       setAuthCookie('refreshToken', response.tokens?.refresh || '');
 
       if (response.user) {
+        console.log(response.user);
         login(response.user);
       }
       router.push('/');
@@ -82,9 +82,6 @@ const SignIn = () => {
             </Link>
           </p>
         </div>
-        {/* TODO: GoogleBtn 여기서 지우기 ! 충돌 날까봐 남겨둠 
-        import GoogleBtn도 같이 지우기 */}
-        <GoogleBtn />
         <hr className="my-4 border-gray-300" />
         <SocialBtnContainer />
       </div>

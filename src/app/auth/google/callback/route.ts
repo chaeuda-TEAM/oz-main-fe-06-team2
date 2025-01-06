@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
@@ -27,23 +29,32 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
+    console.log('정보 확인', data);
 
     if (data.success) {
-      // is_active가 false일 경우 회원가입 페이지로, true일 경우 원래 리다이렉트 URL로 이동
-      const redirectUrl = data.is_active ? data.redirect_url : `http://localhost:3000/auth/signUp`;
+      const redirectUrl = data.user.is_active
+        ? data.redirect_url
+        : `${DEV_API_URL}/auth/signUp/social`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
       // 쿠키에 토큰 저장
       responseObj.cookies.set('accessToken', data.tokens.access, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 30, // 30분
       });
 
       responseObj.cookies.set('refreshToken', data.tokens.refresh, {
-        httpOnly: true,
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 7, // 7일
+      });
+
+      responseObj.cookies.set('user', JSON.stringify(data.user), {
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
