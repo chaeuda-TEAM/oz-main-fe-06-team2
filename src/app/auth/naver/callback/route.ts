@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google/callback/dev?code=${code}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/naver/callback/dev?code=${code}`,
       {
         method: 'GET',
         headers: {
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     if (data.success) {
       const redirectUrl = data.user.is_active
         ? data.redirect_url
-        : `${DEV_API_URL}/auth/signUp/social`;
+        : `${DEV_API_URL}/auth/signUp/social/naver`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
