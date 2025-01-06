@@ -24,7 +24,6 @@ const SocialSignUpPage = () => {
     defaultValues: {
       email: '',
       username: '',
-      phone_number: '',
     },
   });
 
@@ -48,7 +47,6 @@ const SocialSignUpPage = () => {
       console.log(decodedUserInfo);
       setValue('email', decodedUserInfo.email);
       setValue('username', decodedUserInfo.username);
-      setValue('phone_number', decodedUserInfo.email);
     } else {
       console.log('사용자 정보가 없습니다.');
     }
@@ -60,7 +58,7 @@ const SocialSignUpPage = () => {
       id: 'email',
       type: 'email',
       name: 'email',
-      disabled: true,
+      placeholder: '이름을 입력하세요',
     },
     {
       label: '이름',
@@ -74,7 +72,7 @@ const SocialSignUpPage = () => {
       id: 'phone_number',
       type: 'phone',
       name: 'phone_number',
-      disabled: true,
+      placeholder: '전화번호를 입력하세요',
     },
   ];
 
