@@ -29,7 +29,6 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('정보 확인', data);
 
     if (data.success) {
       const redirectUrl = data.user.is_active

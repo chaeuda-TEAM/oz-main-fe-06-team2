@@ -36,7 +36,6 @@ const SignIn = () => {
       }
       router.push('/');
     } else {
-      console.error('로그인 실패:', { email, password });
       setErrorMessages(response.message);
     }
     setLoading(false);

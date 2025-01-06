@@ -1,25 +1,3 @@
-// import { NextRequest, NextResponse } from 'next/server';
-// import { sendLogoutRequest } from '@/api/auth';
-// import { cookies } from 'next/headers';
-
-// export async function GET(req: NextRequest) {
-//     const cookieStore = cookies()
-//     const refreshToken = cookieStore.get('refreshToken')
-
-//     if (refreshToken) {
-//         cookies().delete('accessToken')
-//         cookies().delete('refreshToken')
-//         console.log('로그아웃 성공');
-//         const response = await sendLogoutRequest(refreshToken.value);
-//         // if (response.success) {
-//         // } else {
-//         //   console.error('로그아웃 요청 실패:', response.message);
-//         // }
-//         // return response;
-//       }
-//       return NextResponse();
-// }
-
 import { NextRequest, NextResponse } from 'next/server';
 import { sendLogoutRequest } from '@/api/auth';
 
