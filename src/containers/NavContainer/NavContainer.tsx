@@ -16,11 +16,7 @@ const NavContainer: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
 
   const handleChatClick = () => {
-    if (isAuthenticated) {
-      router.push('/chat');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/chat');
   };
 
   const handleLogout = async () => {
@@ -49,19 +45,11 @@ const NavContainer: React.FC = () => {
   };
 
   const handleMyPageClick = () => {
-    if (isAuthenticated) {
-      router.push('/mypage');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/mypage');
   };
 
   const handleCreateClick = () => {
-    if (isAuthenticated) {
-      router.push('/create');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/create');
   };
 
   const toggleModal = () => {
