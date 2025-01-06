@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/authStore';
 import { setAuthCookie } from '@/utils/cookieUtils';
-import GoogleBtn from '@/components/GoogleBtn';
 import SocialBtnContainer from '@/containers/SocialBtnContainer/SocialBtnContainer';
 
 const SignIn = () => {

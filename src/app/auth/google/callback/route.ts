@@ -40,14 +40,14 @@ export async function GET(req: NextRequest) {
 
       // 쿠키에 토큰 저장
       responseObj.cookies.set('accessToken', data.tokens.access, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 30, // 30분
       });
 
       responseObj.cookies.set('refreshToken', data.tokens.refresh, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
