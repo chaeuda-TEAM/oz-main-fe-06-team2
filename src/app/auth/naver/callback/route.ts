@@ -29,25 +29,24 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('정보 확인', data);
 
     if (data.success) {
       const redirectUrl = data.user.is_active
         ? data.redirect_url
-        : `${DEV_API_URL}/auth/signUp/social/naver`;
+        : `${DEV_API_URL}/auth/signUp/social`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
-
+console.log(data);
       // 쿠키에 토큰 저장
       responseObj.cookies.set('accessToken', data.tokens.access, {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 30, // 30분
       });
 
       responseObj.cookies.set('refreshToken', data.tokens.refresh, {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
