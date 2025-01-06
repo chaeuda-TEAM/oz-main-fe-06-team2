@@ -42,14 +42,14 @@ export async function GET(req: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 10
+        maxAge: 60 * 30, // 30분
       });
 
       responseObj.cookies.set('refreshToken', data.tokens.refresh, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 10
+        maxAge: 60 * 60 * 24 * 7, // 7일
       });
 
       responseObj.cookies.set('user', JSON.stringify(data.user), {
