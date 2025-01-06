@@ -57,7 +57,7 @@ const LocalSignUpPage = () => {
     {
       label: '휴대폰번호',
       id: 'phone_number',
-      type: 'number',
+      type: 'phone',
       name: 'phone_number',
       placeholder: '휴대폰번호를 입력하세요',
     },
