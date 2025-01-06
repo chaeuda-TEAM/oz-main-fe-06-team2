@@ -5,9 +5,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/authStore';
 import { Menu, X } from 'lucide-react';
-// import { clearAuthCookies } from '@/utils/cookieUtils';
-import { getCookie, deleteCookie } from 'cookies-next';
-const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
 const NavContainer: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,9 +23,8 @@ const NavContainer: React.FC = () => {
   const handleLogout = async () => {
     try {
       const { logout } = useAuthStore.getState();
-      // const refreshToken = await getCookie('refreshToken');
-      // console.log(refreshToken);
-      const response = await fetch(`${DEV_API_URL}/auth/logout/api`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_API_URL}/auth/logout/api`);
+
       if (response.ok) {
         logout();
         router.push('/');
