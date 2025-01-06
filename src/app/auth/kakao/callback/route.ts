@@ -43,21 +43,21 @@ export async function GET(req: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 30, // 30분
+        maxAge: 10
       });
 
       responseObj.cookies.set('refreshToken', data.tokens.refresh, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7일
+        maxAge: 10
       });
 
       responseObj.cookies.set('user', JSON.stringify(data.user), {
         httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7일
+        maxAge: 10
       });
 
       return responseObj;
