@@ -66,7 +66,7 @@ const NaverMap = ({
   return (
     <div className="relative">
       {topSearchInput && (
-        <div className="absolute right-10 z-30 w-[250px] p-2">
+        <div className="absolute right-5 z-30 w-[250px] p-5">
           <input
             type="text"
             placeholder="지역명을 검색하세요."

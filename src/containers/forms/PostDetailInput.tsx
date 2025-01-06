@@ -1,4 +1,5 @@
 interface PostDetailInputProps {
+  htmlFor: string;
   label: string;
   id1: string;
   id2?: string;
@@ -8,13 +9,14 @@ interface PostDetailInputProps {
 }
 
 export const PostDetailInput1: React.FC<PostDetailInputProps> = ({
+  htmlFor,
   label,
   id1,
   type,
   placeholder1,
 }) => {
   return (
-    <label className="text-[0.95rem]">
+    <label htmlFor={htmlFor} className="text-[0.95rem]">
       {label}
       <input
         id={id1}
@@ -27,6 +29,7 @@ export const PostDetailInput1: React.FC<PostDetailInputProps> = ({
 };
 
 export const PostDetailInput2: React.FC<PostDetailInputProps> = ({
+  htmlFor,
   label,
   id1,
   id2,
@@ -35,7 +38,7 @@ export const PostDetailInput2: React.FC<PostDetailInputProps> = ({
   placeholder2,
 }) => {
   return (
-    <label className="text-[0.95rem]">
+    <label htmlFor={htmlFor} className="text-[0.95rem]">
       {label}
       <div className="grid grid-cols-2 gap-4 mt-2 mb-4 text-[0.8rem]">
         <input

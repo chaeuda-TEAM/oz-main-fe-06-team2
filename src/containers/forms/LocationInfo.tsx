@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { PostDetailInput1 } from './PostDetailInput';
+import { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
@@ -11,12 +10,26 @@ declare global {
 
 interface PostcodeData {
   roadAddress: string;
+  jibunAddress: string;
   zonecode: string;
 }
 
-const LocationInfoForm = () => {
+export interface LocationData {
+  add_new: string;
+  add_old: string;
+  detailAddress?: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface LocationInfoFormProps {
+  onSubmitData: (data: LocationData) => void;
+}
+
+const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => {
   const addressRef = useRef<HTMLInputElement>(null);
   const zonecodeRef = useRef<HTMLInputElement>(null);
+  const [detailAddress, setDetailAddress] = useState<string>('');
 
   useEffect(() => {
     const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
@@ -37,11 +50,24 @@ const LocationInfoForm = () => {
         if (addressRef.current && zonecodeRef.current) {
           addressRef.current.value = data.roadAddress;
           zonecodeRef.current.value = data.zonecode;
+
+          onSubmitData({
+            add_new: data.roadAddress,
+            add_old: data.jibunAddress,
+            detailAddress,
+            latitude,
+            longitude,
+          });
         }
       },
     });
 
     postcode.open();
+  };
+
+  const handleDetailAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDetailAddress = e.target.value;
+    setDetailAddress(newDetailAddress);
   };
 
   return (
@@ -74,13 +100,17 @@ const LocationInfoForm = () => {
             readOnly
           ></input>
         </label>
-
-        <PostDetailInput1
-          label="상세주소(선택)"
-          id1="address2"
-          type="text"
-          placeholder1="상세주소를 입력해주세요."
-        />
+        <label htmlFor="address2" className="text-[0.95rem]">
+          상세주소(선택)
+          <input
+            id="address2"
+            type="text"
+            placeholder="상세주소를 입력해주세요."
+            value={detailAddress}
+            onChange={handleDetailAddressChange}
+            className="w-full border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
+          />
+        </label>
       </div>
     </div>
   );

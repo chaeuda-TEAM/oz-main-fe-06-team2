@@ -5,13 +5,19 @@ import DraggableMedia from './DraggableMedia';
 
 const MAX_IMG_COUNT = 10;
 
+export interface ImageData {
+  images: File[];
+}
+
 interface FileData {
   id: string; // 고유 ID
   file: File; // 원본 파일
   url: string; // 미리보기 URL
 }
 
-const ImageUploadForm = () => {
+const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = ({
+  onSubmitData,
+}) => {
   const [files, setFiles] = useState<FileData[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -39,9 +45,8 @@ const ImageUploadForm = () => {
 
           reader.onloadend = () => {
             const url = reader.result as string;
-            newFiles.push({ id, file, url });
-
-            setFiles(prev => [...prev, { id, file, url }]);
+            const fileData: FileData = { id, file, url };
+            setFiles(prev => [...prev, fileData]);
           };
 
           reader.readAsDataURL(file);
