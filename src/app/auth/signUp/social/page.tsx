@@ -44,6 +44,7 @@ const SocialSignUpPage = () => {
     const userInfo = getCookie('user');
     if (userInfo) {
       const decodedUserInfo = JSON.parse(decodeURIComponent(userInfo));
+      console.log(decodedUserInfo);
       setValue('email', decodedUserInfo.email);
       setValue('username', decodedUserInfo.username);
     } else {
@@ -89,7 +90,6 @@ const SocialSignUpPage = () => {
 
       if (response.status === 200) {
         const data = await response.json();
-        console.log(data);
         alert('회원가입 성공! 로그인 페이지로 이동합니다.');
         router.push(`${DEV_API_URL}/auth/signIn`);
       }

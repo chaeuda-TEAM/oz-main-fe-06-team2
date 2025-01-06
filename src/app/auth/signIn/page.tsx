@@ -38,6 +38,7 @@ const SignIn = () => {
       setAuthCookie('refreshToken', response.tokens?.refresh || '');
 
       if (response.user) {
+        console.log(response.user);
         login(response.user);
       }
       router.push('/');

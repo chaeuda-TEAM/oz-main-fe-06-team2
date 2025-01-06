@@ -16,7 +16,7 @@ export type User = {
   username: string;
 };
 
-export type socialUser = {
+export type SocialUser = {
   email: string;
   username: string;
   is_active: boolean,
