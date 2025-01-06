@@ -41,9 +41,7 @@ const Home = () => {
       const decodedUserInfo = JSON.parse(decodeURIComponent(userInfo));
       socialLogin(decodedUserInfo);
       console.log(decodedUserInfo);
-    } else {
-      console.log('사용자 정보가 없습니다.');
-    }
+    } 
   }, []);
 
   return (

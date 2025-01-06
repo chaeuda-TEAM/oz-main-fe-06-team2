@@ -5,7 +5,6 @@ const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-
   try {
     const searchParams = req.nextUrl.searchParams;
     const code = searchParams.get('code');
@@ -33,8 +32,8 @@ export async function GET(req: NextRequest) {
     console.log('정보 확인', data);
 
     if (data.success) {
-      const redirectUrl = data.user.is_active 
-        ? data.redirect_url 
+      const redirectUrl = data.user.is_active
+        ? data.redirect_url
         : `${DEV_API_URL}/auth/signUp/social`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
@@ -55,9 +54,9 @@ export async function GET(req: NextRequest) {
       });
 
       responseObj.cookies.set('user', JSON.stringify(data.user), {
-        httpOnly: false, 
-        secure: process.env.NODE_ENV === 'production', 
-        sameSite: 'lax', 
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
       });
 

@@ -25,11 +25,12 @@ const useAuthStore = create<AuthState>()(
       logout: () =>
         set({
           user: null,
+          socialUser: null,
           isAuthenticated: false,
         }),
       socialLogin: socialUserData =>
         set({
-          user: socialUserData,
+          socialUser: socialUserData,
           isAuthenticated: true,
         }),
     }),

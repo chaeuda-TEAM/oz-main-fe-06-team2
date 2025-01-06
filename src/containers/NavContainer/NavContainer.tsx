@@ -34,6 +34,7 @@ const NavContainer: React.FC = () => {
         if (response.success) {
           logout();
           clearAuthCookies();
+          console.log('로그아웃 성공');
           router.push('/');
         } else {
           console.error('로그아웃 요청 실패:', response.message);
