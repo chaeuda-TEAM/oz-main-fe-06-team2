@@ -19,10 +19,10 @@ export type User = {
 export type SocialUser = {
   email: string;
   username: string;
-  is_active: boolean,
-  is_email_verified: boolean,
-  is_social_login: boolean
-}
+  is_active: boolean;
+  is_email_verified: boolean;
+  is_social_login: boolean;
+};
 
 export type LoginResponse = {
   success: boolean;
