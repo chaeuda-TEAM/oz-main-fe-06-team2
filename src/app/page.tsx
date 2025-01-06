@@ -47,6 +47,7 @@ const Home = () => {
     };
 
     const userInfo = getCookie('user');
+
     if (userInfo) {
       const decodedUserInfo = JSON.parse(decodeURIComponent(userInfo));
       socialLogin(decodedUserInfo);

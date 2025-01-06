@@ -44,7 +44,6 @@ const SocialSignUpPage = () => {
     const userInfo = getCookie('user');
     if (userInfo) {
       const decodedUserInfo = JSON.parse(decodeURIComponent(userInfo));
-      console.log(decodedUserInfo);
       setValue('email', decodedUserInfo.email);
       setValue('username', decodedUserInfo.username);
     } else {
@@ -70,7 +69,7 @@ const SocialSignUpPage = () => {
     {
       label: '휴대폰번호',
       id: 'phone_number',
-      type: 'number',
+      type: 'phone',
       name: 'phone_number',
       placeholder: '휴대폰번호를 입력하세요',
     },
@@ -78,7 +77,10 @@ const SocialSignUpPage = () => {
 
   // 최종 회원가입
   const onSubmit = async (data: SocialSignupFormData): Promise<void> => {
-    console.log(data);
+    if (data.phone_number === undefined) {
+      return;
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/api/users/signup`, {
         method: 'POST',
