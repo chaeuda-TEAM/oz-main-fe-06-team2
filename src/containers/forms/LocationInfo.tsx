@@ -79,14 +79,24 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
           zonecodeRef.current.value = data.zonecode;
 
           if (isKakaoLoaded && window.kakao) {
-            const geocoder = new window.kakao.maps.Geocoder();
+            const geocoder = new window.kakao.services.Geocoder();
+            console.log('Geocoding 시작:', data.roadAddress);
+
+            // 주소가 유효한지 확인
+            if (!data.roadAddress) {
+              console.error('유효한 주소가 없습니다.');
+              return;
+            }
+
+            // Geocoding 실행
             geocoder.geocode([data.roadAddress], (result, status) => {
-              if (status === 'OK') {
+              if (status === 'OK' && result.length > 0) {
                 const lat = result[0].y;
                 const lng = result[0].x;
                 setLatitude(lat);
                 setLongitude(lng);
 
+                // 데이터 전달
                 onSubmitData({
                   add_new: data.roadAddress,
                   add_old: data.jibunAddress,
@@ -95,13 +105,13 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
                   longitude: lng,
                 });
 
-                console.log(lat, lng);
+                console.log('경도위도 결과:', { lat, lng });
               } else {
-                console.error('주소를 변환할 수 없습니다.');
+                console.error(`Geocoding 실패: ${status}`);
               }
             });
           } else {
-            console.error('카카오맵 API가 로드되지 않았습니다.');
+            console.error('Kakao Maps API가 로드되지 않았습니다.');
           }
         }
       },
