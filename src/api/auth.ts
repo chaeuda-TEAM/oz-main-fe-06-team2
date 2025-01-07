@@ -8,7 +8,6 @@ export const sendLoginRequest = async (email: string, password: string): Promise
       body: JSON.stringify({ email, password }),
     });
 
-    
     if (!response.ok) {
       const errorData = await response.json();
       return {
