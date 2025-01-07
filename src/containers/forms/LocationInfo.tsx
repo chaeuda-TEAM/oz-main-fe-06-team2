@@ -123,7 +123,7 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
           <div className="flex items-center space-x-2">
             <input
               ref={zonecodeRef}
-              id="address1"
+              id="zonecode"
               placeholder="우편번호를 입력해주세요."
               className="w-[250px] border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
               readOnly
@@ -138,6 +138,7 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
           </div>
           <input
             ref={addressRef}
+            id="address1"
             type="text"
             placeholder="주소를 입력해주세요."
             className="w-full border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
