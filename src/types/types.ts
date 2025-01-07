@@ -14,6 +14,15 @@ export type Tokens = {
 export type User = {
   email: string;
   username: string;
+  phone_number: string;
+};
+
+export type SocialUser = {
+  email: string;
+  username: string;
+  is_active: boolean;
+  is_email_verified: boolean;
+  is_social_login: boolean;
 };
 
 export type LoginResponse = {

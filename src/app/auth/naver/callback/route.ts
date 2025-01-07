@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google/callback/dev?code=${code}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/naver/callback/dev?code=${code}`,
       {
         method: 'GET',
         headers: {
@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
         : `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signUp/social`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
-
       // 쿠키에 토큰 저장
       responseObj.cookies.set('accessToken', data.tokens.access, {
         httpOnly: true,
