@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
-
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
@@ -29,12 +27,11 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('정보 확인', data);
 
     if (data.success) {
       const redirectUrl = data.user.is_active
         ? data.redirect_url
-        : `${DEV_API_URL}/auth/signUp/social`;
+        : `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signUp/social`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
@@ -57,7 +54,7 @@ export async function GET(req: NextRequest) {
         httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 10
+        maxAge: 10,
       });
 
       return responseObj;
