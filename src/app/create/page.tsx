@@ -13,6 +13,7 @@ const CreatePost: React.FC = () => {
 
   const handlePostDetailSubmit = (data: FormData) => {
     setPostDetailData(data);
+    console.log(data);
   };
 
   const handleImageUploadSubmit = (data: ImageData) => {
@@ -65,9 +66,11 @@ const CreatePost: React.FC = () => {
       <ImageUploadForm onSubmitData={handleImageUploadSubmit} />
       <PostDetailForm onSubmitData={handlePostDetailSubmit} />
       <LocationInfoForm onSubmitData={handleLocationSubmit} />
-      <button onClick={createPost} className="px-4 py-2 bg-kick text-white">
-        매물 등록
-      </button>
+      <div className="flex justify-end">
+        <button onClick={createPost} className="px-4 py-2 bg-kick text-white">
+          매물 등록
+        </button>
+      </div>
     </div>
   );
 };

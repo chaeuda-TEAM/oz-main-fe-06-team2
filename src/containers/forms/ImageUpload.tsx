@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { useEffect, useState } from 'react';
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import DraggableMedia from './DraggableMedia';
 
@@ -10,9 +10,9 @@ export interface ImageData {
 }
 
 interface FileData {
-  id: string; // 고유 ID
-  file: File; // 원본 파일
-  url: string; // 미리보기 URL
+  id: string;
+  file: File;
+  url: string;
 }
 
 const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = ({
@@ -24,7 +24,6 @@ const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = (
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (selectedFiles) {
-      const newFiles: FileData[] = [];
       let imgCount = files.length;
 
       Array.from(selectedFiles).forEach(file => {
@@ -76,6 +75,11 @@ const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = (
       return updatedFiles;
     });
   };
+
+  useEffect(() => {
+    const imageFiles = files.map(fileData => fileData.file);
+    onSubmitData({ images: imageFiles });
+  }, [files, onSubmitData]);
 
   return (
     <DndProvider backend={HTML5Backend}>

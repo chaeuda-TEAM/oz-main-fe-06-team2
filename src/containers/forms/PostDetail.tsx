@@ -1,5 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { PostDetailInput1, PostDetailInput2 } from './PostDetailInput';
+import { useState } from 'react';
 
 interface PostDetailFormProps {
   onSubmitData: (data: FormData) => void;
@@ -21,14 +22,32 @@ export interface FormData {
 }
 
 const PostDetailForm: React.FC<PostDetailFormProps> = ({ onSubmitData }) => {
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedHeat, setSelectedHeat] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      management_cost: undefined,
+    },
+  });
 
   const onSubmit: SubmitHandler<FormData> = data => {
     onSubmitData(data);
+  };
+
+  const handleTypeClick = (value: string) => {
+    setSelectedType(value);
+    setValue('pro_type', value);
+  };
+
+  const handleHeatClick = (value: string) => {
+    setSelectedHeat(value);
+    setValue('pro_heat', value);
   };
 
   return (
@@ -49,21 +68,33 @@ const PostDetailForm: React.FC<PostDetailFormProps> = ({ onSubmitData }) => {
           id1="pro_price"
           id2="management_cost"
           {...register('pro_price')}
-          {...register('management_cost')} // 따로 적는게 맞는지?
+          {...register('management_cost')}
           type="number"
           placeholder1="매매 가격을 입력해주세요."
           placeholder2="관리비용을 입력해주세요."
         />
-        <label className="text-[0.95rem]">
+        <label htmlFor="pro_type" id="pro_type" className="text-[0.95rem]">
           건물 유형
-          <div id="pro_type" className="flex gap-4 mt-2 text-[0.8rem]">
-            <button value="단독주택" className="w-[100px] border border-gray-300 py-2">
-              단독주택
-            </button>
-            <button value="다세대주택" className="w-[100px] border border-gray-300 py-2">
-              다세대주택
-            </button>
+          <div id="pro_type" className="flex gap-3 mt-2 text-[0.8rem]">
+            {[
+              { value: 'detached', label: '단독주택' },
+              { value: 'multi', label: '다세대주택' },
+              { value: 'type_etc', label: '기타' },
+            ].map(option => (
+              <button
+                key={option.value}
+                type="button"
+                value={option.value}
+                onClick={() => handleTypeClick(option.value)}
+                className={`w-[80px] border py-2 ${
+                  selectedType === option.value ? 'border-blue-500 bg-blue-100' : 'border-gray-300'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
+          <input id="pro_type" type="hidden" {...register('pro_type')} />
         </label>
         <div className="grid grid-cols-2 gap-4">
           <PostDetailInput1
@@ -110,22 +141,31 @@ const PostDetailForm: React.FC<PostDetailFormProps> = ({ onSubmitData }) => {
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <label htmlFor="pro_heat" id="pro_heat" className="text-[0.95rem]">
+          <label htmlFor="pro_heat" className="text-[0.95rem]">
             난방 방식
-            <div className="flex gap-3 mt-2 text-[0.8rem]">
-              <button value="gas" className="w-[80px] border border-gray-300 py-2">
-                가스보일러
-              </button>
-              <button value="oil" className="w-[80px] border border-gray-300 py-2">
-                기름보일러
-              </button>
-              <button value="briquette" className="w-[80px] border border-gray-300 py-2">
-                연탄보일러
-              </button>
-              <button value="heat_ect" className="w-[80px] border border-gray-300 py-2">
-                기타
-              </button>
+            <div id="pro_heat" className="flex gap-3 mt-2 text-[0.8rem]">
+              {[
+                { value: 'gas', label: '가스보일러' },
+                { value: 'oil', label: '기름보일러' },
+                { value: 'briquette', label: '연탄보일러' },
+                { value: 'heat_ect', label: '기타' },
+              ].map(option => (
+                <button
+                  key={option.value}
+                  type="button"
+                  value={option.value}
+                  onClick={() => handleHeatClick(option.value)}
+                  className={`w-[80px] border py-2 ${
+                    selectedHeat === option.value
+                      ? 'border-blue-500 bg-blue-100'
+                      : 'border-gray-300'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
+            <input id="pro_heat" type="hidden" {...register('pro_heat')} />
           </label>
           <PostDetailInput1
             label="건축 연도"

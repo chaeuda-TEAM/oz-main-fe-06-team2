@@ -39,8 +39,6 @@ const DraggableMedia: React.FC<DraggableMediaProps> = ({
     dropRef(node);
   };
 
-  console.log('Preview:', preview);
-
   return (
     <div ref={combinedRef} className="w-full relative border p-1 bg-white">
       {preview.startsWith('data:image/') ? (
