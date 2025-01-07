@@ -5,6 +5,14 @@ declare global {
     daum: {
       Postcode: new (options: { oncomplete: (data: PostcodeData) => void }) => { open: () => void };
     };
+    kakao: {
+      maps: {
+        load: (callback: () => void) => void;
+        Geocoder: new () => {
+          geocode: (address: string[], callback: (result: any, status: string) => void) => void;
+        };
+      };
+    };
   }
 }
 
@@ -30,16 +38,35 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
   const addressRef = useRef<HTMLInputElement>(null);
   const zonecodeRef = useRef<HTMLInputElement>(null);
   const [detailAddress, setDetailAddress] = useState<string>('');
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [isKakaoLoaded, setIsKakaoLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
+    const loadKakaoMap = () => {
+      const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+        script.async = true;
+        document.head.appendChild(script);
+      }
 
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-      script.async = true;
-      document.head.appendChild(script);
-    }
+      const kakaoScript = document.createElement('script');
+      kakaoScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY}&libraries=services&autoload=false`;
+      kakaoScript.async = true;
+
+      kakaoScript.onload = () => {
+        window.kakao.maps.load(() => {
+          setIsKakaoLoaded(true);
+          console.log('카카오맵 API 로드 완료');
+        });
+      };
+
+      document.head.appendChild(kakaoScript);
+    };
+
+    loadKakaoMap();
   }, []);
 
   const openPostcodeSearch = () => {
@@ -51,17 +78,34 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
           addressRef.current.value = data.roadAddress;
           zonecodeRef.current.value = data.zonecode;
 
-          onSubmitData({
-            add_new: data.roadAddress,
-            add_old: data.jibunAddress,
-            detailAddress,
-            latitude,
-            longitude,
-          });
+          if (isKakaoLoaded && window.kakao) {
+            const geocoder = new window.kakao.maps.Geocoder();
+            geocoder.geocode([data.roadAddress], (result, status) => {
+              if (status === 'OK') {
+                const lat = result[0].y;
+                const lng = result[0].x;
+                setLatitude(lat);
+                setLongitude(lng);
+
+                onSubmitData({
+                  add_new: data.roadAddress,
+                  add_old: data.jibunAddress,
+                  detailAddress,
+                  latitude: lat,
+                  longitude: lng,
+                });
+
+                console.log(lat, lng);
+              } else {
+                console.error('주소를 변환할 수 없습니다.');
+              }
+            });
+          } else {
+            console.error('카카오맵 API가 로드되지 않았습니다.');
+          }
         }
       },
     });
-
     postcode.open();
   };
 

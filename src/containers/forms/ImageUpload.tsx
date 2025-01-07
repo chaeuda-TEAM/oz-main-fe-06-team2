@@ -77,9 +77,11 @@ const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = (
   };
 
   useEffect(() => {
-    const imageFiles = files.map(fileData => fileData.file);
-    onSubmitData({ images: imageFiles });
-  }, [files, onSubmitData]);
+    if (files && files.length > 0) {
+      const imageFiles = files.map(fileData => fileData.file);
+      onSubmitData({ images: imageFiles });
+    }
+  }, [files]);
 
   return (
     <DndProvider backend={HTML5Backend}>

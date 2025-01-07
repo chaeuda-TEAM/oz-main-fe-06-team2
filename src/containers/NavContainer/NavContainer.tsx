@@ -5,39 +5,29 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/authStore';
 import { Menu, X } from 'lucide-react';
-import { sendLogoutRequest } from '@/api/auth';
-import { clearAuthCookies } from '@/utils/cookieUtils';
-import { getCookie } from 'cookies-next';
 
 const NavContainer: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {socialUser} = useAuthStore()
 
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 
   const handleChatClick = () => {
-    if (isAuthenticated) {
-      router.push('/chat');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/chat');
   };
 
   const handleLogout = async () => {
     try {
       const { logout } = useAuthStore.getState();
-      const refreshToken = await getCookie('refreshToken');
-      console.log(refreshToken);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_API_URL}/auth/logout/api`);
 
-      if (refreshToken) {
-        const response = await sendLogoutRequest(refreshToken);
-        if (response.success) {
-          logout();
-          clearAuthCookies();
-          router.push('/');
-        } else {
-          console.error('로그아웃 요청 실패:', response.message);
-        }
+      if (response.ok) {
+        logout();
+        router.push('/');
+        console.log('로그아웃 성공');
+      } else {
+        console.error('로그아웃 요청 실패:');
       }
     } catch (error) {
       console.error('로그아웃 요청 오류:', error);
@@ -45,19 +35,11 @@ const NavContainer: React.FC = () => {
   };
 
   const handleMyPageClick = () => {
-    if (isAuthenticated) {
-      router.push('/mypage');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/mypage');
   };
 
   const handleCreateClick = () => {
-    if (isAuthenticated) {
-      router.push('/create');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/create');
   };
 
   const toggleModal = () => {
@@ -66,6 +48,7 @@ const NavContainer: React.FC = () => {
 
   const closeModal = () => {
     if (isModalOpen) setIsModalOpen(false);
+    console.log(socialUser);
   };
 
   return (
