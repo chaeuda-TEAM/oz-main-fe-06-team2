@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { SignJWT } from 'jose';
+
+const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 
 export const dynamic = 'force-dynamic';
+
+console.log('dfdsfsdfsd');
 
 export async function GET(req: NextRequest) {
   try {
@@ -29,9 +35,20 @@ export async function GET(req: NextRequest) {
     const data = await response.json();
 
     if (data.success) {
+      const jwt = await new SignJWT({
+        email: data.user.email,
+        username: data.user.username,
+        phone_number: data.user.phone_number,
+      })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime('1h')
+        .sign(new TextEncoder().encode(JWT_SECRET));
+      // 암호화 -> 복호화 했을 경우 iat: 토큰이 발급된 시점의 타임스탬프(디버깅 용도.) exp: 토큰 만료 시간(유저정보 토큰)(없애면 만료 기간이 없어지는거라 위험)
+
       const redirectUrl = data.user.is_active
-        ? data.redirect_url
-        : `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/signUp/social`;
+        ? `${data.redirect_url}?user=${jwt}`
+        : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
@@ -48,13 +65,6 @@ export async function GET(req: NextRequest) {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
-      });
-
-      responseObj.cookies.set('user', JSON.stringify(data.user), {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 10,
       });
 
       return responseObj;

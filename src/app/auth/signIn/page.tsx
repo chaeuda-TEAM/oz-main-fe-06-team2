@@ -26,7 +26,6 @@ const SignIn = () => {
     const response = await sendLoginRequest(email, password);
 
     if (response.success) {
-
       if (response.user) {
         login(response.user);
       }
