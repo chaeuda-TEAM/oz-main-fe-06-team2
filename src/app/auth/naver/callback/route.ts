@@ -60,7 +60,6 @@ export async function GET(req: NextRequest) {
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
       });
-
       return responseObj;
     }
 

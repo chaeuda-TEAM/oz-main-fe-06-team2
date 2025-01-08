@@ -54,10 +54,6 @@ const Home = () => {
     fetchDecryptedUser();
   }, [user]);
 
-  useEffect(() => {
-    console.log(socialUser);
-  }, [socialUser])
-
   return (
     <div className="relative">
       <NaverMap

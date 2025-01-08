@@ -8,28 +8,22 @@ import { Menu, X } from 'lucide-react';
 
 const NavContainer: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {socialUser} = useAuthStore()
 
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 
   const handleChatClick = () => {
-    if (isAuthenticated) {
-      router.push('/chat');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/chat');
   };
 
   const handleLogout = async () => {
     try {
       const { logout } = useAuthStore.getState();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_API_URL}/auth/logout/api`);
+      const response = await fetch(`/auth/logout/api`);
 
-      if (response.ok) {
+      if (response.status === 200) {
         logout();
         router.push('/');
-        console.log('로그아웃 성공');
       } else {
         console.error('로그아웃 요청 실패:');
       }
@@ -39,19 +33,11 @@ const NavContainer: React.FC = () => {
   };
 
   const handleMyPageClick = () => {
-    if (isAuthenticated) {
-      router.push('/mypage');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/mypage');
   };
 
   const handleCreateClick = () => {
-    if (isAuthenticated) {
-      router.push('/create');
-    } else {
-      router.push('/auth/signIn');
-    }
+    router.push('/create');
   };
 
   const toggleModal = () => {
@@ -60,7 +46,6 @@ const NavContainer: React.FC = () => {
 
   const closeModal = () => {
     if (isModalOpen) setIsModalOpen(false);
-    console.log(socialUser);
   };
 
   return (
