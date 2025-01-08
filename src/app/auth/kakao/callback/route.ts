@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { SignJWT } from 'jose'
 
 const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 
 export const dynamic = 'force-dynamic';
 
@@ -29,12 +31,18 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('정보 확인', data);
 
     if (data.success) {
+
+      const jwt = await new SignJWT({ email: data.user.email, username: data.user.username, phone_number: data.user.phone_number })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('1h')
+      .sign(new TextEncoder().encode(JWT_SECRET));
+
       const redirectUrl = data.user.is_active
-        ? data.redirect_url
-        : `${DEV_API_URL}/auth/signUp/social`;
+        ? `${data.redirect_url}?user=${jwt}`
+        : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
@@ -51,13 +59,6 @@ export async function GET(req: NextRequest) {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
-      });
-
-      responseObj.cookies.set('user', JSON.stringify(data.user), {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 10
       });
 
       return responseObj;
