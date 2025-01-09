@@ -13,3 +13,10 @@ export type Message = {
   user: string;
   content: string;
 };
+
+export type ChatListProps = {
+  initialChats: Chat[];
+  onSelectChat: (chatId: number) => void;
+  selectedChatId: number | null;
+  onChatCreated?: (newChat: Chat) => void;
+};
