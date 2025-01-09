@@ -9,7 +9,6 @@ import FormInput from '@/components/form/SocialSignUpFormInput';
 import FormButton from '@/components/form/FormButton';
 import { jwtDecrypt } from '@/utils/jwtDecrypt';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
 const SocialSignUpPage = () => {
   const router = useRouter();
@@ -88,7 +87,6 @@ const SocialSignUpPage = () => {
       if (response.status !== 200) return;
 
       if (response.status === 200) {
-        // const data = await response.json();
         alert('회원가입 성공! 로그인 페이지로 이동합니다.');
         router.push(`${process.env.NEXT_PUBLIC_FRONT_URL}/auth/signIn`);
       }
