@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
         .setIssuedAt()
         .setExpirationTime('1h')
         .encrypt(new TextEncoder().encode(JWT_SECRET));
-
+        
       const redirectUrl = data.user.is_active
         ? `${data.redirect_url}?user=${jwt}`
         : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
