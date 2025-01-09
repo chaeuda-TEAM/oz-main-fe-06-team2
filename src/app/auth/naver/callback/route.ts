@@ -73,7 +73,6 @@ console.log('Generated Secret Key (Base64URL):', secretKey.export().toString('ba
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7일
       });
-
       return responseObj;
     }
 
