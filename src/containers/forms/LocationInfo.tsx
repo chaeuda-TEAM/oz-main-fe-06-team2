@@ -85,6 +85,7 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
             longitude,
           });
         }
+        console.log(onSubmitData);
       },
     });
 
