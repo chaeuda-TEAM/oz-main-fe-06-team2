@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SignJWT } from 'jose'
+import { EncryptJWT } from 'jose';
 
-const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+// const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 
 export const dynamic = 'force-dynamic';
@@ -34,15 +34,20 @@ export async function GET(req: NextRequest) {
 
     if (data.success) {
 
-      const jwt = await new SignJWT({ email: data.user.email, username: data.user.username, phone_number: data.user.phone_number })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('1h')
-      .sign(new TextEncoder().encode(JWT_SECRET));
+      const jwt = await new EncryptJWT({
+        email: data.user.email,
+        username: data.user.username,
+        phone_number: data.user.phone_number,
+      })
+        .setProtectedHeader({ alg: 'dir', enc: 'A128CBC-HS256' })
+        .setIssuedAt()
+        .setExpirationTime('1h')
+        .encrypt(new TextEncoder().encode(JWT_SECRET));
 
       const redirectUrl = data.user.is_active
         ? `${data.redirect_url}?user=${jwt}`
-        : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
+        : `${process.env.NEXT_PUBLIC_FRONT_URL}/auth/signUp/social?user=${jwt}`;
+        // : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 

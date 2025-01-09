@@ -16,6 +16,7 @@ const SocialSignUpPage = () => {
 
   const searchParams = useSearchParams();
   const user = searchParams.get('user');
+  console.log(user);
 
   const {
     register,
