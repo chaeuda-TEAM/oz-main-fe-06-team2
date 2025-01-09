@@ -11,9 +11,9 @@ export const middleware = (req: NextRequest) => {
     return NextResponse.redirect(new URL('/auth/signIn', req.url));
   }
 
-  if (refreshToken && (req.url.includes('/auth/signIn') || req.url.includes('/auth/signUp'))) {
-    return NextResponse.redirect(new URL('/mypage', req.url));
-  }
+  // if (refreshToken && (req.url.includes('/auth/signIn') || req.url.includes('/auth/signUp'))) {
+  //   return NextResponse.redirect(new URL('/mypage', req.url));
+  // }
 
   return NextResponse.next();
 };

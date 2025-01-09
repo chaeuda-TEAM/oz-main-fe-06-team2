@@ -25,10 +25,6 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { socialLogin, socialUser } = useAuthStore();
 
-  useEffect(() => {
-    console.log(socialUser);
-  }, [])
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setTopSearchInput(true);
@@ -46,7 +42,6 @@ const Home = () => {
       if (user) {
         const userData = await jwtDecrypt(user);
         if (userData) {
-          console.log(userData);
           socialLogin(userData);
         } else {
           console.error('사용자 정보를 복호화할 수 없습니다.');
