@@ -18,7 +18,6 @@ interface PostcodeData {
 export interface LocationData {
   add_new: string;
   add_old: string;
-  detailAddress?: string;
   latitude: number;
   longitude: number;
 }
@@ -33,6 +32,8 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
   const [detailAddress, setDetailAddress] = useState<string>('');
   const [latitude, setLatitude] = useState<number>(0);
   const [longitude, setLongitude] = useState<number>(0);
+  const [addOld, setAddOld] = useState<string>('');
+  const [addNew, setAddNew] = useState<string>('');
 
   useEffect(() => {
     const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
@@ -62,6 +63,17 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
 
       setLatitude(lat);
       setLongitude(lng);
+
+      const fullNewAddress = detailAddress ? `${addNew} ${detailAddress}` : addNew;
+      const fullOldAddress = detailAddress ? `${addOld} ${detailAddress}` : addOld;
+
+      onSubmitData({
+        add_new: fullNewAddress,
+        add_old: fullOldAddress,
+        latitude: lat,
+        longitude: lng,
+      });
+
       console.log(`Coordinates: lat=${lat}, lng=${lng}`);
     });
   };
@@ -74,18 +86,10 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
         if (addressRef.current && zonecodeRef.current) {
           addressRef.current.value = data.roadAddress;
           zonecodeRef.current.value = data.zonecode;
-
+          setAddOld(data.jibunAddress);
+          setAddNew(data.roadAddress);
           searchAddressToCoordinate(data.roadAddress);
-
-          onSubmitData({
-            add_new: data.roadAddress,
-            add_old: data.jibunAddress,
-            detailAddress,
-            latitude,
-            longitude,
-          });
         }
-        console.log(onSubmitData);
       },
     });
 
@@ -93,7 +97,20 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
   };
 
   const handleDetailAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDetailAddress(e.target.value);
+    const newDetailAddress = e.target.value;
+    setDetailAddress(newDetailAddress);
+
+    if (addNew && addOld && latitude && longitude) {
+      const fullNewAddress = detailAddress ? `${addNew} ${detailAddress}` : addNew;
+      const fullOldAddress = detailAddress ? `${addOld} ${detailAddress}` : addOld;
+
+      onSubmitData({
+        add_new: fullNewAddress,
+        add_old: fullOldAddress,
+        latitude,
+        longitude,
+      });
+    }
   };
 
   return (

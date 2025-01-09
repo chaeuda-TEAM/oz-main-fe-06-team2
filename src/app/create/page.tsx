@@ -26,6 +26,10 @@ const CreatePost: React.FC = () => {
   const createPost = async () => {
     if (!postDetailData || !imageData || !locationData) {
       alert('모든 폼을 작성해주세요.');
+      console.log(postDetailData);
+      console.log(imageData);
+      console.log(locationData);
+
       return;
     }
 
