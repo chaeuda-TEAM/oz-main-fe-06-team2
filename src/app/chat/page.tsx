@@ -21,7 +21,7 @@ const ChatPage = () => {
   useEffect(() => {
     const loadChatList = async () => {
       if (!accessToken) {
-        router.push('/login');
+        router.push('/auth/signIn');
         return;
       }
 
