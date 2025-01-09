@@ -23,7 +23,7 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [topSearchInput, setTopSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { socialLogin, socialUser } = useAuthStore();
+  const { socialLogin } = useAuthStore();
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -36,8 +36,6 @@ const Home = () => {
 
   const searchParams = useSearchParams();
   const user = searchParams.get('user');
-
-
 
   useEffect(() => {
     const fetchDecryptedUser = async () => {

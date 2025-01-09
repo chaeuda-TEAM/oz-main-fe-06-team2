@@ -6,8 +6,6 @@ const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 
 export const dynamic = 'force-dynamic';
 
-console.log('dfdsfsdfsd');
-
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
