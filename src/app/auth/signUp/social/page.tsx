@@ -8,7 +8,6 @@ import { SocialSignupFormData, SocialSignUpSchema } from '@/app/auth/schemas/Soc
 import FormInput from '@/components/form/SocialSignUpFormInput';
 import FormButton from '@/components/form/FormButton';
 import { jwtDecrypt } from '@/utils/jwtDecrypt';
-import { generateSecret } from 'jose';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
@@ -18,6 +17,7 @@ const SocialSignUpPage = () => {
   const searchParams = useSearchParams();
   const user = searchParams.get('user');
   console.log(user);
+
   const {
     register,
     handleSubmit,
