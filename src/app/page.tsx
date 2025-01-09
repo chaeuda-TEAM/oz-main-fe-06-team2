@@ -37,8 +37,6 @@ const Home = () => {
   const searchParams = useSearchParams();
   const user = searchParams.get('user');
 
-
-
   useEffect(() => {
     const fetchDecryptedUser = async () => {
       if (user) {
