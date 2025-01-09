@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SignJWT, EncryptJWT } from 'jose'
-import { generateSecret } from 'jose';
+import { EncryptJWT, generateSecret, exportJWK } from 'jose';
 
 const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
@@ -34,24 +33,25 @@ export async function GET(req: NextRequest) {
     const data = await response.json();
 
     if (data.success) {
-
       // const jwt = await new SignJWT({ email: data.user.email, username: data.user.username, phone_number: data.user.phone_number })
       // .setProtectedHeader({ alg: 'HS256' })
       // .setIssuedAt()
       // .setExpirationTime('1h')
       // .sign(new TextEncoder().encode(JWT_SECRET));
 
-      const encryptedJWT = await new EncryptJWT({ email: data.user.email, username: data.user.username, phone_number: data.user.phone_number })
-      .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
-      .setIssuedAt()
-      .setExpirationTime('1h')
-      .encrypt(jose.base64url.decode(JWT_SECRET));
+      const secretKey = await generateSecret('A256GCM');
+      const secretKeyUint8Array = new Uint8Array(await exportJWK(secretKey));
+      console.log('Generated Secret Key (Base64URL):', secretKeyUint8Array);
 
-      // 128비트 (16바이트) 길이의 키 생성
-const secretKey = await generateSecret('A128CBC-HS256');
-
-// Base64URL 형식으로 출력
-console.log('Generated Secret Key (Base64URL):', secretKey.export().toString('base64url'));
+      const encryptedJWT = await new EncryptJWT({
+        email: data.user.email,
+        username: data.user.username,
+        phone_number: data.user.phone_number,
+      })
+        .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
+        .setIssuedAt()
+        .setExpirationTime('1h')
+        .encrypt(secretKey);
 
       const redirectUrl = data.user.is_active
         ? `${data.redirect_url}?user=${encryptedJWT}`
