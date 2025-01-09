@@ -1,12 +1,41 @@
-import { Chat } from '@/types/chat';
+import { createChatRequest } from '@/api/chat';
+import { Chat, ChatListProps } from '@/types/chat';
+import { useState } from 'react';
 
-interface ChatListProps {
-  chats: Chat[];
-  onSelectChat: (chatId: number) => void;
-  selectedChatId: number | null;
-}
+const ChatList: React.FC<ChatListProps> = ({
+  initialChats,
+  onSelectChat,
+  selectedChatId,
+  onChatCreated,
+}) => {
+  const [chats, setChats] = useState<Chat[]>(initialChats);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-const ChatList: React.FC<ChatListProps> = ({ chats, onSelectChat, selectedChatId }) => {
+  const handleCreateChat = async () => {
+    setLoading(true);
+    setError(null);
+
+    const accessToken = '';
+
+    try {
+      const response = await createChatRequest(accessToken, 6);
+
+      if (response.success) {
+        const newChat = response.chatRoom;
+        setChats(prevChats => [...prevChats, newChat]);
+        if (onChatCreated) onChatCreated(newChat);
+      } else {
+        setError(response.message);
+      }
+    } catch (error) {
+      setError('에러 발생');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="h-full p-4 overflow-y-auto">
       <h2 className="text-lg md:text-xl font-bold mb-4">채팅 목록</h2>
@@ -36,6 +65,14 @@ const ChatList: React.FC<ChatListProps> = ({ chats, onSelectChat, selectedChatId
           ))}
         </ul>
       )}
+      <button
+        onClick={handleCreateChat}
+        disabled={loading}
+        className="bg-kick text-white p-2 rounded mt-4"
+      >
+        {loading ? '생성 중...' : '채팅방 생성(임시)'}
+      </button>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 };

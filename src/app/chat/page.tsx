@@ -16,8 +16,7 @@ const ChatPage = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const accessToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDI4MTc4LCJpYXQiOjE3MzY0MjYzNzgsImp0aSI6IjMzOTU1MmQ3Y2VlYjQyODI5ODBkOTUwZjk1MTE1ODViIiwidXNlcl9pZCI6MjMxfQ.hXarEoFm1eoBuZz7WEk_1uGzcnWF1Kz307psEVmhh7k';
+  const accessToken = '';
 
   useEffect(() => {
     const loadChatList = async () => {
@@ -42,6 +41,11 @@ const ChatPage = () => {
 
     loadChatList();
   }, [accessToken, router]);
+
+  const handleChatCreated = (newChat: Chat) => {
+    setChatList(prevChats => [newChat, ...prevChats]);
+    setSelectedChatId(newChat.id);
+  };
 
   const selectedChat = chatList.find(chat => chat.id === selectedChatId);
 
@@ -68,9 +72,10 @@ const ChatPage = () => {
         }`}
       >
         <ChatList
-          chats={chatList}
+          initialChats={chatList}
           onSelectChat={setSelectedChatId}
           selectedChatId={selectedChatId}
+          onChatCreated={handleChatCreated}
         />
       </div>
       <div className="flex-1 flex flex-col">
