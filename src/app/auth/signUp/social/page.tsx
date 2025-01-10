@@ -16,7 +16,6 @@ const SocialSignUpPage = () => {
 
   const searchParams = useSearchParams();
   const user = searchParams.get('user');
-  console.log(user);
 
   const {
     register,
@@ -79,6 +78,7 @@ const SocialSignUpPage = () => {
     }
 
     try {
+      console.log(data);
       const response = await fetch(`${BASE_URL}/api/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
