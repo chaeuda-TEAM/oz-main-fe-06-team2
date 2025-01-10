@@ -1,3 +1,4 @@
+import useAccessToken from '@/hooks/useAccessToken';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface ChatRoomProps {
@@ -10,28 +11,23 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const accessToken = useAccessToken();
+
   const connect = async () => {
     try {
       setError(null);
-      const tokenResponse = await fetch('/api/token', {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      if (!tokenResponse.ok) {
-        throw new Error('토큰을 가져오는 데 실패했습니다.');
+      if (!accessToken) {
+        setError('Failed to get accessToken');
+        return;
       }
 
-      const tokenData = await tokenResponse.json();
-      const accessToken = tokenData.accessToken;
-
-      // socketRef.current = new WebSocket(
-      //   `wss://api.chaeuda.shop/ws/chat/${chatId}/?token=${encodeURIComponent(accessToken)}`,
-      // );
-      socketRef.current = new WebSocket(`wss://api.chaeuda.shop/ws/chat/${chatId}/`, [
-        'authorization-bearer',
-        `Bearer ${accessToken}`,
-      ]);
+      socketRef.current = new WebSocket(
+        `wss://api.chaeuda.shop/ws/chat/${chatId}/?token=${encodeURIComponent(accessToken)}`,
+      );
+      // socketRef.current = new WebSocket(`wss://api.chaeuda.shop/ws/chat/${chatId}/`, [
+      //   'authorization-bearer',
+      //   `Bearer ${accessToken}`,
+      // ]);
 
       socketRef.current.onopen = () => {
         console.log(`WebSocket connection established for chat ${chatId}`);
