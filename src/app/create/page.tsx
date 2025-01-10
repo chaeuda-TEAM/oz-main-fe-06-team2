@@ -2,17 +2,17 @@
 
 import ImageUploadForm, { ImageData } from '@/containers/forms/ImageUpload';
 import LocationInfoForm, { LocationData } from '@/containers/forms/LocationInfo';
-import PostDetailForm, { FormData } from '@/containers/forms/PostDetail';
+import PostDetailForm, { DetailData } from '@/containers/forms/PostDetail';
 import { getCookie } from 'cookies-next';
 import { useState } from 'react';
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const CreatePost: React.FC = () => {
-  const [postDetailData, setPostDetailData] = useState<FormData | null>(null);
+  const [postDetailData, setPostDetailData] = useState<DetailData | null>(null);
   const [imageData, setImageData] = useState<ImageData | null>(null);
   const [locationData, setLocationData] = useState<LocationData | null>(null);
 
-  const handlePostDetailSubmit = (data: FormData) => {
+  const handlePostDetailSubmit = (data: DetailData) => {
     setPostDetailData(data);
   };
 
@@ -34,17 +34,24 @@ const CreatePost: React.FC = () => {
       return;
     }
 
+    const PostData = new FormData();
+
     const combinedData = {
       ...postDetailData,
       images: imageData.images,
       ...locationData,
     };
 
+    PostData.append('data', JSON.stringify(combinedData));
+    imageData.images.forEach(image => {
+      PostData.append(`files`, image);
+    });
+
     console.log('매물 등록 데이터:', combinedData);
 
     try {
       const accessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDQ1NTMwLCJpYXQiOjE3MzY0NDM3MzAsImp0aSI6ImQ4YjY3OWI3Y2RkYTQ1OTBhYzcwMDc2NDYzMzYwNjQ1IiwidXNlcl9pZCI6MTV9.uPhVNlSNoQ2LQ8vQxdGm-j9yQa4w4-C0b2K4-W50ZNs';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDg2MjUwLCJpYXQiOjE3MzY0ODQ0NTAsImp0aSI6IjI3MTQ1YzE5NjUxNDQ1Zjg4MGExYzhkN2RkNmNmMzdjIiwidXNlcl9pZCI6MTV9.sWTye45xgMCqnzvxj6ZowD_TnzKORY-V5f-pfLRJwnc';
       if (!accessToken) {
         throw new Error('인증 토큰이 없습니다. 다시 로그인 해주세요.');
       }
@@ -52,10 +59,9 @@ const CreatePost: React.FC = () => {
       const response = await fetch(`${BASEURL}/api/product/create`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(combinedData),
+        body: PostData,
       });
       console.log('Response Status:', response.status);
 

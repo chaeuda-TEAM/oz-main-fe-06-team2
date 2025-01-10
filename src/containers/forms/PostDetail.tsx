@@ -2,10 +2,10 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useState } from 'react';
 
 interface PostDetailFormProps {
-  onSubmitData: (data: FormData) => void;
+  onSubmitData: (data: DetailData) => void;
 }
 
-export interface FormData {
+export interface DetailData {
   pro_title: string;
   pro_price: number;
   management_cost?: number;
@@ -30,13 +30,13 @@ const PostDetailForm: React.FC<PostDetailFormProps> = ({ onSubmitData }) => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<DetailData>({
     defaultValues: {
       management_cost: undefined,
     },
   });
 
-  const onSubmit: SubmitHandler<FormData> = data => {
+  const onSubmit: SubmitHandler<DetailData> = data => {
     onSubmitData(data);
   };
 
@@ -56,7 +56,7 @@ const PostDetailForm: React.FC<PostDetailFormProps> = ({ onSubmitData }) => {
     onSubmitData({ ...currentData, pro_heat: value });
   };
 
-  const registerWithChange = (name: keyof FormData) => {
+  const registerWithChange = (name: keyof DetailData) => {
     return {
       ...register(name),
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
