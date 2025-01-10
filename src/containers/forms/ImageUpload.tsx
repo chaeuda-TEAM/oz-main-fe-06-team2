@@ -1,55 +1,94 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import DraggableMedia from './DraggableMedia';
 
 const MAX_IMG_COUNT = 10;
-
-export interface ImageData {
-  images: string[];
-}
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+const allowedVideoTypes = ['video/mp4', 'video/quicktime'];
 
 interface FileData {
   id: string;
   file: File;
   url: string;
+  type: 'image' | 'video';
 }
 
-const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = ({
+export interface ProductImageData {
+  imageFiles: File[];
+  videoFile: File | null;
+}
+
+const ImageUploadForm: React.FC<{ onSubmitData: (data: ProductImageData) => void }> = ({
   onSubmitData,
 }) => {
   const [files, setFiles] = useState<FileData[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
+  const validateFile = (file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error('파일 크기는 10MB 이하여야 합니다.');
+    }
+
+    if (file.type.startsWith('image/') && !allowedImageTypes.includes(file.type)) {
+      throw new Error('지원하지 않는 이미지 형식입니다.');
+    }
+
+    if (file.type.startsWith('video/') && !allowedVideoTypes.includes(file.type)) {
+      throw new Error('지원하지 않는 비디오 형식입니다.');
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (selectedFiles) {
       let imgCount = files.length;
+      const newFiles: FileData[] = [...files];
 
       Array.from(selectedFiles).forEach(file => {
-        if (imgCount >= MAX_IMG_COUNT) {
-          setErrorMessage('사진은 최대 10장까지 등록 가능합니다.');
-          return;
-        }
-
-        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
-          const isDuplicate = files.some(fileData => fileData.file.name === file.name);
-          if (isDuplicate) {
-            setErrorMessage('이미 같은 파일이 존재합니다.');
-            return;
+        try {
+          if (imgCount >= MAX_IMG_COUNT) {
+            throw new Error('사진은 최대 10장까지 등록 가능합니다.');
           }
+
+          validateFile(file);
 
           const id = crypto.randomUUID();
           const reader = new FileReader();
 
-          reader.onloadend = () => {
-            const url = reader.result as string;
-            const fileData: FileData = { id, file, url };
-            setFiles(prev => [...prev, fileData]);
-          };
+          if (file.type.startsWith('image/')) {
+            const isDuplicate = files.some(fileData => fileData.file.name === file.name);
+            if (isDuplicate) {
+              throw new Error('이미 같은 파일이 존재합니다.');
+            }
 
-          reader.readAsDataURL(file);
-          imgCount++;
+            reader.onloadend = () => {
+              const url = reader.result as string;
+              newFiles.push({ id, file, url, type: 'image' });
+              setFiles(newFiles);
+              updateParentData(newFiles);
+            };
+            reader.readAsDataURL(file);
+            imgCount++;
+          } else if (file.type.startsWith('video/')) {
+            if (files.some(f => f.type === 'video')) {
+              throw new Error('영상은 1개만 등록 가능합니다.');
+            }
+
+            reader.onloadend = () => {
+              const url = reader.result as string;
+              newFiles.push({ id, file, url, type: 'video' });
+              setFiles(newFiles);
+              updateParentData(newFiles);
+            };
+            reader.readAsDataURL(file);
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            setErrorMessage(error.message);
+          }
+          return;
         }
       });
 
@@ -61,28 +100,30 @@ const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = (
     }
   };
 
-  //preview 내 삭제 기능
-  const handleDelete = (id: string) => {
-    setFiles(prev => prev.filter(file => file.id !== id));
-  };
+  const updateParentData = (currentFiles: FileData[]) => {
+    const imageFiles = currentFiles.filter(f => f.type === 'image').map(f => f.file);
 
-  //drag and drop 기능
-  const moveItem = (fromIndex: number, toIndex: number) => {
-    setFiles(prev => {
-      const updatedFiles = [...prev];
-      const [movedFile] = updatedFiles.splice(fromIndex, 1);
-      updatedFiles.splice(toIndex, 0, movedFile);
-      return updatedFiles;
+    const videoFile = currentFiles.find(f => f.type === 'video')?.file || null;
+
+    onSubmitData({
+      imageFiles,
+      videoFile,
     });
   };
 
-  useEffect(() => {
-    if (files && files.length > 0) {
-      const imageUrls = files.map(fileData => fileData.url);
-      onSubmitData({ images: imageUrls });
-    }
-  }, [files]);
+  const handleDelete = (id: string) => {
+    const updatedFiles = files.filter(file => file.id !== id);
+    setFiles(updatedFiles);
+    updateParentData(updatedFiles);
+  };
 
+  const moveItem = (fromIndex: number, toIndex: number) => {
+    const updatedFiles = [...files];
+    const [movedFile] = updatedFiles.splice(fromIndex, 1);
+    updatedFiles.splice(toIndex, 0, movedFile);
+    setFiles(updatedFiles);
+    updateParentData(updatedFiles);
+  };
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
