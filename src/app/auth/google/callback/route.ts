@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-
+console.log(data);
     if (data.success) {
       const jwt = await new EncryptJWT({
         email: data.user.email,
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       const redirectUrl = data.user.is_active
         ? `${data.redirect_url}?user=${jwt}`
         : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
-      //d이거 로컬 호스트거든용
+
       const responseObj = NextResponse.redirect(redirectUrl);
 
       // 쿠키에 토큰 저장
