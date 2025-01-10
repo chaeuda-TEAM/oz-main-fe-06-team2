@@ -6,7 +6,7 @@ import DraggableMedia from './DraggableMedia';
 const MAX_IMG_COUNT = 10;
 
 export interface ImageData {
-  images: File[];
+  images: string[];
 }
 
 interface FileData {
@@ -78,8 +78,8 @@ const ImageUploadForm: React.FC<{ onSubmitData: (data: ImageData) => void }> = (
 
   useEffect(() => {
     if (files && files.length > 0) {
-      const imageFiles = files.map(fileData => fileData.file);
-      onSubmitData({ images: imageFiles });
+      const imageUrls = files.map(fileData => fileData.url);
+      onSubmitData({ images: imageUrls });
     }
   }, [files]);
 

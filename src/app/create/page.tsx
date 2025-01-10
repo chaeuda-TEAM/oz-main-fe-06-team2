@@ -3,6 +3,7 @@
 import ImageUploadForm, { ImageData } from '@/containers/forms/ImageUpload';
 import LocationInfoForm, { LocationData } from '@/containers/forms/LocationInfo';
 import PostDetailForm, { FormData } from '@/containers/forms/PostDetail';
+import { getCookie } from 'cookies-next';
 import { useState } from 'react';
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -35,18 +36,28 @@ const CreatePost: React.FC = () => {
 
     const combinedData = {
       ...postDetailData,
-      ...imageData,
+      images: imageData.images,
       ...locationData,
     };
 
+    console.log('매물 등록 데이터:', combinedData);
+
     try {
+      const accessToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDQ1NTMwLCJpYXQiOjE3MzY0NDM3MzAsImp0aSI6ImQ4YjY3OWI3Y2RkYTQ1OTBhYzcwMDc2NDYzMzYwNjQ1IiwidXNlcl9pZCI6MTV9.uPhVNlSNoQ2LQ8vQxdGm-j9yQa4w4-C0b2K4-W50ZNs';
+      if (!accessToken) {
+        throw new Error('인증 토큰이 없습니다. 다시 로그인 해주세요.');
+      }
+
       const response = await fetch(`${BASEURL}/api/product/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(combinedData),
       });
+      console.log('Response Status:', response.status);
 
       if (response.ok) {
         const result = await response.json();

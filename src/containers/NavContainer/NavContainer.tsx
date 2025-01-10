@@ -71,10 +71,7 @@ const NavContainer: React.FC = () => {
               </Link>
             </li>
             <li className="hover:text-kick">
-              <Link href="/create" onClick={closeModal}>
-                매물 올리기
-              </Link>
-              {/* <button onClick={handleCreateClick}>매물 올리기</button> */}
+              <button onClick={handleCreateClick}>매물 올리기</button>
             </li>
           </ul>
 
