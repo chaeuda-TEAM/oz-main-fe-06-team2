@@ -6,7 +6,7 @@ import PostDetailForm, { DetailData } from '@/containers/forms/PostDetail';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const CreatePost: React.FC = () => {
@@ -15,6 +15,29 @@ const CreatePost: React.FC = () => {
   const [imageData, setImageData] = useState<ProductImageData | null>(null);
   const [locationData, setLocationData] = useState<LocationData | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const response = await fetch('/api/token', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch token');
+        }
+
+        const data = await response.json();
+        setAccessToken(data.accessToken);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchToken();
+  }, []);
 
   const handlePostDetailSubmit = (data: DetailData) => {
     setPostDetailData(data);
@@ -60,8 +83,6 @@ const CreatePost: React.FC = () => {
 
       formData.append('data', JSON.stringify(productData));
 
-      const accessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDk1MzUyLCJpYXQiOjE3MzY0OTM1NTIsImp0aSI6IjM5NDgxYjVhMjk2MDQ2N2U4YTgwZGFiNmZjYWZmNjdmIiwidXNlcl9pZCI6MTV9.j5Q_0r1ewEGOmvOBqj-k7EypUDRglvKuD3LG8X8dR0I';
       if (!accessToken) {
         throw new Error('인증 토큰이 없습니다. 다시 로그인 해주세요.');
       }
