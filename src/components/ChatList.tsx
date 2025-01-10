@@ -1,12 +1,51 @@
-import { Chat } from '@/types/chat';
+import { createChatRequest } from '@/api/chat';
+import { Chat, ChatListProps } from '@/types/chat';
+import { useState } from 'react';
 
-interface ChatListProps {
-  chats: Chat[];
-  onSelectChat: (chatId: number) => void;
-  selectedChatId: number | null;
-}
+const ChatList: React.FC<ChatListProps> = ({
+  initialChats,
+  onSelectChat,
+  selectedChatId,
+  onChatCreated,
+}) => {
+  const [chats, setChats] = useState<Chat[]>(initialChats);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-const ChatList: React.FC<ChatListProps> = ({ chats, onSelectChat, selectedChatId }) => {
+  const handleCreateChat = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const tokenResponse = await fetch('/api/token', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!tokenResponse.ok) {
+        throw new Error('토큰을 가져오는 데 실패했습니다.');
+      }
+
+      const tokenData = await tokenResponse.json();
+      const accessToken = tokenData.accessToken;
+
+      const response = await createChatRequest(accessToken, 6);
+
+      if (response.success) {
+        const newChat = response.chatRoom;
+        setChats(prevChats => [...prevChats, newChat]);
+        if (onChatCreated) onChatCreated(newChat);
+      } else {
+        setError(response.message);
+      }
+    } catch (err) {
+      setError('에러 발생');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="h-full p-4 overflow-y-auto">
       <h2 className="text-lg md:text-xl font-bold mb-4">채팅 목록</h2>
@@ -36,6 +75,14 @@ const ChatList: React.FC<ChatListProps> = ({ chats, onSelectChat, selectedChatId
           ))}
         </ul>
       )}
+      <button
+        onClick={handleCreateChat}
+        disabled={loading}
+        className="bg-kick text-white p-2 rounded mt-4"
+      >
+        {loading ? '생성 중...' : '채팅방 생성(임시)'}
+      </button>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 };
