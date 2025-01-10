@@ -73,12 +73,7 @@ const SocialSignUpPage = () => {
 
   // 최종 회원가입
   const onSubmit = async (data: SocialSignupFormData): Promise<void> => {
-    if (data.phone_number === undefined) {
-      return;
-    }
-
     try {
-      console.log(data);
       const response = await fetch(`${BASE_URL}/api/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

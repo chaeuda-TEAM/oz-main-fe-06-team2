@@ -56,8 +56,15 @@ const MyPage = () => {
   }, [user, socialUser]);
 
   const handleMyPageClick = () => {
-    router.push('/mypage/editMypage');
-    console.log(1);
+    if (user) {
+      router.push('/mypage/editMypage');
+      return;
+    }
+
+    if (socialUser) {
+      router.push('/mypage/social/editMypage');
+      return;
+    }
   };
 
   // TODO: confirm 컴포넌트 제작

@@ -67,13 +67,16 @@ const MyPage = () => {
       }
   
       try {
-        const response = await fetch(`${BASE_URL}/api/users/signup`, {
-          method: 'POST',
+        console.log(data);
+        const response = await fetch(`${BASE_URL}/api/users/update-profile`, {
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         });
   
-        if (response.status !== 200) return;
+        if (response.status !== 200) {
+          return console.log('회원수정 실패');
+        };
   
         if (response.status === 200) {
           alert('회원가입 성공! 로그인 페이지로 이동합니다.');
