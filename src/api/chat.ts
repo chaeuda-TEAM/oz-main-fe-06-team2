@@ -18,7 +18,6 @@ export const fetchChatList = async (accessToken: string): Promise<Chat[]> => {
     }
 
     const data = await response.json();
-    console.log(data);
     return data.chat_rooms || [];
   } catch (error) {
     console.error('Error fetching chat list:', error);
@@ -26,7 +25,7 @@ export const fetchChatList = async (accessToken: string): Promise<Chat[]> => {
   }
 };
 
-export const createChatRequest = async (accessToken: string, product_id = 3) => {
+export const createChatRequest = async (accessToken: string, product_id: number) => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/chat/create`, {
       method: 'POST',
