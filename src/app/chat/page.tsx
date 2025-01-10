@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Menu, MapPin } from 'lucide-react';
 import ChatList from '@/components/ChatList';
-// import ChatDisplay from '@/components/ChatDisplay';
-import { Chat, Message } from '@/types/chat';
+import { Chat } from '@/types/chat';
 import { fetchChatList } from '@/api/chat';
 
 const ChatPage = () => {
@@ -14,33 +13,50 @@ const ChatPage = () => {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  const accessToken = '';
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  // const router = useRouter();
 
   useEffect(() => {
-    const loadChatList = async () => {
-      if (!accessToken) {
-        router.push('/auth/signIn');
-        return;
-      }
-
+    const fetchToken = async () => {
       try {
-        setIsLoading(true);
-        const chats = await fetchChatList(accessToken);
-        setChatList(chats);
-        if (chats.length > 0) {
-          setSelectedChatId(chats[0].id);
+        const response = await fetch('/api/token', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch token');
         }
+        const data = await response.json();
+        // console.log(data);
+        setAccessToken(data.accessToken);
       } catch (err) {
-        setError('Failed to load chat list. Please try again later.');
-      } finally {
+        console.error(err);
+        setError('토큰을 가져오지 못했습니다.');
         setIsLoading(false);
       }
     };
 
-    loadChatList();
-  }, [accessToken, router]);
+    fetchToken();
+  }, []);
+
+  useEffect(() => {
+    if (accessToken) {
+      const fetchChats = async () => {
+        try {
+          const chats = await fetchChatList(accessToken);
+          setChatList(chats);
+          setIsLoading(false);
+        } catch (err) {
+          console.error(err);
+          setError('채팅 목록을 가져오지 못했습니다.');
+          setIsLoading(false);
+        }
+      };
+
+      fetchChats();
+    }
+  }, [accessToken]);
 
   const handleChatCreated = (newChat: Chat) => {
     setChatList(prevChats => [newChat, ...prevChats]);
@@ -48,13 +64,6 @@ const ChatPage = () => {
   };
 
   const selectedChat = chatList.find(chat => chat.id === selectedChatId);
-
-  const dummyMessages: Message[] = [
-    { id: '1', user: '한효찬', content: '안녕하세요' },
-    { id: '2', user: '주민재', content: '안녕하세요' },
-    { id: '3', user: '한효찬', content: '오늘 날씨가 좋네요' },
-    { id: '4', user: '주민재', content: '네, 정말 좋습니다' },
-  ];
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -85,7 +94,6 @@ const ChatPage = () => {
               <h1 className="text-xl md:text-2xl font-bold text-gray-800">
                 {selectedChat.product_title}
               </h1>
-
               <div className="flex items-center text-gray-600 mt-1">
                 <span className="text-lg font-semibold">
                   {selectedChat.seller} - {selectedChat.product_price.toLocaleString()}원
@@ -107,7 +115,6 @@ const ChatPage = () => {
             <Menu size={24} />
           </button>
         </header>
-        {/* <ChatDisplay messages={dummyMessages} /> */}
       </div>
     </div>
   );

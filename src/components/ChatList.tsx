@@ -16,9 +16,19 @@ const ChatList: React.FC<ChatListProps> = ({
     setLoading(true);
     setError(null);
 
-    const accessToken = '';
-
     try {
+      const tokenResponse = await fetch('/api/token', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!tokenResponse.ok) {
+        throw new Error('토큰을 가져오는 데 실패했습니다.');
+      }
+
+      const tokenData = await tokenResponse.json();
+      const accessToken = tokenData.accessToken;
+
       const response = await createChatRequest(accessToken, 6);
 
       if (response.success) {
@@ -28,9 +38,9 @@ const ChatList: React.FC<ChatListProps> = ({
       } else {
         setError(response.message);
       }
-    } catch (error) {
+    } catch (err) {
       setError('에러 발생');
-      console.error(error);
+      console.error(err);
     } finally {
       setLoading(false);
     }
