@@ -154,14 +154,14 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
             className="w-full border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
           />
         </label>
-        <div className="mt-4 text-[0.9rem]">
+        {/* <div className="mt-4 text-[0.9rem]">
           <p>
             <span className="font-semibold">위도:</span> {latitude}
           </p>
           <p>
             <span className="font-semibold">경도:</span> {longitude}
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
