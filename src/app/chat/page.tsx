@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { Menu, MapPin } from 'lucide-react';
-import ChatList from '@/components/ChatList';
+import ChatList from '@/components/chat/ChatList';
 import { Chat } from '@/types/chat';
 import { fetchChatList } from '@/api/chat';
+import ChatRoom from '@/components/chat/ChatRoom';
 import useAccessToken from '@/hooks/useAccessToken';
 
 const ChatPage = () => {
@@ -91,6 +92,7 @@ const ChatPage = () => {
             <Menu size={24} />
           </button>
         </header>
+        <ChatRoom chatId={18} />
       </div>
     </div>
   );
