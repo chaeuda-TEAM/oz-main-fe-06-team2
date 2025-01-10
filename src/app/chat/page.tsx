@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Menu, MapPin } from 'lucide-react';
-import ChatList from '@/components/ChatList';
+import ChatList from '@/components/chat/ChatList';
 import { Chat } from '@/types/chat';
 import { fetchChatList } from '@/api/chat';
+import ChatRoom from '@/components/chat/ChatRoom';
 
 const ChatPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -115,6 +116,7 @@ const ChatPage = () => {
             <Menu size={24} />
           </button>
         </header>
+        <ChatRoom chatId={18} />
       </div>
     </div>
   );
