@@ -1,26 +1,6 @@
 'use client';
 
-interface Product {
-  product_id: number;
-  pro_title: string;
-  pro_price: number;
-  management_cost: number;
-  pro_supply_a: number;
-  pro_site_a: number;
-  pro_heat: string;
-  pro_type: string;
-  pro_floor: number;
-  description: string;
-  sale: boolean;
-  pro_rooms: number;
-  pro_bathrooms: number;
-  pro_construction_year: number;
-  add_new: string;
-  add_old: string;
-  created_at: string;
-  updated_at: string;
-  username: string;
-}
+import { Pro_type, Pro_heat, Product } from '@/types/product';
 
 interface DetailContentProps {
   product: Product;
@@ -42,65 +22,67 @@ export const DetailContent = ({ product }: DetailContentProps) => {
         </p>
         <div className="border-t pt-6">
           <div className="flex">
-            <span className="w-[110px] font-semibold">매매</span>
-            <span>{product.pro_price}원</span>
+            <span className="w-[115px] font-semibold">매매</span>
+            <span>{product.pro_price.toLocaleString()}원</span>
           </div>
           <div className="flex">
-            <span className="w-[110px] font-semibold">관리비</span>
-            <span>{product.management_cost}원</span>
+            <span className="w-[115px] font-semibold">관리비</span>
+            <span>
+              {product.management_cost ? `${product.management_cost.toLocaleString()}원` : '0원'}
+            </span>
           </div>
         </div>
       </div>
 
       <div className="border-t pt-6">
         <div className="flex">
-          <span className="w-[110px] font-semibold">건물 유형</span>
-          <span>{product.pro_type}</span>
+          <span className="w-[115px] font-semibold">건물 유형</span>
+          <span>{Pro_type[product.pro_type]}</span>
         </div>
         <div className="flex">
-          <span className="w-[110px] font-semibold">평수(공급면적)</span>
+          <span className="w-[115px] font-semibold">평수(공급면적)</span>
           <span>{product.pro_supply_a}㎡</span>
         </div>
         <div className="flex">
-          <span className="w-[110px] font-semibold">부지면적</span>
+          <span className="w-[115px] font-semibold">부지면적</span>
           <span>{product.pro_site_a}㎡</span>
         </div>
         <div className="flex">
-          <span className="w-[110px] font-semibold">층</span>
+          <span className="w-[115px] font-semibold">층</span>
           <span>{product.pro_floor}층</span>
         </div>
         <div className="flex">
-          <span className="w-[110px] font-semibold">방/욕실 수</span>
+          <span className="w-[115px] font-semibold">방/욕실 수</span>
           <span>
             {product.pro_rooms}개/{product.pro_bathrooms}개
           </span>
         </div>
         <div className="flex">
-          <span className="w-[110px] font-semibold">난방 방식</span>
-          <span>{product.pro_heat}</span>
+          <span className="w-[115px] font-semibold">난방 방식</span>
+          <span>{Pro_heat[product.pro_heat]}</span>
         </div>
         <div className="flex">
-          <span className="w-[110px] font-semibold">건축연도</span>
+          <span className="w-[115px] font-semibold">건축연도</span>
           <span>{product.pro_construction_year}년</span>
         </div>
       </div>
 
       <div className="flex border-t pt-6">
-        <span className="w-[110px] font-semibold">상세 설명</span>
+        <span className="w-[115px] font-semibold">상세 설명</span>
         <span>{product.description}</span>
       </div>
 
       <div className="flex border-t pt-6">
-        <span className="w-[110px] font-semibold">위치정보</span>
+        <span className="w-[115px] font-semibold">위치정보</span>
         <div className="flex flex-col">
           <span>{product.add_new}</span>
           <span>{product.add_old}</span>
         </div>
       </div>
 
-      <div className="border-t py-6">
-        <span className="w-[110px] font-semibold">판매자</span>
-        <span>{product.username}</span>
+      <div className="flex border-t py-6">
+        <span className="w-[115px] font-semibold">판매자</span>
+        <span>{product.user.username}</span>
       </div>
     </div>
   );

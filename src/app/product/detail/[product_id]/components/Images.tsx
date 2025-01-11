@@ -52,7 +52,6 @@ export const Images = ({ images, video }: ImagesProps) => {
         <button className="swiper-button-next absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-black/50 rounded-full text-white hover:bg-black/70">
           <span className="sr-only">Next</span>→
         </button>
-
         <div className="swiper-pagination absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
           {images.map((_, index) => (
             <span key={index} className="w-2 h-2 rounded-full bg-white/50 cursor-pointer" />

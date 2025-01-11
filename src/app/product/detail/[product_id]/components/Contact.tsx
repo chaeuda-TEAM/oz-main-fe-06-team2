@@ -7,6 +7,18 @@ interface ContactProps {
   phone_number: string;
 }
 
+const formatPhoneNumber = (phone: string) => {
+  const numbers = phone.replace(/[^\d]/g, '');
+
+  if (numbers.length === 11) {
+    return numbers.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+  }
+  if (numbers.length === 10) {
+    return numbers.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+  }
+  return phone;
+};
+
 export const Contact = ({ phone_number }: ContactProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,15 +43,13 @@ export const Contact = ({ phone_number }: ContactProps) => {
 
       {isOpen && (
         <div className="p-4 space-y-3 bg-gray-50">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col">
+            <div className="font-semibold">판매자 휴대폰번호</div>
             <div>
-              <span className="text-sm text-gray-500">판매자 휴대폰번호</span>
-              <div>
-                <span>{phone_number}</span>
-                <button onClick={handleCopyClick} className="p-2 hover:bg-gray-200 rounded-full">
-                  <Copy className="w-5 h-5" />
-                </button>
-              </div>
+              <span>{formatPhoneNumber(phone_number)}</span>
+              <button onClick={handleCopyClick} className="ml-5 p-2 hover:bg-gray-200 rounded-full">
+                <Copy className="w-5 h-5" />
+              </button>
             </div>
           </div>
           <button className="w-full py-3 bg-gray-500 text-white hover:bg-gray-600">채팅</button>

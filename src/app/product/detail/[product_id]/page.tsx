@@ -4,33 +4,9 @@ import { useState, useEffect } from 'react';
 import { DetailContent } from './components/DetailContent';
 import { Images } from './components/Images';
 import { Contact } from './components/Contact';
+import { Product } from '@/types/product';
 
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
-
-interface Product {
-  product_id: number;
-  images: string[];
-  video: string | null;
-  pro_title: string;
-  pro_price: number;
-  management_cost: number;
-  pro_supply_a: number;
-  pro_site_a: number;
-  pro_heat: string;
-  pro_type: string;
-  pro_floor: number;
-  description: string;
-  sale: boolean;
-  pro_rooms: number;
-  pro_bathrooms: number;
-  pro_construction_year: number;
-  add_new: string;
-  add_old: string;
-  username: string;
-  phone_number: string;
-  created_at: string;
-  updated_at: string;
-}
 
 export default function ProductDetailPage({ params }: { params: { product_id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
@@ -64,7 +40,7 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
           <div className="p-6">
             <Images images={product.images} video={product.video} />
             <DetailContent product={product} />
-            <Contact phone_number={product.phone_number} />
+            <Contact phone_number={product.user.phone_number} />
           </div>
         ) : (
           <div>정보를 불러오는데 실패했습니다.</div>
