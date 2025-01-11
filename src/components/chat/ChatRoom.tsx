@@ -100,13 +100,13 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
           <p>{error}</p>
         </div>
       )}
-      <div className="border rounded p-4 h-64 overflow-y-auto">
+      {/* <div className="border rounded p-4 h-64 overflow-y-auto">
         {messages.map((message, index) => (
           <p key={index} className="mb-2">
             {message}
           </p>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
