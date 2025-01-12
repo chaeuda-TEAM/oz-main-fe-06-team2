@@ -15,6 +15,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
   const accessToken = useAccessToken();
   const { user, socialUser } = useAuthStore();
   const myName = user?.username || socialUser?.username;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const connect = useCallback(() => {
     if (!accessToken) {
@@ -36,35 +37,61 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
     };
 
     socketRef.current.onmessage = event => {
-      console.log('Received message:', event.data);
+      // console.log('Received message:', event.data);
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'error') {
           setError(`Server error: ${data.message}`);
+        } else if (data.type === 'connection_established') {
+          const userInfo = data.user_info;
+          setSenderNames(prev => ({
+            ...prev,
+            [userInfo.id]: userInfo.username,
+          }));
+
+          const prevMessages = (data.prev_messages || []).map((msg: any) => ({
+            id: msg.id?.toString() || Date.now().toString(),
+            content: msg.message || '',
+            sender: msg.sender?.username || 'Unknown',
+            createdAt: new Date(msg.created_at || Date.now()),
+            chatRoom: msg.chat_room_id?.toString() || chatId,
+          }));
+
+          prevMessages.sort(
+            (a: Message, b: Message) => a.createdAt.getTime() - b.createdAt.getTime(),
+          );
+
+          setMessages(prevMessages);
         } else {
-          // When sending a message, store the mapping of ID to name
-          if (data.original_sender) {
+          if (data.sender && typeof data.sender === 'object') {
             setSenderNames(prev => ({
               ...prev,
-              [data.sender]: data.original_sender,
+              [data.sender.id]: data.sender.username,
             }));
           }
 
           const newMessage: Message = {
-            id: Date.now().toString(),
-            content: data.message,
-            // Use the stored name if available, otherwise use the ID
-            sender: senderNames[data.sender] || data.sender,
-            createdAt: new Date(data.created_at),
-            chatRoom: data.chat_room,
+            id: data.id?.toString() || Date.now().toString(),
+            content: data.message || '',
+            sender:
+              (typeof data.sender === 'object' ? data.sender.username : data.sender) || 'Unknown',
+            createdAt: new Date(data.created_at || Date.now()),
+            chatRoom: data.chat_room_id?.toString() || chatId,
           };
-          setMessages(prev => [...prev, newMessage]);
+          setMessages(prev => {
+            const updatedMessages = [...prev, newMessage];
+            return updatedMessages.sort(
+              (a: Message, b: Message) => a.createdAt.getTime() - b.createdAt.getTime(),
+            );
+          });
         }
       } catch (err) {
         console.error('Error parsing message:', err);
+        console.error('Raw message data:', event.data);
         setError('Failed to process incoming message');
       }
     };
+
     socketRef.current.onerror = error => {
       console.error('WebSocket error:', error);
       setError('WebSocket connection error. Attempting to reconnect...');
@@ -72,7 +99,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
     };
 
     socketRef.current.onclose = event => {
-      console.log(`WebSocket connection closed for chat ${chatId}`, event.code, event.reason);
+      // console.log(`WebSocket connection closed for chat ${chatId}`, event.code, event.reason);
       setIsConnected(false);
       reconnectTimeoutRef.current = setTimeout(() => {
         console.log('Attempting to reconnect...');
@@ -100,12 +127,18 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
       const messageData = {
         message: inputMessage,
         sender: myName,
-        original_sender: myName,
       };
-      console.log(messageData);
       socketRef.current.send(JSON.stringify(messageData));
       setInputMessage('');
     }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -126,70 +159,48 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
   }, [connect, disconnect]);
 
   return (
-    <div className="flex-1 p-4 flex flex-col h-[300px]">
-      {error && (
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4 relative"
-          role="alert"
-        >
-          <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{error}</span>
-          <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-            <svg
-              className="fill-current h-6 w-6 text-red-500"
-              role="button"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              onClick={clearError}
-            >
-              <title>Close</title>
-              <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
-            </svg>
-          </span>
-        </div>
-      )}
-      <div className="flex-1 border p-4 overflow-y-auto mb-4">
+    <div className="flex flex-col h-full max-h-[calc(100vh-4rem)]">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map(message => (
           <div
             key={message.id}
-            className={`mb-4 ${
-              senderNames[message.sender] === myName || message.sender === myName
-                ? 'text-right'
-                : 'text-left'
-            }`}
+            className={`flex ${message.sender === myName ? 'justify-end' : 'justify-start'}`}
           >
-            <p className="text-xs text-gray-500 mb-1">
-              {senderNames[message.sender] || message.sender}
-            </p>
-            <div
-              className={`inline-block p-3 ${
-                senderNames[message.sender] === myName || message.sender === myName
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-800'
-              }`}
-            >
-              <p>{message.content}</p>
+            <div className={`max-w-[70%] ${message.sender === myName ? 'order-1' : 'order-2'}`}>
+              <p className="text-xs text-gray-500 mb-1">{message.sender}</p>
+              <div
+                className={`p-3 rounded-lg ${
+                  message.sender === myName ? 'bg-kick text-white' : 'bg-gray-200 text-gray-800'
+                }`}
+              >
+                <p className="break-words">{message.content}</p>
+              </div>
+              <p>{message.createdAt.toLocaleTimeString()}</p>
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
-      <div className="flex items-stretch">
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={e => setInputMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="메시지를 입력하세요..."
-          className="flex-1 p-2 border focus:outline-none"
-          disabled={!isConnected}
-        />
-        <button
-          onClick={sendMessage}
-          disabled={!isConnected || !inputMessage.trim()}
-          className="bg-kick text-white px-4 disabled:opacity-50"
-        >
-          <Send size={20} />
-        </button>
+      <div className="p-4 bg-white">
+        <div className="flex items-stretch">
+          <input
+            type="text"
+            value={inputMessage}
+            onChange={e => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="메시지를 입력하세요."
+            className="flex-1 p-2 border rounded-l-md focus:outline-none"
+            disabled={!isConnected}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!isConnected || !inputMessage.trim()}
+            className="bg-kick text-white px-4 rounded-r-md disabled:opacity-50"
+            aria-label="Send message"
+          >
+            <Send size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );
