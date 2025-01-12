@@ -171,12 +171,14 @@ const MyPage = () => {
         },
         body: JSON.stringify(data),
       });
-  
+      console.log(response);
       const responsedata = await response.json();
+      console.log(responsedata);
 
       if (responsedata.success) {
         router.back()
         login(responsedata.user)
+
       } else {
         console.error('회원정보 수정 실패:', responsedata.message);
       }

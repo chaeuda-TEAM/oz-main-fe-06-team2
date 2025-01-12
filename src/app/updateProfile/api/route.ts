@@ -7,17 +7,14 @@ export const POST = async (
   req: NextRequest
 ): Promise<NextResponse> => {
   try {
-    // 1. 요청에서 사용자 정보 받기
     const userProfileData = await req.json();
 
-    // 2. 리프레시 토큰 가져오기
     const refreshToken = req.cookies.get('refreshToken')?.value;
     
     if (!refreshToken) {
       return NextResponse.json({ success: false, message: '리프레시 토큰이 없습니다.' });
     }
 
-    // 3. 리프레시 토큰으로 엑세스 토큰 갱신
     const refreshResponse = await sendRefreshTokenRequest(refreshToken);
 
     if (!refreshResponse.success || !refreshResponse.tokens?.access) {
@@ -26,12 +23,11 @@ export const POST = async (
 
     const accessToken = refreshResponse.tokens.access;
 
-    // 4. 갱신된 엑세스 토큰을 Authorization 헤더에 넣어 사용자 정보 수정
     const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/update-profile`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`, // 엑세스 토큰을 Authorization 헤더에 추가
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(userProfileData),
     });
@@ -45,7 +41,7 @@ export const POST = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`, // 엑세스 토큰을 Authorization 헤더에 추가
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
