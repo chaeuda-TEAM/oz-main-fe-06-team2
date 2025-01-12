@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-
+import SearchModal from '@/components/modals/SearchModal';
 import useAuthStore from '@/stores/authStore';
 import { useSearchParams } from 'next/navigation';
 import { jwtDecrypt } from '@/utils/jwtDecrypt';
-import SearchModal from '@/components/modals/SearchModal';
 
 const NaverMap = dynamic(() => import('../components/NaverMap'), {
   loading: () => (
@@ -23,16 +22,12 @@ const NaverMap = dynamic(() => import('../components/NaverMap'), {
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [topSearchInput, setTopSearchInput] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const { socialLogin, socialUser } = useAuthStore();
+  const { socialLogin } = useAuthStore();
+  const [initialCenter, setInitialCenter] = useState({ lat: 37.5656, lng: 126.9769 });
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setTopSearchInput(true);
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
   };
 
   const searchParams = useSearchParams();
@@ -51,20 +46,12 @@ const Home = () => {
     };
 
     fetchDecryptedUser();
-  }, [user]);
+  }, [user, socialLogin]);
 
   return (
     <div className="relative">
-      <NaverMap
-        topSearchInput={topSearchInput}
-        searchQuery={searchQuery}
-        handleSearchChange={handleSearchChange}
-      />
-      <SearchModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        handleSearchChange={handleSearchChange}
-      />
+      <NaverMap topSearchInput={topSearchInput} initialCenter={initialCenter} initialZoom={13} />
+      <SearchModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };
