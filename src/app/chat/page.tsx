@@ -92,7 +92,7 @@ const ChatPage = () => {
             <Menu size={24} />
           </button>
         </header>
-        <ChatRoom chatId={18} />
+        <ChatRoom chatId={24} />
       </div>
     </div>
   );

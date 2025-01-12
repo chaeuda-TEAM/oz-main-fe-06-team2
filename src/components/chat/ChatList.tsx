@@ -25,7 +25,7 @@ const ChatList: React.FC<ChatListProps> = ({
     setError(null);
 
     try {
-      const response = await createChatRequest(accessToken, 10);
+      const response = await createChatRequest(accessToken, 11);
 
       if (response.success) {
         const newChat = response.chatRoom;
