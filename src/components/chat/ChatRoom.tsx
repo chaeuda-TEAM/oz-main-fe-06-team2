@@ -143,9 +143,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
               <p className="text-xs text-[#71829b]">{message.sender}</p>
               <div
                 className={`p-3 rounded-xl ${
-                  message.sender === myName
-                    ? 'bg-[#f22929] text-white'
-                    : 'bg-[#cbc9c9] text-[#181818]'
+                  message.sender === myName ? 'bg-kick text-white' : 'bg-[#cbc9c9] text-[#181818]'
                 }`}
               >
                 <p className="text-sm break-words leading-relaxed">{message.content}</p>
@@ -165,13 +163,13 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
             onChange={e => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="메시지를 입력하세요."
-            className="flex-1 px-4 py-3 border border-[#d9d9d9] rounded-l-lg focus:outline-none focus:border-[#f22929] text-sm"
+            className="flex-1 px-4 py-3 border border-[#d9d9d9] rounded-l-lg focus:outline-none focus:border-kick text-sm"
             disabled={!isConnected}
           />
           <button
             onClick={sendMessage}
             disabled={!isConnected || !inputMessage.trim()}
-            className="bg-[#f22929] text-white px-5 rounded-r-lg hover:bg-[#f22929]/90 disabled:opacity-50 transition-colors"
+            className="bg-kick text-white px-5 rounded-r-lg hover:bg-kick/90 disabled:opacity-50 transition-colors"
             aria-label="Send message"
           >
             <Send size={18} />
