@@ -9,21 +9,15 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [senderNames, setSenderNames] = useState<Record<string | number, string>>({});
   const accessToken = useAccessToken();
   const { user, socialUser } = useAuthStore();
   const myName = user?.username || socialUser?.username;
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const connect = useCallback(() => {
-    if (!accessToken) {
-      setError('Failed to get accessToken');
-      return;
-    }
+    if (!accessToken) return;
 
-    setError(null);
     socketRef.current = new WebSocket(
       `${process.env.NEXT_PUBLIC_WS_URL}/${chatId}/?token=${encodeURIComponent(accessToken)}`,
     );
@@ -37,18 +31,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
     };
 
     socketRef.current.onmessage = event => {
-      // console.log('Received message:', event.data);
       try {
         const data = JSON.parse(event.data);
-        if (data.type === 'error') {
-          setError(`Server error: ${data.message}`);
-        } else if (data.type === 'connection_established') {
-          const userInfo = data.user_info;
-          setSenderNames(prev => ({
-            ...prev,
-            [userInfo.id]: userInfo.username,
-          }));
-
+        if (data.type === 'connection_established') {
           const prevMessages = (data.prev_messages || []).map((msg: any) => ({
             id: msg.id?.toString() || Date.now().toString(),
             content: msg.message || '',
@@ -63,13 +48,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
 
           setMessages(prevMessages);
         } else {
-          if (data.sender && typeof data.sender === 'object') {
-            setSenderNames(prev => ({
-              ...prev,
-              [data.sender.id]: data.sender.username,
-            }));
-          }
-
           const newMessage: Message = {
             id: data.id?.toString() || Date.now().toString(),
             content: data.message || '',
@@ -88,18 +66,15 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
       } catch (err) {
         console.error('Error parsing message:', err);
         console.error('Raw message data:', event.data);
-        setError('Failed to process incoming message');
       }
     };
 
     socketRef.current.onerror = error => {
       console.error('WebSocket error:', error);
-      setError('WebSocket connection error. Attempting to reconnect...');
       setIsConnected(false);
     };
 
-    socketRef.current.onclose = event => {
-      // console.log(`WebSocket connection closed for chat ${chatId}`, event.code, event.reason);
+    socketRef.current.onclose = () => {
       setIsConnected(false);
       reconnectTimeoutRef.current = setTimeout(() => {
         console.log('Attempting to reconnect...');
@@ -147,10 +122,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
     }
   };
 
-  const clearError = () => {
-    setError(null);
-  };
-
   useEffect(() => {
     connect();
     return () => {
@@ -159,29 +130,34 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
   }, [connect, disconnect]);
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-4rem)]">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col h-full bg-white">
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.map(message => (
           <div
             key={message.id}
             className={`flex ${message.sender === myName ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`max-w-[70%] ${message.sender === myName ? 'order-1' : 'order-2'}`}>
-              <p className="text-xs text-gray-500 mb-1">{message.sender}</p>
+            <div
+              className={`max-w-[70%] space-y-2 ${message.sender === myName ? 'order-1' : 'order-2'}`}
+            >
+              <p className="text-xs text-[#71829b]">{message.sender}</p>
               <div
-                className={`p-3 rounded-lg ${
-                  message.sender === myName ? 'bg-kick text-white' : 'bg-gray-200 text-gray-800'
+                className={`p-3 rounded-xl ${
+                  message.sender === myName
+                    ? 'bg-[#f22929] text-white'
+                    : 'bg-[#cbc9c9] text-[#181818]'
                 }`}
               >
-                <p className="break-words">{message.content}</p>
+                <p className="text-sm break-words leading-relaxed">{message.content}</p>
               </div>
-              <p>{message.createdAt.toLocaleTimeString()}</p>
+              <p className="text-xs text-[#71829b]">{message.createdAt.toLocaleTimeString()}</p>
             </div>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-white">
+
+      <div className="p-4 border-t border-[#d9d9d9]">
         <div className="flex items-stretch">
           <input
             type="text"
@@ -189,16 +165,16 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
             onChange={e => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="메시지를 입력하세요."
-            className="flex-1 p-2 border rounded-l-md focus:outline-none"
+            className="flex-1 px-4 py-3 border border-[#d9d9d9] rounded-l-lg focus:outline-none focus:border-[#f22929] text-sm"
             disabled={!isConnected}
           />
           <button
             onClick={sendMessage}
             disabled={!isConnected || !inputMessage.trim()}
-            className="bg-kick text-white px-4 rounded-r-md disabled:opacity-50"
+            className="bg-[#f22929] text-white px-5 rounded-r-lg hover:bg-[#f22929]/90 disabled:opacity-50 transition-colors"
             aria-label="Send message"
           >
-            <Send size={20} />
+            <Send size={18} />
           </button>
         </div>
       </div>
