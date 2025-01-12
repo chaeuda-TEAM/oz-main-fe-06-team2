@@ -27,7 +27,7 @@ export const POST = async (
     const accessToken = refreshResponse.tokens.access;
 
     // 4. 갱신된 엑세스 토큰을 Authorization 헤더에 넣어 사용자 정보 수정
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/update-profile`, {
+    const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/update-profile`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -36,12 +36,22 @@ export const POST = async (
       body: JSON.stringify(userProfileData),
     });
 
-    if (response.status !== 200) {
-      const errorData = await response.json();
+    if (updateResponse.status !== 200) {
+      const errorData = await updateResponse.json();
       return NextResponse.json({ success: false, message: errorData.message || '회원정보 수정 실패' });
     }
 
-    return NextResponse.json({ success: true, message: '회원정보 수정 성공' });
+    const updatedResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`, // 엑세스 토큰을 Authorization 헤더에 추가
+      },
+    });
+
+    const data = await updatedResponse.json();
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error('API 요청 중 에러 발생:', error);
     return NextResponse.json({

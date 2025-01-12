@@ -23,7 +23,7 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [topSearchInput, setTopSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { socialLogin, socialUser } = useAuthStore();
+  const { login } = useAuthStore();
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -42,7 +42,7 @@ const Home = () => {
       if (user) {
         const userData = await jwtDecrypt(user);
         if (userData) {
-          socialLogin(userData);
+          login(userData);
         } else {
           console.error('사용자 정보를 복호화할 수 없습니다.');
         }
