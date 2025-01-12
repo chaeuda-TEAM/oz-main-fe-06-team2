@@ -25,13 +25,11 @@ const SearchPage = () => {
           initialZoom={14}
         />
       </div>
-      <div className="w-[25%]">
+      <div className="w-[25%] ml-[20px] flex items-center justify-center">
         {selectedLocation ? (
           <ProductList location={selectedLocation} onProductClick={setSelectedProductId} />
         ) : (
-          <div className=" flex items-center justify-center">
-            원하시는 지역의 매물을 검색하세요.
-          </div>
+          <div>원하시는 지역의 매물을 검색하세요.</div>
         )}
       </div>
       {selectedProductId && (
