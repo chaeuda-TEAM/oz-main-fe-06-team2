@@ -1,5 +1,8 @@
-import { FirstSelectRegion, SecondSelectRegion } from '@/constants/region';
+
+import { FirstSelectRegion, SecondSelectRegion } from './SelectRegion';
+// import { FirstSelectRegion, SecondSelectRegion } from '@/constants/region';
 import { useState, useEffect } from 'react';
+import { Location } from '@/types/product';
 
 interface RegionFilterFormProps {
   onRegionChange: (lat: number, lng: number) => void;
@@ -31,7 +34,7 @@ const RegionFilterForm: React.FC<RegionFilterFormProps> = ({ onRegionChange }) =
   }, [selectedCategory, selectedOptions]);
 
   return (
-    <form className="mb-3 space-x-3">
+    <div className="mb-3 space-x-3">
       <select
         className="w-[140px] p-[10px] text-[0.8rem] bg-[#f4f4f4]"
         onChange={e => handleCategoryChange(e.target.value)}
@@ -46,6 +49,11 @@ const RegionFilterForm: React.FC<RegionFilterFormProps> = ({ onRegionChange }) =
 
       <select
         className="w-[140px] p-[10px] text-[0.8rem] bg-[#f4f4f4]"
+
+<!--         onChange={e => handleSecondRegionChange(e.target.value)}
+        value={selectedSecondRegion}
+      >
+        <option value="">지역을 선택하세요</option> -->
         onChange={e => handleRegionChange(e.target.value)}
         value={selectedRegion}
       >
@@ -55,8 +63,8 @@ const RegionFilterForm: React.FC<RegionFilterFormProps> = ({ onRegionChange }) =
           </option>
         ))}
       </select>
-    </form>
+    </div>
   );
 };
 
-export default RegionFilterForm;
+export default RegionFilter;

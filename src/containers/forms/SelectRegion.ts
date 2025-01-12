@@ -1,9 +1,16 @@
-interface Region {
+interface FirstRegion {
   value: string;
   name: string;
 }
 
-export const FirstSelectRegion: Region[] = [
+interface SecondRegion {
+  value: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+export const FirstSelectRegion: FirstRegion[] = [
   { value: 'default', name: '시/도' },
   { value: '강원', name: '강원' },
   { value: '경기', name: '경기' },
@@ -23,12 +30,11 @@ export const FirstSelectRegion: Region[] = [
   { value: '충북', name: '충북' },
 ];
 
-type SecondSelectRegionType = Record<string, Region[]>;
-
-export const SecondSelectRegion: SecondSelectRegionType = {
+export const SecondSelectRegion: Record<string, SecondRegion[]> = {
+  default: [{ value: '-', name: '-', latitude: 35.1152, longitude: 129.0185 }],
   부산: [
-    { value: '강서구', name: '강서구' },
-    { value: '금정구', name: '금정구' },
+    { value: '강서구', name: '강서구', latitude: 35.1152, longitude: 129.0185 },
+    { value: '금정구', name: '금정구', latitude: 35.2429, longitude: 129.0892 },
     { value: '기장군', name: '기장군' },
     { value: '남구', name: '남구' },
     { value: '동구', name: '동구' },
