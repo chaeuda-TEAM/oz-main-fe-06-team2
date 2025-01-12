@@ -42,3 +42,8 @@ export const Pro_heat: Record<string, string> = {
   briquette: '연탄보일러',
   heat_etc: '기타',
 };
+
+export interface Location {
+  latitude: number;
+  longitude: number;
+}
