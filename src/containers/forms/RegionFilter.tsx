@@ -1,38 +1,37 @@
-import { useState } from 'react';
+
 import { FirstSelectRegion, SecondSelectRegion } from './SelectRegion';
+// import { FirstSelectRegion, SecondSelectRegion } from '@/constants/region';
+import { useState, useEffect } from 'react';
 import { Location } from '@/types/product';
 
-interface RegionFilterProps {
-  onRegionSelect: (location: Location) => void;
+interface RegionFilterFormProps {
+  onRegionChange: (lat: number, lng: number) => void;
 }
 
-const RegionFilter = ({ onRegionSelect }: RegionFilterProps) => {
+const RegionFilterForm: React.FC<RegionFilterFormProps> = ({ onRegionChange }) => {
   const [selectedCategory, setSelectedCategory] = useState('default');
-  const [selectedSecondRegion, setSelectedSecondRegion] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('');
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    setSelectedSecondRegion('');
+    setSelectedRegion('');
   };
 
-  const handleSecondRegionChange = (value: string) => {
-    setSelectedSecondRegion(value);
-
-    if (value) {
-      const selectedRegion = SecondSelectRegion[selectedCategory]?.find(
-        region => region.value === value,
-      );
-
-      if (selectedRegion?.latitude && selectedRegion?.longitude) {
-        onRegionSelect({
-          latitude: selectedRegion.latitude,
-          longitude: selectedRegion.longitude,
-        });
-      }
+  const handleRegionChange = (region: string) => {
+    setSelectedRegion(region);
+    const selectedOption = SecondSelectRegion[selectedCategory].find(item => item.value === region);
+    if (selectedOption && selectedOption.lat && selectedOption.lng) {
+      onRegionChange(selectedOption.lat, selectedOption.lng);
     }
   };
 
   const selectedOptions = SecondSelectRegion[selectedCategory] || [];
+
+  useEffect(() => {
+    if (selectedOptions.length > 0 && !selectedRegion) {
+      handleRegionChange(selectedOptions[0].value);
+    }
+  }, [selectedCategory, selectedOptions]);
 
   return (
     <div className="mb-3 space-x-3">
@@ -50,10 +49,14 @@ const RegionFilter = ({ onRegionSelect }: RegionFilterProps) => {
 
       <select
         className="w-[140px] p-[10px] text-[0.8rem] bg-[#f4f4f4]"
-        onChange={e => handleSecondRegionChange(e.target.value)}
+
+<!--         onChange={e => handleSecondRegionChange(e.target.value)}
         value={selectedSecondRegion}
       >
-        <option value="">지역을 선택하세요</option>
+        <option value="">지역을 선택하세요</option> -->
+        onChange={e => handleRegionChange(e.target.value)}
+        value={selectedRegion}
+      >
         {selectedOptions.map(item => (
           <option key={item.value} value={item.value}>
             {item.name}
