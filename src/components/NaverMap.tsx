@@ -25,44 +25,44 @@ const NaverMap = ({
   const [marker, setMarker] = useState<any>(null);
 
   // 주소로 좌표 검색하는 함수
-  const searchAddressToCoordinate = (address: string) => {
-    if (!window.naver || !map || !marker) return;
+  // const searchAddressToCoordinate = (address: string) => {
+  //   if (!window.naver || !map || !marker) return;
 
-    window.naver.maps.Service.geocode(
-      {
-        query: address,
-      },
-      function (status, response) {
-        if (status === window.naver.maps.Service.Status.ERROR) {
-          console.log('Something Wrong!');
-          return;
-        }
+  //   window.naver.maps.Service.geocode(
+  //     {
+  //       query: address,
+  //     },
+  //     function (status, response) {
+  //       if (status === window.naver.maps.Service.Status.ERROR) {
+  //         console.log('Something Wrong!');
+  //         return;
+  //       }
 
-        if (response.v2.meta.totalCount === 0) {
-          console.log('totalCount' + response.v2.meta.totalCount);
-          return;
-        }
+  //       if (response.v2.meta.totalCount === 0) {
+  //         console.log('totalCount' + response.v2.meta.totalCount);
+  //         return;
+  //       }
 
-        const item = response.v2.addresses[0];
-        const point = new window.naver.maps.Point(Number(item.x), Number(item.y));
+  //       const item = response.v2.addresses[0];
+  //       const point = new window.naver.maps.Point(Number(item.x), Number(item.y));
 
-        console.log({
-          address: item.roadAddress || item.jibunAddress,
-          coordinate: {
-            lat: Number(item.y),
-            lng: Number(item.x),
-          },
-        });
-        map.setCenter(point);
-        marker.setPosition(point);
-      },
-    );
-  };
+  //       console.log({
+  //         address: item.roadAddress || item.jibunAddress,
+  //         coordinate: {
+  //           lat: Number(item.y),
+  //           lng: Number(item.x),
+  //         },
+  //       });
+  //       map.setCenter(point);
+  //       marker.setPosition(point);
+  //     },
+  //   );
+  // };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    searchAddressToCoordinate(searchAddress);
-  };
+  // const handleSearchSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   searchAddressToCoordinate(searchAddress);
+  // };
 
   useEffect(() => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -76,15 +76,15 @@ const NaverMap = ({
         zoomControl: false,
       };
 
-      const newMap = new window.naver.maps.Map(mapRef.current, mapOptions);
+      new window.naver.maps.Map(mapRef.current, mapOptions);
 
-      const newMarker = new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(initialCenter.lat, initialCenter.lng),
-        map: newMap,
-      });
+      // const newMarker = new window.naver.maps.Marker({
+      //   position: new window.naver.maps.LatLng(initialCenter.lat, initialCenter.lng),
+      //   map: newMap,
+      // });
 
-      setMap(newMap);
-      setMarker(newMarker);
+      // setMap(newMap);
+      // setMarker(newMarker);
     };
 
     const existingScript = document.querySelector('script[src*="maps.js"]');
@@ -107,7 +107,7 @@ const NaverMap = ({
     <div className="relative">
       {topSearchInput && (
         <div className="absolute right-5 z-30 w-[300px] p-5">
-          <form onSubmit={handleSearchSubmit} className="flex gap-2">
+          <form className="flex gap-2">
             <input
               type="text"
               value={searchAddress}
