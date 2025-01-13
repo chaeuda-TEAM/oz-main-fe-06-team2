@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import NaverMap from '@/components/NaverMap';
 import RegionFilterForm from '@/containers/forms/RegionFilter';
-import { useState } from 'react';
 import { ProductList } from './_compoenets/ProductList';
 import { ProductDetailModal } from '../product/detail/[product_id]/modal';
 import { Location } from '@/types/product';
@@ -12,9 +11,10 @@ const SearchPage = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const handleRegionSelect = (location: Location) => {
     setSelectedLocation(location);
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
