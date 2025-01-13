@@ -24,7 +24,7 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [topSearchInput, setTopSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { login } = useAuthStore();
+  const { login, user } = useAuthStore();
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -36,14 +36,14 @@ const Home = () => {
   };
 
   const searchParams = useSearchParams();
-  const user = searchParams.get('user');
+  const userData = searchParams.get('user');
 
   useEffect(() => {
     const fetchDecryptedUser = async () => {
-      if (user) {
-        const userData = await jwtDecrypt(user);
-        if (userData) {
-          login(userData);
+      if (userData) {
+        const decryptedUserData = await jwtDecrypt(userData);
+        if (decryptedUserData) {
+          login(decryptedUserData);
         } else {
           console.error('사용자 정보를 복호화할 수 없습니다.');
         }
@@ -51,8 +51,8 @@ const Home = () => {
     };
 
     fetchDecryptedUser();
-  }, [user]);
-
+  }, [userData]);
+console.log(user);
   return (
     <div className="relative">
       <NaverMap
