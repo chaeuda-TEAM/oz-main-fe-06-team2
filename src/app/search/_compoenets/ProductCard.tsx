@@ -1,3 +1,4 @@
+import { Pro_type } from '@/types/product';
 import Image from 'next/image';
 
 interface ProductCardProps {
@@ -29,25 +30,30 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, onClick }: ProductCardProps) => {
+  const formatDate = (dateString: string) => {
+    return dateString.slice(0, 10).replace(/-/g, '/');
+  };
+
   return (
-    <div onClick={onClick} className="cursor-pointer border overflow-hidden">
+    <div onClick={onClick} className="w-full cursor-pointer border overflow-hidden">
       <div className="relative h-48">
         <Image
           src={product.images}
           alt={product.pro_title}
           fill
+          sizes="100%"
           className="object-cover"
           priority={false}
         />
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col p-2">
         <h3 className="font-bold">{product.pro_price.toLocaleString()}원</h3>
         <p className="text-sm mt-1">{product.add_new}</p>
-        <div>
+        <div className="flex justify-between items-center">
           <p className="text-sm mt-1">
-            {product.pro_type} | {product.pro_supply_a}㎡
+            {Pro_type[product.pro_type]} | {product.pro_supply_a}㎡
           </p>
-          <p className="text-sm mt-1">{product.created_at}</p>
+          <p className="text-xs mt-1 text-gray-400">등록일: {formatDate(product.created_at)}</p>
         </div>
       </div>
     </div>

@@ -73,7 +73,7 @@ export const ProductList = ({ location, onProductClick }: ProductListProps) => {
   }
 
   return (
-    <div className="flex flex-col space-y-4 overflow-auto">
+    <div className="flex w-full items-center flex-col space-y-4">
       {products.length > 0 ? (
         products.map(product => (
           <ProductCard

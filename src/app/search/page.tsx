@@ -26,19 +26,19 @@ const SearchPage = () => {
         />
       </div>
       <div className="w-[25%] ml-[20px] flex items-center justify-center">
+        {selectedProductId && (
+          <ProductDetailModal
+            productId={selectedProductId}
+            isOpen={true}
+            onClose={() => setSelectedProductId(null)}
+          />
+        )}
         {selectedLocation ? (
           <ProductList location={selectedLocation} onProductClick={setSelectedProductId} />
         ) : (
           <div>원하시는 지역의 매물을 검색하세요.</div>
         )}
       </div>
-      {selectedProductId && (
-        <ProductDetailModal
-          productId={selectedProductId}
-          isOpen={true}
-          onClose={() => setSelectedProductId(null)}
-        />
-      )}
     </div>
   );
 };
