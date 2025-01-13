@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google/callback/?code=${code}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google/callback?code=${code}`,
       {
         method: 'GET',
         headers: {
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    console.log('확인', data);
+    
     if (data.success) {
       const jwt = await new EncryptJWT({
         email: data.user.email,
