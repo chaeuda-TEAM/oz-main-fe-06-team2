@@ -61,18 +61,18 @@
 
 //     // 최종 수정 버튼 클릭
 //     const onSubmit = async (data: SocialSignupFormData): Promise<void> => {
-  
+
 //       try {
 //         const response = await fetch(`${BASE_URL}/api/users/update-profile`, {
 //           method: 'PUT',
 //           headers: { 'Content-Type': 'application/json' },
 //           body: JSON.stringify(data),
 //         });
-  
+
 //         if (response.status !== 200) {
 //           return console.log('회원수정 실패');
 //         };
-  
+
 //         if (response.status === 200) {
 //           alert('회원가입 성공! 로그인 페이지로 이동합니다.');
 //           router.push(`${DEV_API_URL}/auth/signIn`);
@@ -119,10 +119,14 @@ import {
 } from '@/app/auth/schemas/SocialEditMypageSchema';
 import { useEffect } from 'react';
 import FormButton from '@/components/form/FormButton';
+import useUpdateProfile from '@/hooks/useUpdateProfile';
+import useFetchProfile from '@/hooks/useFetchProfile';
 
 const MyPage = () => {
   const { login, user } = useAuthStore();
   const router = useRouter();
+  const { updateProfile } = useUpdateProfile();
+  const { getUpdateProfile } = useFetchProfile();
 
   const {
     register,
@@ -163,40 +167,30 @@ const MyPage = () => {
 
   // 최종 수정 버튼 클릭
   const onSubmit = async (data: SocialEditMypageFormData): Promise<void> => {
+
     try {
-      const response = await fetch('/updateProfile/api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      console.log(response);
-      const responsedata = await response.json();
-      console.log(responsedata);
+      const result = await updateProfile(data);
 
-      if (responsedata.success) {
-        router.back()
-        login(responsedata.user)
-
-      } else {
-        console.error('회원정보 수정 실패:', responsedata.message);
+      if (result.success) {
+        const result = await getUpdateProfile();
+        console.log(result);
+        router.back();
+        login(result.user);
       }
     } catch (error) {
-      console.error('API 요청 중 에러 발생:', error);
+      console.error('회원정보 수정 실패:', error);
     }
-
   };
 
   return (
     <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
         <div className="flex flex-col space-y-1.5">
-          <label htmlFor='email'>이메일 주소</label>
+          <label htmlFor="email">이메일 주소</label>
           <input
-            id='email'
-            type='email'
-            defaultValue={user && user.email || ''}
+            id="email"
+            type="email"
+            defaultValue={(user && user.email) || ''}
             className="border border-gray-400 w-full h-9 text-4 p-2"
             disabled={true}
           />

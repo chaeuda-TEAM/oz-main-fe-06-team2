@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Menu, MapPin } from 'lucide-react';
-import ChatList from '@/components/ChatList';
-// import ChatDisplay from '@/components/ChatDisplay';
-import { Chat, Message } from '@/types/chat';
+import ChatList from '@/components/chat/ChatList';
+import { Chat } from '@/types/chat';
 import { fetchChatList } from '@/api/chat';
+import ChatRoom from '@/components/chat/ChatRoom';
+import useAccessToken from '@/hooks/useAccessToken';
 
 const ChatPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,43 +14,37 @@ const ChatPage = () => {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
-  const accessToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDI4MTc4LCJpYXQiOjE3MzY0MjYzNzgsImp0aSI6IjMzOTU1MmQ3Y2VlYjQyODI5ODBkOTUwZjk1MTE1ODViIiwidXNlcl9pZCI6MjMxfQ.hXarEoFm1eoBuZz7WEk_1uGzcnWF1Kz307psEVmhh7k';
+  const accessToken = useAccessToken();
 
   useEffect(() => {
-    const loadChatList = async () => {
-      if (!accessToken) {
-        router.push('/login');
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        const chats = await fetchChatList(accessToken);
-        setChatList(chats);
-        if (chats.length > 0) {
-          setSelectedChatId(chats[0].id);
+    if (accessToken) {
+      const fetchChats = async () => {
+        try {
+          const chats = await fetchChatList(accessToken);
+          setChatList(chats);
+          setIsLoading(false);
+        } catch (err) {
+          console.error(err);
+          setError('채팅 목록을 가져오지 못했습니다.');
+          setIsLoading(false);
         }
-      } catch (err) {
-        setError('Failed to load chat list. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
 
-    loadChatList();
-  }, [accessToken, router]);
+      fetchChats();
+    }
+  }, [accessToken]);
+
+  const handleChatCreated = (newChat: Chat) => {
+    setChatList(prevChats => [newChat, ...prevChats]);
+    setSelectedChatId(newChat.id);
+  };
+
+  const handleProductMove = () => {
+    alert('연결할예정 ㄱㄷ');
+  };
 
   const selectedChat = chatList.find(chat => chat.id === selectedChatId);
-
-  const dummyMessages: Message[] = [
-    { id: '1', user: '한효찬', content: '안녕하세요' },
-    { id: '2', user: '주민재', content: '안녕하세요' },
-    { id: '3', user: '한효찬', content: '오늘 날씨가 좋네요' },
-    { id: '4', user: '주민재', content: '네, 정말 좋습니다' },
-  ];
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -61,48 +55,56 @@ const ChatPage = () => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-screen">
+    <div className="flex h-screen bg-[#f6f6f6]">
       <div
-        className={`md:w-64 bg-white md:block transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? 'block' : 'hidden'
-        }`}
+        className={`w-60 bg-white border-r border-[#d9d9d9] transition-all duration-300 ease-in-out ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } fixed md:relative md:translate-x-0 z-10 h-full`}
       >
         <ChatList
-          chats={chatList}
+          initialChats={chatList}
           onSelectChat={setSelectedChatId}
           selectedChatId={selectedChatId}
+          onChatCreated={handleChatCreated}
         />
       </div>
-      <div className="flex-1 flex flex-col">
-        <header className="bg-white shadow-md flex items-center justify-between p-4">
-          {selectedChat ? (
-            <div className="flex flex-col">
-              <h1 className="text-xl md:text-2xl font-bold text-gray-800">
-                {selectedChat.product_title}
-              </h1>
-
-              <div className="flex items-center text-gray-600 mt-1">
-                <span className="text-lg font-semibold">
-                  {selectedChat.seller} - {selectedChat.product_price.toLocaleString()}원
-                </span>
+      <div className="flex-1 flex flex-col w-full md:w-[calc(100%-20rem)]">
+        <header className="bg-gray-300 border-b border-[#d9d9d9] flex items-center justify-between p-4">
+          <div className="flex items-center">
+            <button
+              className="mr-4 text-[#71829b] md:hidden"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              aria-label="Toggle sidebar"
+            >
+              <Menu size={24} />
+            </button>
+            {selectedChat ? (
+              <div className="">
+                <h1 className="text-lg font-medium text-[#181818]">{selectedChat.product_title}</h1>
+                <div className="flex items-center text-[#181818] mt-1">
+                  <span className="text-sm">
+                    {selectedChat.seller} · {selectedChat.product_price.toLocaleString()}원
+                  </span>
+                </div>
+                <div className="flex items-center text-[#181818] mt-1">
+                  <MapPin size={14} className="mr-1" />
+                  <span className="text-xs mr-2">{selectedChat.product_address}</span>
+                  <button
+                    className="bg-gray-400 text-white font-thin text-xs px-2 py-1"
+                    onClick={handleProductMove}
+                  >
+                    매물 확인하기
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center text-gray-500 mt-1">
-                <MapPin size={16} className="mr-2" />
-                <span className="text-sm">{selectedChat.product_address}</span>
-              </div>
-            </div>
-          ) : (
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800">채팅을 선택해주세요</h1>
-          )}
-          <button
-            className="md:hidden text-gray-600"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            aria-label="Toggle sidebar"
-          >
-            <Menu size={24} />
-          </button>
+            ) : (
+              <h1 className="text-lg font-medium text-[#181818]">채팅을 선택해주세요</h1>
+            )}
+          </div>
         </header>
-        {/* <ChatDisplay messages={dummyMessages} /> */}
+        <div className="flex-1 overflow-hidden">
+          <ChatRoom chatId={24} />
+        </div>
       </div>
     </div>
   );

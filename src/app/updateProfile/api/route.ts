@@ -1,27 +1,15 @@
-'use server';
+// 'use server';
+'use client';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { sendRefreshTokenRequest } from '@/api/auth';
+import useAccessToken from '@/hooks/useAccessToken';
 
 export const POST = async (
   req: NextRequest
 ): Promise<NextResponse> => {
   try {
     const userProfileData = await req.json();
-
-    const refreshToken = req.cookies.get('refreshToken')?.value;
-    
-    if (!refreshToken) {
-      return NextResponse.json({ success: false, message: '리프레시 토큰이 없습니다.' });
-    }
-
-    const refreshResponse = await sendRefreshTokenRequest(refreshToken);
-
-    if (!refreshResponse.success || !refreshResponse.tokens?.access) {
-      return NextResponse.json({ success: false, message: '엑세스 토큰 갱신 실패' });
-    }
-
-    const accessToken = refreshResponse.tokens.access;
+    const accessToken = useAccessToken();
 
     const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/update-profile`, {
       method: 'PUT',

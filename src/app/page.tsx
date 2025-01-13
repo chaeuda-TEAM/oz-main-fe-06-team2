@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import SearchModal from '../components/SearchModal';
+
 import useAuthStore from '@/stores/authStore';
 import { useSearchParams } from 'next/navigation';
 import { jwtDecrypt } from '@/utils/jwtDecrypt';
+import SearchModal from '@/components/modals/SearchModal';
 
 const NaverMap = dynamic(() => import('../components/NaverMap'), {
   loading: () => (
