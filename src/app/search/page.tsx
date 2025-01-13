@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import NaverMap from '@/components/NaverMap';
 import RegionFilterForm from '@/containers/forms/RegionFilter';
 import { useState } from 'react';
@@ -10,9 +11,13 @@ import { Location } from '@/types/product';
 const SearchPage = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-
+  const [searchQuery, setSearchQuery] = useState('');
+  
   const handleRegionSelect = (location: Location) => {
     setSelectedLocation(location);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -23,6 +28,8 @@ const SearchPage = () => {
           topSearchInput={false}
           initialCenter={{ lat: 37.5656, lng: 126.9769 }}
           initialZoom={14}
+          searchQuery={searchQuery}
+          handleSearchChange={handleSearchChange}
         />
       </div>
       <div className="w-[25%] ml-[20px] flex items-center justify-center">

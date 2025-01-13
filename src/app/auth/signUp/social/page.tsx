@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,13 +9,13 @@ import FormInput from '@/components/form/SocialSignUpFormInput';
 import FormButton from '@/components/form/FormButton';
 import { jwtDecrypt } from '@/utils/jwtDecrypt';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
 
 const SocialSignUpPage = () => {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const user = searchParams.get('user');
+  const userData = searchParams.get('user');
 
   const {
     register,
@@ -33,11 +33,11 @@ const SocialSignUpPage = () => {
 
   useEffect(() => {
     const fetchDecryptedUser = async () => {
-      if (user) {
-        const userData = await jwtDecrypt(user);
-        if (userData) {
-          setValue('email', userData.email);
-          setValue('username', userData.username);
+      if (userData) {
+        const decryptedUserData = await jwtDecrypt(userData);
+        if (decryptedUserData) {
+          setValue('email', decryptedUserData.email);
+          setValue('username', decryptedUserData.username);
         } else {
           console.error('사용자 정보를 복호화할 수 없습니다.');
         }
@@ -45,7 +45,7 @@ const SocialSignUpPage = () => {
     };
 
     fetchDecryptedUser();
-  }, [user, setValue]);
+  }, [userData, setValue]);
 
   const inputField = [
     {
@@ -73,12 +73,7 @@ const SocialSignUpPage = () => {
 
   // 최종 회원가입
   const onSubmit = async (data: SocialSignupFormData): Promise<void> => {
-    if (data.phone_number === undefined) {
-      return;
-    }
-
     try {
-      console.log(data);
       const response = await fetch(`${BASE_URL}/api/users/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,24 +92,29 @@ const SocialSignUpPage = () => {
   };
 
   return (
-    <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
-        {inputField.map(item => (
-          <FormInput
-            key={item.id}
-            name={item.name as keyof SocialSignupFormData}
-            label={item.label}
-            id={item.id}
-            type={item.type}
-            register={register}
-            errorMessage={errors[item.name as keyof SocialSignupFormData]?.message}
-            disabled={item.disabled}
-            placeholder={item.placeholder}
-          />
-        ))}
-        <FormButton>회원가입</FormButton>
-      </form>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col w-[80%] sm:w-1/3 space-y-5"
+        >
+          {inputField.map(item => (
+            <FormInput
+              key={item.id}
+              name={item.name as keyof SocialSignupFormData}
+              label={item.label}
+              id={item.id}
+              type={item.type}
+              register={register}
+              errorMessage={errors[item.name as keyof SocialSignupFormData]?.message}
+              disabled={item.disabled}
+              placeholder={item.placeholder}
+            />
+          ))}
+          <FormButton>회원가입</FormButton>
+        </form>
+      </div>
+    </Suspense>
   );
 };
 

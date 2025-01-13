@@ -46,4 +46,17 @@ export const Pro_heat: Record<string, string> = {
 export interface Location {
   latitude: number;
   longitude: number;
-}
+};
+
+export type MyProduct = {
+  product_id: string;
+  images: string;
+  pro_title: string;
+  pro_price: number;
+  pro_type: string;
+  pro_supply_a: number;
+  add_new: string;
+  created_at: string;
+  is_liked: boolean;
+};
+

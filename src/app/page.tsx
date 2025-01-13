@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 
 import useAuthStore from '@/stores/authStore';
@@ -24,7 +24,7 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [topSearchInput, setTopSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { socialLogin, socialUser } = useAuthStore();
+  const { login, user } = useAuthStore();
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -36,14 +36,14 @@ const Home = () => {
   };
 
   const searchParams = useSearchParams();
-  const user = searchParams.get('user');
+  const userData = searchParams.get('user');
 
   useEffect(() => {
     const fetchDecryptedUser = async () => {
-      if (user) {
-        const userData = await jwtDecrypt(user);
-        if (userData) {
-          socialLogin(userData);
+      if (userData) {
+        const decryptedUserData = await jwtDecrypt(userData);
+        if (decryptedUserData) {
+          login(decryptedUserData);
         } else {
           console.error('사용자 정보를 복호화할 수 없습니다.');
         }
@@ -51,21 +51,23 @@ const Home = () => {
     };
 
     fetchDecryptedUser();
-  }, [user]);
-
+  }, [userData]);
+console.log(user);
   return (
-    <div className="relative">
-      <NaverMap
-        topSearchInput={topSearchInput}
-        searchQuery={searchQuery}
-        handleSearchChange={handleSearchChange}
-      />
-      <SearchModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        handleSearchChange={handleSearchChange}
-      />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="relative">
+        <NaverMap
+          topSearchInput={topSearchInput}
+          searchQuery={searchQuery}
+          handleSearchChange={handleSearchChange}
+        />
+        <SearchModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          handleSearchChange={handleSearchChange}
+        />
+      </div>
+    </Suspense>
   );
 };
 
