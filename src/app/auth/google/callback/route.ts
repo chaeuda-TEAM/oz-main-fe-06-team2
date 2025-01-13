@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google/callback?code=${code}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google/callback/dev?code=${code}`,
       {
         method: 'GET',
         headers: {

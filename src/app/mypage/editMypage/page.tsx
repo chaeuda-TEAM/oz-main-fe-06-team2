@@ -5,17 +5,12 @@ import { useRouter } from 'next/navigation';
 import FormInput from '@/components/form/SocialMypageFormInput';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  SocialEditMypageFormData,
-  SocialEditMypageSchema,
-} from '@/app/auth/schemas/SocialEditMypageSchema';
+import { EditMypageFormData, EditMypageSchema } from '@/app/auth/schemas/EditMypageSchema';
 import { useEffect } from 'react';
 import FormButton from '@/components/form/FormButton';
 
 import useUpdateProfile from '@/hooks/useUpdateProfile';
 import useFetchProfile from '@/hooks/useFetchProfile';
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
 
 const MyPage = () => {
   const { login, user } = useAuthStore();
@@ -28,13 +23,14 @@ const MyPage = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<SocialEditMypageFormData>({
-    resolver: zodResolver(SocialEditMypageSchema),
+  } = useForm<EditMypageFormData>({
+    resolver: zodResolver(EditMypageSchema),
     mode: 'onBlur',
     defaultValues: {
-      //   email: '',
       username: '',
       phone_number: '',
+      password: '',
+      password_confirm: ''
     },
   });
 
@@ -55,20 +51,37 @@ const MyPage = () => {
     },
   ];
 
+  const passwordField = [
+    {
+      label: '새 비밀번호',
+      id: 'password',
+      type: 'password',
+      name: 'password',
+      placeholder: '비밀번호를 입력하세요',
+    },
+    {
+      label: '비밀번호 확인',
+      id: 'password_confirm',
+      type: 'password',
+      name: 'password_confirm',
+      placeholder: '비밀번호를 한번 더 입력하세요',
+    },
+  ];
+
   useEffect(() => {
     setValue('username', user?.username || '');
     setValue('phone_number', user?.phone_number || '');
   }, [user]);
 
   // 최종 수정 버튼 클릭
-  const onSubmit = async (data: SocialEditMypageFormData): Promise<void> => {
-
+  const onSubmit = async (data: EditMypageFormData): Promise<void> => {
     try {
+      console.log(data);
       const result = await updateProfile(data);
 
       if (result.success) {
+        alert('회원 정보를 수정하시겠습니까?');
         const result = await getUpdateProfile();
-        console.log(result);
         router.back();
         login(result.user);
       }
@@ -94,16 +107,31 @@ const MyPage = () => {
         {inputField.map(item => (
           <FormInput
             key={item.id}
-            name={item.name as keyof SocialEditMypageFormData}
+            name={item.name as keyof EditMypageFormData}
             label={item.label}
             id={item.id}
             type={item.type}
             register={register}
-            errorMessage={errors[item.name as keyof SocialEditMypageFormData]?.message}
-            disabled={item.disabled}
+            errorMessage={errors[item.name as keyof EditMypageFormData]?.message}
             placeholder={item.placeholder}
           />
         ))}
+        {user?.isSocialUser ? null : (
+          <>
+            {passwordField.map(item => (
+              <FormInput
+                key={item.id}
+                name={item.name as keyof EditMypageFormData}
+                label={item.label}
+                id={item.id}
+                type={item.type}
+                register={register}
+                errorMessage={errors[item.name as keyof EditMypageFormData]?.message}
+                placeholder={item.placeholder}
+              />
+            ))}
+          </>
+        )}
         <FormButton>정보 수정 완료</FormButton>
       </form>
     </div>

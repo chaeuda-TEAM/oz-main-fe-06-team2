@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/naver/callback?code=${code}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/naver/callback/dev?code=${code}`,
       {
         method: 'GET',
         headers: {
@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
+    console.log('dfgdfgdf', data);
     if (data.success) {
       const jwt = await new EncryptJWT({
         email: data.user.email,
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
 
       const redirectUrl = data.user.is_active
         ? `${data.redirect_url}?user=${jwt}`
-        : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
+        : `http://localhost:3000/auth/signUp/social?user=${jwt}`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
