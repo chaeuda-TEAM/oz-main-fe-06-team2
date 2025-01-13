@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-console.log('확인', data);
+
     if (data.success) {
       const jwt = await new EncryptJWT({
         email: data.user.email,
@@ -49,20 +49,21 @@ console.log('확인', data);
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
-      // 쿠키에 토큰 저장
-      responseObj.cookies.set('accessToken', data.tokens.access, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 30, // 30분
-      });
-
-      responseObj.cookies.set('refreshToken', data.tokens.refresh, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7일
-      });
+      if (data.user.is_active) {
+        responseObj.cookies.set('accessToken', data.tokens.access, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 30, // 30분
+        });
+  
+        responseObj.cookies.set('refreshToken', data.tokens.refresh, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7, // 7일
+        });
+      }
 
       return responseObj;
     }
