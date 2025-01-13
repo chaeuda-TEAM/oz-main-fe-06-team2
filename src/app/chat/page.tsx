@@ -103,7 +103,7 @@ const ChatPage = () => {
           </div>
         </header>
         <div className="flex-1 overflow-hidden">
-          <ChatRoom chatId={25} />
+          <ChatRoom chatId={24} />
         </div>
       </div>
     </div>
