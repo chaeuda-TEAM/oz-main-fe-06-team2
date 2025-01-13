@@ -99,7 +99,6 @@ const MyPage = () => {
             type={item.type}
             register={register}
             errorMessage={errors[item.name as keyof SocialEditMypageFormData]?.message}
-            disabled={item.disabled}
             placeholder={item.placeholder}
           />
         ))}
