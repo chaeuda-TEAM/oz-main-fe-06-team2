@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,7 +9,7 @@ import FormInput from '@/components/form/SocialSignUpFormInput';
 import FormButton from '@/components/form/FormButton';
 import { jwtDecrypt } from '@/utils/jwtDecrypt';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
 
 const SocialSignUpPage = () => {
   const router = useRouter();
@@ -92,24 +92,29 @@ const SocialSignUpPage = () => {
   };
 
   return (
-    <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
-        {inputField.map(item => (
-          <FormInput
-            key={item.id}
-            name={item.name as keyof SocialSignupFormData}
-            label={item.label}
-            id={item.id}
-            type={item.type}
-            register={register}
-            errorMessage={errors[item.name as keyof SocialSignupFormData]?.message}
-            disabled={item.disabled}
-            placeholder={item.placeholder}
-          />
-        ))}
-        <FormButton>회원가입</FormButton>
-      </form>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col w-[80%] sm:w-1/3 space-y-5"
+        >
+          {inputField.map(item => (
+            <FormInput
+              key={item.id}
+              name={item.name as keyof SocialSignupFormData}
+              label={item.label}
+              id={item.id}
+              type={item.type}
+              register={register}
+              errorMessage={errors[item.name as keyof SocialSignupFormData]?.message}
+              disabled={item.disabled}
+              placeholder={item.placeholder}
+            />
+          ))}
+          <FormButton>회원가입</FormButton>
+        </form>
+      </div>
+    </Suspense>
   );
 };
 
