@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import { ChevronDown, Copy } from 'lucide-react';
+import { createChatRequest } from '@/api/chat';
+import useAccessToken from '@/hooks/useAccessToken';
 
 interface ContactProps {
   phone_number: string;
+  productId: string;
 }
 
 const formatPhoneNumber = (phone: string) => {
@@ -19,8 +22,11 @@ const formatPhoneNumber = (phone: string) => {
   return phone;
 };
 
-export const Contact = ({ phone_number }: ContactProps) => {
+export const Contact = ({ phone_number, productId }: ContactProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const accessToken = useAccessToken();
 
   const handleCopyClick = async () => {
     try {
@@ -28,6 +34,28 @@ export const Contact = ({ phone_number }: ContactProps) => {
       alert('전화번호가 복사되었습니다.');
     } catch (err) {
       alert('복사에 실패했습니다.');
+    }
+  };
+
+  const handleChatButton = async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    if (!accessToken) return;
+
+    try {
+      const response = await createChatRequest(accessToken, parseInt(productId, 10));
+
+      if (response.success) {
+        alert('채팅방이 생성되었습니다.');
+      } else {
+        setErrorMessage(response.message || '채팅방 생성에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('채팅방 생성 오류: ', error);
+      setErrorMessage('알 수 없는 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,7 +80,14 @@ export const Contact = ({ phone_number }: ContactProps) => {
               </button>
             </div>
           </div>
-          <button className="w-full py-3 bg-gray-500 text-white hover:bg-gray-600">채팅</button>
+          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+          <button
+            onClick={handleChatButton}
+            className={`w-full py-3 text-white ${isLoading ? 'bg-gray-400' : 'bg-gray-500 hover:bg-gray-600'}`}
+            disabled={isLoading}
+          >
+            {isLoading ? '생성 중...' : '채팅'}
+          </button>
         </div>
       )}
     </div>

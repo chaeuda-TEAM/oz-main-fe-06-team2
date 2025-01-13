@@ -54,7 +54,7 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
             <div className="bg-white">
               <Images images={product.images} video={product.video} />
               <DetailContent product={product} />
-              <Contact phone_number={product.user.phone_number} />
+              <Contact phone_number={product.user.phone_number} productId={productId} />
             </div>
           ) : (
             <div>정보를 불러오는데 실패했습니다.</div>
