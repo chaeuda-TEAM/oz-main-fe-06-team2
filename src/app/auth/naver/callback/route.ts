@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { EncryptJWT } from 'jose';
 
-const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
+const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 
 export const dynamic = 'force-dynamic';
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/naver/callback?code=${code}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/naver/callback/dev?code=${code}`,
       {
         method: 'GET',
         headers: {
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
           sameSite: 'lax',
           maxAge: 60 * 30, // 30분
         });
-  
+
         responseObj.cookies.set('refreshToken', data.tokens.refresh, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',

@@ -11,11 +11,8 @@ import {
 } from '@/app/auth/schemas/SocialEditMypageSchema';
 import { useEffect } from 'react';
 import FormButton from '@/components/form/FormButton';
-
 import useUpdateProfile from '@/hooks/useUpdateProfile';
 import useFetchProfile from '@/hooks/useFetchProfile';
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
 
 const MyPage = () => {
   const { login, user } = useAuthStore();
@@ -62,7 +59,6 @@ const MyPage = () => {
 
   // 최종 수정 버튼 클릭
   const onSubmit = async (data: SocialEditMypageFormData): Promise<void> => {
-
     try {
       const result = await updateProfile(data);
 
@@ -100,7 +96,6 @@ const MyPage = () => {
             type={item.type}
             register={register}
             errorMessage={errors[item.name as keyof SocialEditMypageFormData]?.message}
-            disabled={item.disabled}
             placeholder={item.placeholder}
           />
         ))}

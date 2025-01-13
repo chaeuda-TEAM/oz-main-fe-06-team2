@@ -35,7 +35,7 @@ export const ProductCard = ({ product, onClick }: ProductCardProps) => {
   };
 
   return (
-    <div onClick={onClick} className="w-full cursor-pointer border overflow-hidden">
+    <div onClick={onClick} className="w-full cursor-pointer border overflow-hidden relative">
       <div className="relative h-48">
         <Image
           src={product.images}
@@ -44,9 +44,10 @@ export const ProductCard = ({ product, onClick }: ProductCardProps) => {
           sizes="100%"
           className="object-cover"
           priority={false}
+          style={{ zIndex: 1 }}
         />
       </div>
-      <div className="flex flex-col p-2">
+      <div className="flex flex-col p-2 relative">
         <h3 className="font-bold">{product.pro_price.toLocaleString()}원</h3>
         <p className="text-sm mt-1">{product.add_new}</p>
         <div className="flex justify-between items-center">
