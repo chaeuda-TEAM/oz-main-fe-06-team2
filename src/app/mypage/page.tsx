@@ -138,7 +138,7 @@
 
 'use client';
 
-import ViewProfile from './viewProfile';
+import ViewProfile from './ViewProfile';
 import EditProfile from './EditeProfile';
 import { useState } from 'react';
 
@@ -146,7 +146,7 @@ const MyPage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div className="w-full h-full flex">
+    <div className="w-full h-[100%] flex border border-black">
       <div className="bg-kick w-[20%]">
         <h2 className="text-white text-lg font-semibold">사이드바</h2>
         <ul className="space-y-4 mt-6 text-white">
