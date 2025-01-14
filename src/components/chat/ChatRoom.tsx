@@ -1,5 +1,5 @@
 import useAccessToken from '@/hooks/useAccessToken';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
 import { Send } from 'lucide-react';
 import useAuthStore from '@/stores/authStore';
 import { ChatRoomProps, Message } from '@/types/chat';
@@ -108,19 +108,13 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
     }
   };
 
-  useEffect(() => {
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, []);
+
+  useLayoutEffect(() => {
     scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      sendMessage();
-    }
-  };
+  }, [messages, scrollToBottom]);
 
   useEffect(() => {
     connect();
@@ -129,9 +123,14 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
     };
   }, [connect, disconnect]);
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-white">
-      <div ref={messagesEndRef} />
       <div className="flex-1 overflow-y-auto px-2 py-4 space-y-4">
         {messages.map(message => (
           <div
@@ -153,8 +152,8 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
-
       <div className="p-4 border-t border-[#d9d9d9]">
         <div className="flex items-stretch">
           <input
