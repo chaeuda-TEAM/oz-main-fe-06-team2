@@ -34,7 +34,9 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
     fetchProduct();
   }, [params.product_id]);
 
-  const handleUpdateClick = () => {};
+  const handleUpdateClick = () => {
+    router;
+  };
 
   return (
     <div className="flex flex-col items-center py-5">
