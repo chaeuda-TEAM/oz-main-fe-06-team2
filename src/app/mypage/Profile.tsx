@@ -11,7 +11,7 @@ interface EditProfileProps {
   handleToggle: () => void;
 }
 
-const ViewProfile = ({ handleToggle }: EditProfileProps) => {
+const Profile = ({ handleToggle }: EditProfileProps) => {
   const { user } = useAuthStore();
 
   const { register, setValue } = useForm<SocialSignupFormData>({
@@ -82,4 +82,4 @@ const ViewProfile = ({ handleToggle }: EditProfileProps) => {
   );
 };
 
-export default ViewProfile;
+export default Profile;
