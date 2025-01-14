@@ -9,7 +9,7 @@ import FormInput from '@/components/form/SocialSignUpFormInput';
 import FormButton from '@/components/form/FormButton';
 import { jwtDecrypt } from '@/utils/jwtDecrypt';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
+const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
 const SocialSignUpPage = () => {
   const router = useRouter();
@@ -17,7 +17,6 @@ const SocialSignUpPage = () => {
   const userData = searchParams.get('user');
 
   useEffect(() => {
-    console.log(11);
     const fetchDecryptedUser = async () => {
       if (userData) {
         const decryptedUserData = await jwtDecrypt(userData);

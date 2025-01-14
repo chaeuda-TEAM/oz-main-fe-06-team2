@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { EncryptJWT } from 'jose';
 
-const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
+const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 
 export const dynamic = 'force-dynamic';
