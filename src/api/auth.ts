@@ -23,7 +23,7 @@ export const sendLoginRequest = async (email: string, password: string): Promise
     }
 
     const data = await response.json();
-    console.log(data);
+
     cookieStore.set({
       name: 'accessToken',
       value: data.tokens.access,

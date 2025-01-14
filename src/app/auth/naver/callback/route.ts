@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
+
     if (data.success) {
       const jwt = await new EncryptJWT({
         email: data.user.email,
