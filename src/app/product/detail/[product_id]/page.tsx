@@ -35,14 +35,19 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
   }, [params.product_id]);
 
   const handleUpdateClick = () => {
-    router;
+    router.push(
+      `/product/update/${params.product_id}?product=${encodeURIComponent(JSON.stringify(product))}`,
+    );
   };
 
   return (
     <div className="flex flex-col items-center py-5">
       <div className="w-[60%]">
         <div className="flex justify-end mb-4">
-          <button className="bg-kick text-white text-sm rounded-lg p-2 flex items-center gap-1">
+          <button
+            onClick={handleUpdateClick}
+            className="bg-kick text-white text-sm rounded-lg p-2 flex items-center gap-1"
+          >
             <Pencil size={16} />
             수정
           </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ProductDetailModal } from '../product/detail/[product_id]/modal';
 import { Location } from '@/types/product';
 import { fetchNearbyProducts } from '@/api/product';
