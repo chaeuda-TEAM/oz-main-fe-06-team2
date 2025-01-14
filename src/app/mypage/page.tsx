@@ -67,15 +67,21 @@ const MyPage = () => {
     const confirmed = confirm('정말로 회원 탈퇴를 진행하시겠습니까?');
     if (!confirmed) return;
     try {
-      await sendWithdrawRequest();
-      const response = await fetch(`/auth/logout/api`);
+      const withdrawResponse = await sendWithdrawRequest();
 
-      // 응답 상태가 200~299일 경우
-      if (!response.ok) {
-        logout();
-        router.push('/');
-        console.log('회원 탈퇴 성공');
+      if (!withdrawResponse) {
+        console.log('탈퇴 에러');
       }
+
+      const logoutResponse = await fetch(`/auth/logout/api`);
+
+      if (!logoutResponse.ok) {
+        console.log('에러');
+      }
+
+      logout();
+      router.push('/');
+      console.log('회원 탈퇴 성공');
     } catch (error) {
       console.error(error);
     }

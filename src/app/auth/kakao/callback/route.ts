@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-console.log('기기기ㅣㄱ',data);
+
     if (data.success) {
       const jwt = await new EncryptJWT({
         email: data.user.email,
