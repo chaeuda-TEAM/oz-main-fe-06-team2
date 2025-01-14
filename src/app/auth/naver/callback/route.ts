@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 
       const redirectUrl = data.user.is_active
         ? `${data.redirect_url}?user=${jwt}`
-        : `http://localhost:3000/auth/signUp/social?user=${jwt}`;
+        : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
