@@ -62,6 +62,10 @@ const MyPage = () => {
     }
   };
 
+  const handleMyPostClick = () => {
+    router.push('/mypage/myproducts');
+  };
+
   // 회원 탈퇴 요청 함수
   const handleWithdraw = async () => {
     const confirmed = confirm('정말로 회원 탈퇴를 진행하시겠습니까?');
@@ -97,6 +101,7 @@ const MyPage = () => {
         <button className="float-end text-kick" onClick={handleWithdraw}>
           회원 탈퇴
         </button>
+        <button onClick={handleMyPostClick}>내 매물</button>
       </div>
     </div>
   );

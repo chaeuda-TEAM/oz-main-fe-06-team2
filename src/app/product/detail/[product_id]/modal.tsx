@@ -31,6 +31,7 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
           const response = await fetch(`${BASEURL}/api/product/detail/${productId}`);
           if (!response.ok) throw new Error('API 요청 실패');
           const data = await response.json();
+          console.log('상품 정보:', data);
           setProduct(data.product);
           setIsLiked(data.is_liked);
         } catch (error) {
@@ -48,9 +49,8 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
     if (!accessToken) {
       alert('로그인이 필요한 서비스입니다.');
       router.push('/auth/signIn');
+      return;
     }
-
-    console.log('토큰 확인:', accessToken);
 
     try {
       const response = await fetch(`${BASEURL}/api/product/like/${productId}`, {
@@ -61,10 +61,12 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
         },
         // body: JSON.stringify({ isLiked: !isLiked }),
       });
-      console.log('좋아요 응답:', response);
 
       if (!response.ok) throw new Error('좋아요 실패');
-      setIsLiked(!isLiked);
+
+      const data = await response.json();
+      console.log('좋아요 결과:', data);
+      setIsLiked(data.is_liked);
     } catch (error) {
       console.error('좋아요 에러:', error);
     }
