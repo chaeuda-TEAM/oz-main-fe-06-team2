@@ -113,7 +113,7 @@ export const sendLogoutRequest = async (refresh: string): Promise<LogoutResponse
   }
 };
 
-export const sendWithdrawRequest = async (password: string) => {
+export const sendWithdrawRequest = async () => {
   try {
     const accessToken = getCookie('accessToken');
     if (!accessToken) {

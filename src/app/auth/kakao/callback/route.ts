@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const code = searchParams.get('code');
-console.log('확인', code);
+
     if (!code) {
       return NextResponse.json({ error: 'No code provided' }, { status: 400 });
     }
@@ -31,7 +31,7 @@ console.log('확인', code);
     }
 
     const data = await response.json();
-
+console.log('기기기ㅣㄱ',data);
     if (data.success) {
       const jwt = await new EncryptJWT({
         email: data.user.email,

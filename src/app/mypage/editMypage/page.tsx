@@ -75,9 +75,7 @@ const MyPage = () => {
   // 최종 수정 버튼 클릭
   const onSubmit = async (data: EditMypageFormData): Promise<void> => {
     try {
-      console.log(data);
       const result = await updateProfile(data);
-
       if (result.success) {
         alert('회원 정보를 수정하시겠습니까?');
         const result = await getUpdateProfile();
