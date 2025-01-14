@@ -66,12 +66,22 @@ const MyPage = () => {
   const handleWithdraw = async () => {
     const confirmed = confirm('정말로 회원 탈퇴를 진행하시겠습니까?');
     if (!confirmed) return;
-
     try {
-      await sendWithdrawRequest('Qq11@@');
-      console.log('회원 탈퇴 성공');
+      const withdrawResponse = await sendWithdrawRequest();
+
+      if (!withdrawResponse) {
+        console.log('탈퇴 에러');
+      }
+
+      const logoutResponse = await fetch(`/auth/logout/api`);
+
+      if (!logoutResponse.ok) {
+        console.log('에러');
+      }
+
       logout();
       router.push('/');
+      console.log('회원 탈퇴 성공');
     } catch (error) {
       console.error(error);
     }

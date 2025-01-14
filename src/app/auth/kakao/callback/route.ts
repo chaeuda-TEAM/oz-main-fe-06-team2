@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const code = searchParams.get('code');
-console.log('확인', code);
+
     if (!code) {
       return NextResponse.json({ error: 'No code provided' }, { status: 400 });
     }
