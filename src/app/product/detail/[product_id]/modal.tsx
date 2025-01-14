@@ -57,13 +57,11 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
-        // body: JSON.stringify({ isLiked: !isLiked }),
       });
 
       if (!response.ok) throw new Error('좋아요 실패');
 
       const data = await response.json();
-      console.log('좋아요 결과:', data);
       setIsLiked(data.is_liked);
     } catch (error) {
       console.error('좋아요 에러:', error);

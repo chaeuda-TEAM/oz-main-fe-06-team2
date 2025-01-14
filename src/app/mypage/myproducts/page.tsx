@@ -6,11 +6,13 @@ import useAccessToken from '@/hooks/useAccessToken';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { MyProduct } from '@/types/product';
+const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default function MyProductsPage() {
   const accessToken = useAccessToken();
   const [products, setProducts] = useState<MyProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState<{ [key: string]: boolean }>({});
   const [error, setError] = useState('');
   const router = useRouter();
 
@@ -24,6 +26,12 @@ export default function MyProductsPage() {
 
           if (response.success) {
             setProducts(response.products);
+
+            const initialIsLiked: { [key: string]: boolean } = {};
+            response.products.forEach((product: MyProduct) => {
+              initialIsLiked[product.product_id] = product.is_liked;
+            });
+            setIsLiked(initialIsLiked);
           } else {
             setError(response.message || 'Failed to fetch products.');
           }
@@ -60,6 +68,27 @@ export default function MyProductsPage() {
   };
 
   // TODO : 좋아요 토글 버튼 연결
+  const handleLikeToggle = async (productId: string) => {
+    try {
+      const response = await fetch(`${BASEURL}/api/product/like/${productId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('좋아요 실패');
+
+      const data = await response.json();
+      setIsLiked(prevIsLiked => ({
+        ...prevIsLiked,
+        [productId]: data.is_liked,
+      }));
+    } catch (error) {
+      console.error('좋아요 에러:', error);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -82,9 +111,15 @@ export default function MyProductsPage() {
               <div className="p-4 space-y-3">
                 <div className="flex justify-between items-start">
                   <h2 className="text-lg font-normal flex-grow">{product.pro_title}</h2>
-                  <button className="p-2 bg-white/80 backdrop-blur-sm rounded-full">
+                  <button
+                    className="p-2 bg-white/80 backdrop-blur-sm rounded-full"
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleLikeToggle(product.product_id);
+                    }}
+                  >
                     <Heart
-                      className={`w-5 h-5 ${product.is_liked ? 'fill-red-500 stroke-red-500' : 'stroke-gray-600'}`}
+                      className={`w-5 h-5 ${isLiked[product.product_id] ? 'fill-red-500 stroke-red-500' : 'stroke-gray-600'}`}
                     />
                   </button>
                 </div>

@@ -65,13 +65,11 @@ export default function ProductUpdatePage({ params }: { params: { product_id: nu
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log('change', { name, value });
     setProduct(prev =>
       prev
         ? {
             ...prev,
             [name]:
-              name.includes('pro_') ||
               name === 'management_cost' ||
               name === 'pro_floor' ||
               name === 'pro_rooms' ||
@@ -91,8 +89,9 @@ export default function ProductUpdatePage({ params }: { params: { product_id: nu
 
     if (!product) return;
 
+    const formData = new FormData();
+
     const updatedProduct = {
-      product_id: product.product_id,
       pro_title: product.pro_title,
       pro_price: product.pro_price,
       management_cost: product.management_cost,
@@ -110,19 +109,21 @@ export default function ProductUpdatePage({ params }: { params: { product_id: nu
       latitude: product.latitude,
       longitude: product.longitude,
     };
+
+    formData.append('data', JSON.stringify(updatedProduct));
+
     try {
       const response = await fetch(`${BASEURL}/api/product/update/${params.product_id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(updatedProduct),
+        body: formData,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log(product);
+        console.log(updatedProduct);
         throw new Error(errorData.message || '상품 수정 실패');
       }
       router.push(`/product/detail/${params.product_id}`);
