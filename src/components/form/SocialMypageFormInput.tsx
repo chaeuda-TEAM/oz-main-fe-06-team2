@@ -1,14 +1,14 @@
 import React from 'react';
 import { UseFormRegister } from 'react-hook-form';
-import { SocialEditMypageFormData } from '@/app/auth/schemas/SocialEditMypageSchema';
+import { EditMypageFormData } from '@/app/auth/schemas/EditMypageSchema';
 
 interface InputFieldProps {
   label: string;
   id: string;
   type: string;
   defaultValue?: string;
-  register: UseFormRegister<SocialEditMypageFormData>;
-  name: keyof SocialEditMypageFormData;
+  register: UseFormRegister<EditMypageFormData>;
+  name: keyof EditMypageFormData;
   errorMessage?: string;
   disabled?: boolean;
   placeholder: string;
