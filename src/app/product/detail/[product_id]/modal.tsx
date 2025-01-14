@@ -28,7 +28,12 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
       if (isOpen && productId) {
         setIsLoading(true);
         try {
-          const response = await fetch(`${BASEURL}/api/product/detail/${productId}`);
+          const response = await fetch(`${BASEURL}/api/product/detail/${productId}`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
           if (!response.ok) throw new Error('API 요청 실패');
           const data = await response.json();
           console.log('상품 정보:', data);
