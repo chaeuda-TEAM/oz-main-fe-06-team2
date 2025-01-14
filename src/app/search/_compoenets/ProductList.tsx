@@ -42,7 +42,7 @@ export const ProductList = ({ location, onProductClick }: ProductListProps) => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `${BASEURL}/api/product/nearby?latitude=${location.latitude}&longitude=${location.longitude}`,
+          `${BASEURL}/api/product/nearby?latitude=${location.latitude}&longitude=${location.longitude}&zoom=14`,
           {
             method: 'GET',
             headers: {
