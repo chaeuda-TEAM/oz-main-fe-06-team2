@@ -5,7 +5,7 @@ export interface User {
 }
 
 export interface Product {
-  product_id: number;
+  product_id: string;
   user: User;
   images: string[];
   video: string | null;
@@ -73,3 +73,4 @@ export type NearbyProductsResponse = {
   message?: string;
   products?: SearchProduct[];
 };
+
