@@ -59,3 +59,18 @@ export type MyProduct = {
   created_at: string;
   is_liked: boolean;
 };
+
+type SearchProduct = {
+  id: number;
+  title: string;
+  price: number;
+  latitude: number;
+  longitude: number;
+};
+
+export type NearbyProductsResponse = {
+  success: boolean;
+  message?: string;
+  products?: SearchProduct[];
+};
+

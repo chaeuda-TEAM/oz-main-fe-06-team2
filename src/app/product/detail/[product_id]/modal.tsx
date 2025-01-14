@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 interface ProductDetailModalProps {
-  productId: string;
+  productId: number;
   isOpen: boolean;
   onClose: () => void;
 }
