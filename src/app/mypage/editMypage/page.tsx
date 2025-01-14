@@ -72,12 +72,13 @@ const MyPage = () => {
     setValue('phone_number', user?.phone_number || '');
   }, [user]);
 
-  // 최종 수정 버튼 클릭
   const onSubmit = async (data: EditMypageFormData): Promise<void> => {
     try {
+      const confirmed = confirm('회원 정보를 수정하시겠습니까?');
+      if (!confirmed) return;
+
       const result = await updateProfile(data);
       if (result.success) {
-        alert('회원 정보를 수정하시겠습니까?');
         const result = await getUpdateProfile();
         login(
           user?.isSocialUser

@@ -92,7 +92,7 @@ const MyPage = () => {
   };
 
   return (
-    <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
+    <div className="pt-9 pb-9 w-full h-full flex justify-center items-center ">
       <div className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
         <div>
           <h1 className="text-2xl font-normal text-kick">마이페이지</h1>
