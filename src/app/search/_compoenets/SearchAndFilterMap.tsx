@@ -81,19 +81,6 @@ const SearchAndFilterMap = ({
             property.location.longitude,
           ),
           map: map,
-          title: property.title,
-        });
-
-        window.naver.maps.Event.addListener(marker, 'click', () => {
-          const infoWindow = new window.naver.maps.InfoWindow({
-            content: `
-              <div style="padding: 10px;">
-                <h3 style="margin-bottom: 5px;">${property.title}</h3>
-                <p>가격: ${property.price.toLocaleString()}원</p>
-              </div>
-            `,
-          });
-          infoWindow.open(map, marker);
         });
 
         markersRef.current.push(marker);
