@@ -7,6 +7,7 @@ import { Product } from '@/types/product';
 import { Heart, X } from 'lucide-react';
 import useAccessToken from '@/hooks/useAccessToken';
 import { useRouter } from 'next/navigation';
+import { fetchProductDetail } from '@/api/fetchProductDetail';
 
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -28,17 +29,9 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
       if (isOpen && productId) {
         setIsLoading(true);
         try {
-          const response = await fetch(`${BASEURL}/api/product/detail/${productId}`, {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-          if (!response.ok) throw new Error('API 요청 실패');
-          const data = await response.json();
-          console.log('상품 정보:', data);
+          const data = await fetchProductDetail(productId);
           setProduct(data.product);
-          setIsLiked(data.is_liked);
+          setIsLiked(data.product.is_liked);
         } catch (error) {
           console.error('API 요청 에러:', error);
         } finally {

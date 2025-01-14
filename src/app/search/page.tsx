@@ -59,7 +59,7 @@ const SearchPage = () => {
           isLoading={isLoading}
         />
       </div>
-      <div className="w-[25%] ml-[20px] flex flex-col items-center justify-start">
+      <div className="w-[25%] ml-[20px] flex items-center justify-center">
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {selectedProductId && (
           <ProductDetailModal
