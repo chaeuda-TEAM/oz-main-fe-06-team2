@@ -16,7 +16,7 @@ const MyPage = () => {
   const router = useRouter();
   const { updateProfile } = useUpdateProfile();
   const { getUpdateProfile } = useFetchProfile();
-
+  console.log(user);
   const {
     register,
     handleSubmit,
@@ -29,7 +29,7 @@ const MyPage = () => {
       username: '',
       phone_number: '',
       password: '',
-      password_confirm: ''
+      password_confirm: '',
     },
   });
 
@@ -79,8 +79,12 @@ const MyPage = () => {
       if (result.success) {
         alert('회원 정보를 수정하시겠습니까?');
         const result = await getUpdateProfile();
+        login(
+          user?.isSocialUser
+            ? { ...result.user, isSocialUser: true }
+            : { ...result.user, isSocialUser: false },
+        );
         router.back();
-        login(result.user);
       }
     } catch (error) {
       console.error('회원정보 수정 실패:', error);
@@ -90,6 +94,9 @@ const MyPage = () => {
   return (
     <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
+        <div>
+          <h1 className="text-2xl font-normal text-kick">마이페이지 수정</h1>
+        </div>
         <div className="flex flex-col space-y-1.5">
           <label htmlFor="email">이메일 주소</label>
           <input
