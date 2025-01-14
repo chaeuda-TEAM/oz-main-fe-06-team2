@@ -5,7 +5,7 @@ export interface User {
 }
 
 export interface Product {
-  product_id: number;
+  product_id: string;
   user: User;
   images: string[];
   video: string | null;
@@ -46,7 +46,7 @@ export const Pro_heat: Record<string, string> = {
 export interface Location {
   latitude: number;
   longitude: number;
-};
+}
 
 export type MyProduct = {
   product_id: string;
@@ -59,4 +59,3 @@ export type MyProduct = {
   created_at: string;
   is_liked: boolean;
 };
-
