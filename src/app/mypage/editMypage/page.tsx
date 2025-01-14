@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { EditMypageFormData, EditMypageSchema } from '@/app/auth/schemas/EditMypageSchema';
 import { useEffect } from 'react';
 import FormButton from '@/components/form/FormButton';
-
 import useUpdateProfile from '@/hooks/useUpdateProfile';
 import useFetchProfile from '@/hooks/useFetchProfile';
 

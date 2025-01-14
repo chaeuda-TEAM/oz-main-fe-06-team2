@@ -8,7 +8,6 @@ import { Menu, X } from 'lucide-react';
 
 const NavContainer: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 

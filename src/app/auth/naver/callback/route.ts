@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
           sameSite: 'lax',
           maxAge: 60 * 30, // 30분
         });
-  
+
         responseObj.cookies.set('refreshToken', data.tokens.refresh, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
