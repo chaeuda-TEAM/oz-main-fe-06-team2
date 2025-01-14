@@ -46,7 +46,7 @@ export const Pro_heat: Record<string, string> = {
 export interface Location {
   latitude: number;
   longitude: number;
-};
+}
 
 export type MyProduct = {
   product_id: string;
@@ -60,3 +60,16 @@ export type MyProduct = {
   is_liked: boolean;
 };
 
+type SearchProduct = {
+  id: number;
+  title: string;
+  price: number;
+  latitude: number;
+  longitude: number;
+};
+
+export type NearbyProductsResponse = {
+  success: boolean;
+  message?: string;
+  products?: SearchProduct[];
+};
