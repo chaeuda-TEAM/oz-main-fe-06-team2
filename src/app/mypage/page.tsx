@@ -66,6 +66,10 @@ const MyPage = () => {
     router.push('/mypage/myproducts');
   };
 
+  const handleLikePostClick = () => {
+    router.push('/mypage/likeproducts');
+  };
+
   // 회원 탈퇴 요청 함수
   const handleWithdraw = async () => {
     const confirmed = confirm('정말로 회원 탈퇴를 진행하시겠습니까?');
@@ -115,6 +119,7 @@ const MyPage = () => {
           회원 탈퇴
         </button>
         <button onClick={handleMyPostClick}>내 매물</button>
+        <button onClick={handleLikePostClick}>찜 목록</button>
       </div>
     </div>
   );

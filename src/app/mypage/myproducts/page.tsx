@@ -5,7 +5,7 @@ import { fetchMyProducts } from '@/api/product';
 import useAccessToken from '@/hooks/useAccessToken';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MyProduct } from '@/types/product';
+import { MyProduct, Pro_type } from '@/types/product';
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default function MyProductsPage() {
@@ -90,6 +90,10 @@ export default function MyProductsPage() {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    return dateString.slice(0, 10).replace(/-/g, '/');
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       {products.length > 0 ? (
@@ -110,7 +114,7 @@ export default function MyProductsPage() {
 
               <div className="p-4 space-y-3">
                 <div className="flex justify-between items-start">
-                  <h2 className="text-lg font-normal flex-grow">{product.pro_title}</h2>
+                  <h3 className="text-lg font-normal flex-grow">{product.pro_title}</h3>
                   <button
                     className="p-2 bg-white/80 backdrop-blur-sm rounded-full"
                     onClick={e => {
@@ -124,15 +128,13 @@ export default function MyProductsPage() {
                   </button>
                 </div>
 
-                <p className="text-lg">{product.pro_price.toLocaleString()}원</p>
+                <p className="font-bold">{product.pro_price.toLocaleString()}원</p>
 
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className="flex flex-wrap justify-between text-sm text-gray-600 gap-1">
                   <span>
-                    {product.pro_type} | {product.pro_supply_a}㎡
+                    {Pro_type[product.pro_type]} | {product.pro_supply_a}㎡
                   </span>
-                  <p className="text-sm text-gray-600">
-                    등록일: {new Date(product.created_at).toLocaleDateString()}
-                  </p>
+                  <p className="text-sm text-gray-600">등록일: {formatDate(product.created_at)}</p>
                 </div>
               </div>
             </div>
