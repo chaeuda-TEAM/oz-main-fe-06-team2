@@ -44,7 +44,7 @@ export const DetailContent = ({ product }: DetailContentProps) => {
           <span>{product.pro_construction_year}년</span>
         </div>
         <div className="flex">
-          <span className="w-[115px] font-semibold">평수(공급면적)</span>
+          <span className="w-[115px] font-semibold">공급면적</span>
           <span>{product.pro_supply_a}㎡</span>
         </div>
         <div className="flex">
@@ -68,7 +68,7 @@ export const DetailContent = ({ product }: DetailContentProps) => {
       </div>
 
       <div className="flex border-t pt-6">
-        <span className="w-[115px] font-semibold">상세 설명</span>
+        <span className="w-[115px] flex-shrink-0 font-semibold">상세 설명</span>
         <span className="text-sm">{product.description}</span>
       </div>
 

@@ -8,7 +8,7 @@ import Profile from './profile/page';
 import LikeProductsPage from './likeproducts/page';
 import MyProductsPage from './myproducts/page';
 // import ChattingList from './chattingList/page';
-import { Heart, House, Settings } from 'lucide-react';
+import { Heart, House, MessageSquareIcon, Settings } from 'lucide-react';
 
 const MyPage = () => {
   const router = useRouter();
@@ -60,14 +60,14 @@ const MyPage = () => {
               className="cursor-pointer flex gap-2 hover:text-kick"
             >
               <Settings />
-              계정관리
+              계정 관리
             </li>
             <li
               onClick={() => setMyPageView('likeproducts')}
               className="cursor-pointer flex gap-2 hover:text-kick"
             >
               <Heart />
-              찜한 방
+              찜한 매물
             </li>
             <li
               onClick={() => setMyPageView('myProductsPage')}

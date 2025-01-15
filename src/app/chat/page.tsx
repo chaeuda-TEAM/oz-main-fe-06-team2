@@ -59,7 +59,9 @@ const ChatPage = () => {
   }
 
   if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500 w-full">{error}</div>;
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500 w-full">{error}</div>
+    );
   }
 
   return (

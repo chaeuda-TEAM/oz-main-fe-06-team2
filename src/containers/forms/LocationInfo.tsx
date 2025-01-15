@@ -1,3 +1,4 @@
+import { MapPinHouse } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 declare global {
@@ -160,9 +161,10 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
             <button
               type="button"
               onClick={openPostcodeSearch}
-              className="w-[120px] h-[37px] mb-2 text-[0.8rem] bg-gray-300"
+              className="w-[100px] h-[37px] mb-2 text-[0.8rem] bg-gray-300 flex justify-center items-center rounded-sm gap-2 hover:bg-gray-400"
             >
-              주소 검색하기
+              <MapPinHouse size={18} />
+              주소 검색
             </button>
           </div>
           <input

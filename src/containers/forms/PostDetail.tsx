@@ -137,7 +137,7 @@ const PostDetailForm: React.FC<PostDetailFormProps> = ({ onSubmitData }) => {
 
         <div className="grid grid-cols-2 gap-4">
           <label htmlFor="pro_supply_a" className="text-[0.95rem]">
-            평수(공급면적)
+            공급면적(㎡)
             <input
               id="pro_supply_a"
               type="number"
@@ -148,7 +148,7 @@ const PostDetailForm: React.FC<PostDetailFormProps> = ({ onSubmitData }) => {
             />
           </label>
           <label htmlFor="pro_site_a" className="text-[0.95rem]">
-            부지면적
+            부지면적(㎡)
             <input
               id="pro_site_a"
               type="number"

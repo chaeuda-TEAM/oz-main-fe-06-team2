@@ -2,6 +2,7 @@ export interface User {
   id: number;
   username: string;
   phone_number: string;
+  email: string;
 }
 
 export interface Product {

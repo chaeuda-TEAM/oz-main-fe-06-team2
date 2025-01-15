@@ -9,6 +9,7 @@ import { Pencil, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { deleteRequest } from '@/api/product';
 import useAccessToken from '@/hooks/useAccessToken';
+import useAuthStore from '@/stores/authStore';
 
 const BASEURL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -17,6 +18,7 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const accessToken = useAccessToken();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -25,6 +27,8 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
         const response = await fetch(`${BASEURL}/api/product/detail/${params.product_id}`);
         if (!response.ok) throw new Error('Failed to fetch product');
         const data = await response.json();
+        console.log('user:', user);
+        console.log(data.product);
         setProduct(data.product);
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -64,28 +68,32 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
 
   return (
     <div className="flex flex-col items-center py-5  mx-auto">
-      <div className="w-[500px] md:w-[600px] lg:w-[700px] duration-200">
-        <div className="flex justify-end mb-4 gap-2">
-          <button
-            className="bg-kick text-white text-sm rounded-lg p-2 flex items-center gap-1"
-            onClick={handleUpdateClick}
-          >
-            <Pencil size={16} />
-            수정
-          </button>
-          <button
-            onClick={handleDelete}
-            className="bg-gray-500 text-white text-sm rounded-lg p-2 flex items-center gap-1"
-          >
-            <X size={16} />
-            삭제
-          </button>
-        </div>
+      <div className="w-[500px] md:w-[600px] duration-200">
+        {user?.email === product?.user.email && (
+          <div className="flex justify-end mb-3 gap-3">
+            <button
+              className="bg-kick text-white text-sm rounded-lg p-2 px-4 flex items-center gap-1"
+              onClick={handleUpdateClick}
+            >
+              <Pencil size={16} />
+              수정
+            </button>
+
+            <button
+              onClick={handleDelete}
+              className="bg-gray-500 text-white text-sm rounded-lg p-2 px-4 flex items-center gap-1"
+            >
+              <X size={16} />
+              삭제
+            </button>
+          </div>
+        )}
+
         <div className="border">
           {isLoading ? (
             <div className="h-[600px] animate-pulse bg-gray-100" />
           ) : product ? (
-            <div className="px-8 py-6">
+            <div className="p-8 pb-10">
               <Images images={product.images} video={product.video} />
               <DetailContent product={product} />
               <Contact
