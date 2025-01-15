@@ -40,6 +40,10 @@ export const DetailContent = ({ product }: DetailContentProps) => {
           <span>{Pro_type[product.pro_type]}</span>
         </div>
         <div className="flex">
+          <span className="w-[115px] font-semibold">건축연도</span>
+          <span>{product.pro_construction_year}년</span>
+        </div>
+        <div className="flex">
           <span className="w-[115px] font-semibold">평수(공급면적)</span>
           <span>{product.pro_supply_a}㎡</span>
         </div>
@@ -60,10 +64,6 @@ export const DetailContent = ({ product }: DetailContentProps) => {
         <div className="flex">
           <span className="w-[115px] font-semibold">난방 방식</span>
           <span>{Pro_heat[product.pro_heat]}</span>
-        </div>
-        <div className="flex">
-          <span className="w-[115px] font-semibold">건축연도</span>
-          <span>{product.pro_construction_year}년</span>
         </div>
       </div>
 

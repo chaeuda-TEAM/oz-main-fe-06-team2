@@ -46,7 +46,7 @@ const MyPage = () => {
   };
 
   return (
-    <div className="flex w-full h-full">
+    <div className="flex w-full h-full px-10 pb-10">
       <div className="border border-[#e5e7eb] w-40 flex justify-center p-6">
         <div className="flex flex-col justify-between">
           <ul className="space-y-4">
