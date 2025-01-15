@@ -40,7 +40,7 @@ const ChatList: React.FC<ChatListProps> = ({
       </div>
       <div className="flex-1 overflow-y-auto">
         {chats.length === 0 ? (
-          <p className="text-[#939393] text-sm p-3 text-center">채팅 목록이 없습습니다.</p>
+          <p className="text-[#939393] text-sm p-3 text-center">채팅 목록이 없습니다.</p>
         ) : (
           <ul>
             {chats.map(chat => (
