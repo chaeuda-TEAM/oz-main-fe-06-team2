@@ -73,7 +73,7 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
   return (
     <div className="z-[50000]">
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <div className="fixed inset-0 flex justify-end mr-[26%] pt-[80px]">
+        <div className="fixed inset-0 flex justify-end mr-[26%] pt-[79px]">
           <div className="relative bg-white w-[300px] overflow-y-auto px-5 py-2 border shadow-md">
             <div className="flex justify-between py-2 pl-2">
               <button onClick={handleLikeToggle}>

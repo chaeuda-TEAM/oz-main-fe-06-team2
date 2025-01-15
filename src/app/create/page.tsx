@@ -106,7 +106,7 @@ const CreatePost: React.FC = () => {
       <div className="flex justify-end">
         <button
           onClick={createPost}
-          className="px-4 py-2 bg-kick text-white rounded-lg flex gap-2 hover:transition-transform hover:scale-105"
+          className="px-4 py-3 bg-kick text-white rounded-lg flex gap-2 hover:transition-transform hover:scale-105"
         >
           <HousePlus />
           매물 등록

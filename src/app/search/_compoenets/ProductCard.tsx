@@ -29,6 +29,16 @@ interface ProductCardProps {
   onClick: () => void;
 }
 
+function formatPrice(price: number): string {
+  if (price >= 100000000) {
+    return `${price / 100000000}억`;
+  } else if (price >= 10000) {
+    return `${price / 10000}만`;
+  } else {
+    return price.toLocaleString();
+  }
+}
+
 export const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const formatDate = (dateString: string) => {
     return dateString.slice(0, 10).replace(/-/g, '/');
@@ -51,7 +61,7 @@ export const ProductCard = ({ product, onClick }: ProductCardProps) => {
         />
       </div>
       <div className="flex flex-col p-3 relative">
-        <h3 className="font-bold">{product.pro_price.toLocaleString()}원</h3>
+        <h3 className="font-bold">{formatPrice(product.pro_price)}</h3>
         <p className="text-sm mt-1">{product.add_new}</p>
         <div className="flex justify-between items-center flex-wrap lg:flex-nowrap">
           <div className="text-sm mt-1 flex flex-wrap md:flex-nowrap">
