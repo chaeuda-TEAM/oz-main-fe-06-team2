@@ -49,7 +49,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full p-5">
       <div className="flex-1">
         <SearchAndFilterMap
           onRegionSelect={handleRegionSelect}

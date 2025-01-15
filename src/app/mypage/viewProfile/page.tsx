@@ -60,7 +60,7 @@ const ViewProfile = ({ handleToggle }: EditProfileProps) => {
   };
 
   return (
-    <div className="flex flex-col w-60 sm:w-96 h-full p-4 space-y-5">
+    <div className="flex flex-col w-60 sm:w-96 h-full p-4 space-y-5 justify-center">
       <div>
         <h1 className="text-2xl font-normal text-kick">마이페이지</h1>
       </div>
