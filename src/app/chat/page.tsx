@@ -55,11 +55,11 @@ const ChatPage = () => {
   const selectedChat = chatList.find(chat => chat.id === selectedChatId);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen w-full">Loading...</div>;
   }
 
   if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>;
+    return <div className="flex justify-center items-center h-screen text-red-500 w-full">{error}</div>;
   }
 
   return (

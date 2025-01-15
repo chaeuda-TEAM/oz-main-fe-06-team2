@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={`${pretendard.className} flex flex-col w-full h-full overflow-hidden`}>
         <NavContainer />
         <div className='flex flex-col felx-1 overflow-scroll w-full h-full'>
-          <main className="flex-1 flex w-full h-full">{children}</main>
+          <main className="flex flex-1 w-full">{children}</main>
           <Footer />
         </div>
       </body>
