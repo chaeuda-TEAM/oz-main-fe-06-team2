@@ -33,6 +33,7 @@ export const fetchMyProducts = async (accessToken: string) => {
     if (!response.ok) throw new Error('API 요청 실패');
 
     const data = await response.json();
+    console.log(data);
     return data;
   } catch (error) {
     console.error('나의 매물 조회 오류: ', error);

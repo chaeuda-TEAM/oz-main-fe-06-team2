@@ -25,7 +25,6 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
         const response = await fetch(`${BASEURL}/api/product/detail/${params.product_id}`);
         if (!response.ok) throw new Error('Failed to fetch product');
         const data = await response.json();
-        console.log(data.product);
         setProduct(data.product);
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -76,7 +75,7 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
           </button>
           <button
             onClick={handleDelete}
-            className="bg-kick text-white text-sm rounded-lg p-2 flex items-center gap-1"
+            className="bg-gray-500 text-white text-sm rounded-lg p-2 flex items-center gap-1"
           >
             <X size={16} />
             삭제
