@@ -53,10 +53,12 @@ export const ProductCard = ({ product, onClick }: ProductCardProps) => {
       <div className="flex flex-col p-3 relative">
         <h3 className="font-bold">{product.pro_price.toLocaleString()}원</h3>
         <p className="text-sm mt-1">{product.add_new}</p>
-        <div className="flex justify-between items-center">
-          <p className="text-sm mt-1">
-            {Pro_type[product.pro_type]} | {product.pro_supply_a}㎡
-          </p>
+        <div className="flex justify-between items-center flex-wrap lg:flex-nowrap">
+          <div className="text-sm mt-1 flex flex-wrap md:flex-nowrap">
+            <p className="mr-1">{Pro_type[product.pro_type]} </p>
+            <p> | {product.pro_supply_a}㎡</p>
+          </div>
+
           <p className="text-xs mt-1 text-gray-400">등록일: {formatDate(product.created_at)}</p>
         </div>
       </div>

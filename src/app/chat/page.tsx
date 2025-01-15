@@ -55,15 +55,15 @@ const ChatPage = () => {
   const selectedChat = chatList.find(chat => chat.id === selectedChatId);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen w-full">Loading...</div>;
   }
 
   if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>;
+    return <div className="flex justify-center items-center h-screen text-red-500 w-full">{error}</div>;
   }
 
   return (
-    <div className="flex h-[600px] bg-[#f6f6f6]">
+    <div className="flex h-[600px] bg-[#f6f6f6] w-full">
       <div
         className={`w-60 bg-white border-r border-[#d9d9d9] transition-all duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'

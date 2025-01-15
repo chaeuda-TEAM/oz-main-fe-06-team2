@@ -19,18 +19,22 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats, selectedChatId }) => 
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
   useEffect(() => {
-    setFilteredChats(initialChats);
-  }, [initialChats]);
+    if (activeFilter === 'all') {
+      setFilteredChats(initialChats);
+    } else if (activeFilter === 'buy') {
+      setFilteredChats(initialChats.filter(chat => chat.buyer === myName));
+    } else if (activeFilter === 'sell') {
+      setFilteredChats(initialChats.filter(chat => chat.seller === myName));
+    }
+  }, [initialChats, activeFilter, myName]);
 
   const onFilterBuy = (buyer: string) => {
-    const filtered = initialChats.filter(chat => chat.buyer === buyer);
-    setFilteredChats(filtered);
+    setFilteredChats(prevChats => prevChats.filter(chat => chat.buyer === buyer));
     setActiveFilter('buy');
   };
 
   const onFilterSell = (seller: string) => {
-    const filtered = initialChats.filter(chat => chat.seller === seller);
-    setFilteredChats(filtered);
+    setFilteredChats(prevChats => prevChats.filter(chat => chat.seller === seller));
     setActiveFilter('sell');
   };
 

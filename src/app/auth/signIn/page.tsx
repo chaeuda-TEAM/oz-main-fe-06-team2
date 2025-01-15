@@ -38,7 +38,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex w-full items-center justify-center">
       <div className="w-full max-w-sm p-6">
         <h1 className="text-2xl font-bold text-center text-gray-800">로그인</h1>
         <form className="mt-6" onSubmit={onSubmit}>
