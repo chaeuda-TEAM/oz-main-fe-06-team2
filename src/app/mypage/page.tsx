@@ -7,8 +7,8 @@ import useAuthStore from '@/stores/authStore';
 import Profile from './profile/page';
 import LikeProductsPage from './likeproducts/page';
 import MyProductsPage from './myproducts/page';
-import ChattingList from './chattingList/page';
-import { Heart, House, MessageCircle, MessageSquareIcon, Settings } from 'lucide-react';
+// import ChattingList from './chattingList/page';
+import { Heart, House, Settings } from 'lucide-react';
 
 const MyPage = () => {
   const router = useRouter();
@@ -19,7 +19,7 @@ const MyPage = () => {
     Profile: <Profile />,
     likeproducts: <LikeProductsPage />,
     myProductsPage: <MyProductsPage />,
-    chattingList: <ChattingList />,
+    // chattingList: <ChattingList />,
   };
 
   const handleWithdraw = async () => {
@@ -47,7 +47,7 @@ const MyPage = () => {
   };
 
   return (
-    <div className="flex w-full h-full px-10 py-6">
+    <div className="flex w-full h-full px-10 py-8">
       <div className="border border-[#e5e7eb] w-[230px] flex justify-center px-3 py-10 mt-4 rounded-md shadow-md">
         <div className="flex flex-col justify-between items-center">
           <ul className="space-y-6">
@@ -56,7 +56,7 @@ const MyPage = () => {
               className="cursor-pointer flex gap-2 hover:text-kick"
             >
               <Settings />
-              <span>계정관리</span>
+              계정관리
             </li>
             <li
               onClick={() => setMyPageView('likeproducts')}
@@ -72,13 +72,13 @@ const MyPage = () => {
               <House />
               나의 매물
             </li>
-            <li
+            {/* <li
               onClick={() => setMyPageView('chattingList')}
               className="cursor-pointer flex gap-2 hover:text-kick"
             >
               <MessageSquareIcon />
               채팅 목록
-            </li>
+            </li> */}
           </ul>
           <span
             onClick={handleWithdraw}
