@@ -52,26 +52,26 @@ const MyPage = () => {
 
   return (
     <div className="flex w-full h-full px-10 py-8">
-      <div className="border border-[#e5e7eb] w-[230px] flex justify-center px-3 py-10 mt-4 rounded-md shadow-md">
+      <div className="border border-[#e5e7eb] w-[230px] flex justify-center px-3 py-10 rounded-md shadow-md">
         <div className="flex flex-col justify-between items-center">
           <ul className="space-y-6">
             <li
               onClick={() => setMyPageView('Profile')}
-              className="cursor-pointer flex gap-2 hover:text-kick"
+              className="cursor-pointer flex gap-4 hover:text-kick"
             >
               <Settings />
               계정 관리
             </li>
             <li
               onClick={() => setMyPageView('likeproducts')}
-              className="cursor-pointer flex gap-2 hover:text-kick"
+              className="cursor-pointer flex gap-4 hover:text-kick"
             >
               <Heart />
               찜한 매물
             </li>
             <li
               onClick={() => setMyPageView('myProductsPage')}
-              className="cursor-pointer flex gap-2 hover:text-kick"
+              className="cursor-pointer flex gap-4 hover:text-kick"
             >
               <House />
               나의 매물

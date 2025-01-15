@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/authStore';
 import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
+import LogoImg from '../../../public/logo/Chaeuda.svg';
 
 const NavContainer: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,9 +53,9 @@ const NavContainer: React.FC = () => {
     <>
       <header className="w-full bg-white z-40">
         <nav className="flex items-center justify-between h-[80px] md:px-10 px-8 border-b">
-          <div className="mr-10 text-kick text-2xl font-bold">
+          <div className="text-kick text-2xl font-bold">
             <Link href="/" onClick={closeModal}>
-              채우다 로고
+              <Image src={LogoImg} alt="logo" width={150} height={100} />
             </Link>
           </div>
           <ul className="flex md:space-x-8 space-x-5">
