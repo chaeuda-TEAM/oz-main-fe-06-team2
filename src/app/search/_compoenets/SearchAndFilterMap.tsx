@@ -139,9 +139,9 @@ const SearchAndFilterMap = ({
 
   return (
     <div className="space-y-3">
-      <div className="flex space-x-3">
+      <div className="flex space-x-3 ml-2">
         <select
-          className="w-[140px] p-[10px] text-[0.8rem] bg-[#f4f4f4]"
+          className="w-[140px] p-3 text-[0.8rem] bg-[#f4f4f4] shadow-sm border"
           onChange={e => handleCategoryChange(e.target.value)}
           value={selectedCategory}
         >
@@ -153,7 +153,7 @@ const SearchAndFilterMap = ({
         </select>
 
         <select
-          className="w-[140px] p-[10px] text-[0.8rem] bg-[#f4f4f4]"
+          className="w-[140px] p-3 text-[0.8rem] bg-[#f4f4f4] shadow-sm border"
           onChange={e => handleSecondRegionChange(e.target.value)}
           value={selectedSecondRegion}
         >

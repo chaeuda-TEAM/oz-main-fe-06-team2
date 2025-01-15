@@ -72,3 +72,26 @@ export const fetchNearbyProducts = async (
     };
   }
 };
+
+export const deleteRequest = async (productId: number, accessToken: string) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/delete/${productId}`,
+      {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+      },
+    );
+
+    if (!response.ok) throw new Error('API 요청 실패');
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('매물 삭제 오류: ', error);
+    return {
+      success: false,
+      message: '매물 삭제 중 오류가 발생하였습니다.',
+    };
+  }
+};

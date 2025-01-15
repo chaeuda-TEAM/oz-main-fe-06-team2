@@ -14,19 +14,19 @@ interface InputFieldProps {
   placeholder: string;
 }
 
-const Input = ({ 
-  label, 
-  id, 
-  type, 
+const Input = ({
+  label,
+  id,
+  type,
   defaultValue,
-  register, 
+  register,
   name,
   errorMessage,
   disabled,
-  placeholder
+  placeholder,
 }: InputFieldProps) => {
   return (
-    <div className='flex flex-col space-y-1.5'>
+    <div className="flex flex-col space-y-1.5">
       <label htmlFor={id}>{label}</label>
       <input
         id={id}
