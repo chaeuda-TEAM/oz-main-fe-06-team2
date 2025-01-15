@@ -1,7 +1,7 @@
 'use client';
 
-import ViewProfile from '../ViewProfile';
-import EditProfile from '../EditeProfile';
+import ViewProfile from '../viewProfile/page';
+import EditProfile from '../editProfile/page';
 import { useState } from 'react';
 
 const MyPage = () => {

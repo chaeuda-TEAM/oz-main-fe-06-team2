@@ -53,7 +53,7 @@ const Home = () => {
   };
 
   return (
-      <div className="relative">
+      <div className="relative w-full">
         <NaverMap
           topSearchInput={topSearchInput}
           searchQuery={searchQuery}
