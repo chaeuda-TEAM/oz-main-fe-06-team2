@@ -38,7 +38,9 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
   }, [params.product_id]);
 
   const handleUpdateClick = () => {
-    router;
+    router.push(
+      `/product/update/${params.product_id}?product=${encodeURIComponent(JSON.stringify(product))}`,
+    );
   };
 
   const handleDelete = async () => {
@@ -63,7 +65,7 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
 
   return (
     <div className="flex flex-col items-center py-5">
-      <div className="w-[60%]">
+      <div className="w-[500px] md:w-[600px] lg:w-[700px] duration-200">
         <div className="flex justify-end mb-4 gap-2">
           <button className="bg-kick text-white text-sm rounded-lg p-2 flex items-center gap-1">
             <Pencil size={16} />
