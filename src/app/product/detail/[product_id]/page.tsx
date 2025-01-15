@@ -67,7 +67,10 @@ export default function ProductDetailPage({ params }: { params: { product_id: st
     <div className="flex flex-col items-center py-5">
       <div className="w-[500px] md:w-[600px] lg:w-[700px] duration-200">
         <div className="flex justify-end mb-4 gap-2">
-          <button className="bg-kick text-white text-sm rounded-lg p-2 flex items-center gap-1">
+          <button
+            className="bg-kick text-white text-sm rounded-lg p-2 flex items-center gap-1"
+            onClick={handleUpdateClick}
+          >
             <Pencil size={16} />
             수정
           </button>

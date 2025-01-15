@@ -71,29 +71,21 @@ export const ProductDetailModal = ({ productId, isOpen, onClose }: ProductDetail
   if (!isOpen) return null;
 
   return (
-   <div className="z-[50000]">
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <div className="fixed inset-0 flex justify-end mr-[26%] pt-[80px]">
-        <div className="relative bg-white w-[300px] overflow-y-auto px-5 py-2 border shadow-md">
-          <div className="flex justify-between py-2 pl-2">
-            <button onClick={handleLikeToggle}>
-              <Heart
-                size={20}
-                className={`${isLiked ? 'text-kick fill-current' : 'text-gray-600 hover:text-kick'}`}
-                fill={isLiked ? 'currentColor' : 'none'}
-              />
-            </button>
-            <button onClick={onClose}>
-              <X size={20} className="text-gray-600 hover:text-kick" />
-            </button>
-          </div>
-          {isLoading ? (
-            <div className="h-[600px] animate-pulse bg-gray-100" />
-          ) : product ? (
-            <div className="bg-white">
-              <Images images={product.images} video={product.video} />
-              <DetailContent product={product} />
-              <Contact phone_number={product.user.phone_number} productId={productId} />
+    <div className="z-[50000]">
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <div className="fixed inset-0 flex justify-end mr-[26%] pt-[80px]">
+          <div className="relative bg-white w-[300px] overflow-y-auto px-5 py-2 border shadow-md">
+            <div className="flex justify-between py-2 pl-2">
+              <button onClick={handleLikeToggle}>
+                <Heart
+                  size={20}
+                  className={`${isLiked ? 'text-kick fill-current' : 'text-gray-600 hover:text-kick'}`}
+                  fill={isLiked ? 'currentColor' : 'none'}
+                />
+              </button>
+              <button onClick={onClose}>
+                <X size={20} className="text-gray-600 hover:text-kick" />
+              </button>
             </div>
             {isLoading ? (
               <div className="h-[600px] animate-pulse bg-gray-100" />
