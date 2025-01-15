@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useAuthStore from '@/stores/authStore';
-import { ChatListProps } from '@/types/chat';
+import { Chat } from '@/types/chat';
 import { MessageSquare } from 'lucide-react';
+import Link from 'next/link';
+
+export interface ChatListProps {
+  initialChats: Chat[];
+  selectedChatId: number | null;
+  onChatCreated?: (newChat: Chat) => void;
+}
 
 type FilterType = 'all' | 'buy' | 'sell';
 
-const ChatList: React.FC<ChatListProps> = ({ initialChats, onSelectChat, selectedChatId }) => {
+const ChatList: React.FC<ChatListProps> = ({ initialChats, selectedChatId }) => {
   const { user } = useAuthStore();
   const myName = user?.username;
   const [filteredChats, setFilteredChats] = useState(initialChats);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+
+  useEffect(() => {
+    setFilteredChats(initialChats);
+  }, [initialChats]);
 
   const onFilterBuy = (buyer: string) => {
     const filtered = initialChats.filter(chat => chat.buyer === buyer);
@@ -70,14 +81,14 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats, onSelectChat, selecte
       </div>
       <div className="flex-1 overflow-y-auto">
         {filteredChats.length === 0 ? (
-          <p className="text-[#939393] text-sm p-3 text-center">채팅 목록이 없습니다.</p>
+          <p className="text-[#939393] text-sm p-3 text-center">채팅 목록이 없습습니다.</p>
         ) : (
           <ul>
             {filteredChats.map(chat => (
               <li key={chat.id}>
-                <button
-                  onClick={() => onSelectChat(chat.id)}
-                  className={`w-full p-3 text-left transition-colors ${
+                <Link
+                  href={`/chat?id=${chat.id}`}
+                  className={`block w-full p-3 text-left transition-colors ${
                     selectedChatId === chat.id
                       ? 'bg-gray-100 text-kick'
                       : 'text-[#181818] hover:bg-gray-50'
@@ -85,7 +96,7 @@ const ChatList: React.FC<ChatListProps> = ({ initialChats, onSelectChat, selecte
                 >
                   <span className="text-sm font-medium block">{chat.product_title}</span>
                   <span className="text-xs text-gray-500">{chat.seller}</span>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
