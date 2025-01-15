@@ -8,7 +8,7 @@ import Profile from './profile/page';
 import LikeProductsPage from './likeproducts/page';
 import MyProductsPage from './myproducts/page';
 import ChattingList from './chattingList/page';
-import { Heart, House, MessageCircle, MessageSquareIcon, Settings } from 'lucide-react';
+import { Heart, House, MessageSquareIcon, Settings } from 'lucide-react';
 
 const MyPage = () => {
   const router = useRouter();
@@ -46,6 +46,10 @@ const MyPage = () => {
     }
   };
 
+  const handleChatClick = () => {
+    router.push('/chat');
+  };
+
   return (
     <div className="flex w-full h-full px-10 py-6">
       <div className="border border-[#e5e7eb] w-[230px] flex justify-center px-3 py-10 mt-4 rounded-md shadow-md">
@@ -72,10 +76,7 @@ const MyPage = () => {
               <House />
               나의 매물
             </li>
-            <li
-              onClick={() => setMyPageView('chattingList')}
-              className="cursor-pointer flex gap-2 hover:text-kick"
-            >
+            <li onClick={handleChatClick} className="cursor-pointer flex gap-2 hover:text-kick">
               <MessageSquareIcon />
               채팅 목록
             </li>

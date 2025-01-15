@@ -165,7 +165,7 @@ const SearchAndFilterMap = ({
           ))}
         </select>
       </div>
-      <div ref={mapRef} className="w-full h-[650px] relative">
+      <div ref={mapRef} className="w-full h-[650px] relative shadow-sm">
         {isLoading && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
