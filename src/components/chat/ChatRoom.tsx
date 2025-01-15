@@ -130,7 +130,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
   }, [connect, disconnect]);
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-white border">
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.map(message => (
           <div

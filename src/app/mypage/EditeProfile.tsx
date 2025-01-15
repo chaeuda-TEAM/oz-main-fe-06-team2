@@ -97,7 +97,7 @@ const EditProfile = ({ handleToggle }: EditProfileProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col w-60 sm:w-96 h-full p-4 space-y-5"
+      className="flex flex-col justify-center w-60 sm:w-96 h-full p-4 space-y-5"
     >
       <div>
         <h1 className="text-2xl font-normal text-kick">마이페이지 수정</h1>

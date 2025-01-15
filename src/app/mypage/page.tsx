@@ -46,10 +46,10 @@ const MyPage = () => {
   };
 
   return (
-    <div className="w-full h-[100%] md:px-10 px-8 flex">
-      <div className="border border-[#e5e7eb] w-40 flex justify-center">
+    <div className="flex w-full h-full">
+      <div className="border border-[#e5e7eb] w-40 flex justify-center p-6">
         <div className="flex flex-col justify-between">
-          <ul className="space-y-4 mt-6">
+          <ul className="space-y-4">
             <li onClick={() => setMyPageView('Profile')} className="cursor-pointer">
               마이페이지
             </li>
@@ -63,7 +63,7 @@ const MyPage = () => {
               채팅 목록
             </li>
           </ul>
-          <span onClick={handleWithdraw} className="mb-6 text-gray-400 text-sm cursor-pointer">
+          <span onClick={handleWithdraw} className="text-gray-400 text-sm cursor-pointer">
             회원 탈퇴
           </span>
         </div>
