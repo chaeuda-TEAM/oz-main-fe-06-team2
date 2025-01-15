@@ -1,12 +1,14 @@
-import { ChatListProps } from '@/types/chat';
+import { Chat } from '@/types/chat';
 import { MessageSquare } from 'lucide-react';
+import Link from 'next/link';
 
-const ChatList: React.FC<ChatListProps> = ({
-  initialChats,
-  onSelectChat,
-  selectedChatId,
-  // onChatCreated
-}) => {
+export interface ChatListProps {
+  initialChats: Chat[];
+  selectedChatId: number | null;
+  onChatCreated?: (newChat: Chat) => void;
+}
+
+const ChatList: React.FC<ChatListProps> = ({ initialChats, selectedChatId }) => {
   const chats = initialChats;
 
   return (
@@ -45,9 +47,9 @@ const ChatList: React.FC<ChatListProps> = ({
           <ul>
             {chats.map(chat => (
               <li key={chat.id}>
-                <button
-                  onClick={() => onSelectChat(chat.id)}
-                  className={`w-full p-3 text-left transition-colors ${
+                <Link
+                  href={`/chat?id=${chat.id}`}
+                  className={`block w-full p-3 text-left transition-colors ${
                     selectedChatId === chat.id
                       ? 'bg-gray-100 text-kick'
                       : 'text-[#181818] hover:bg-gray-50'
@@ -55,7 +57,7 @@ const ChatList: React.FC<ChatListProps> = ({
                 >
                   <span className="text-sm font-medium block">{chat.product_title}</span>
                   <span className="text-xs text-gray-500">{chat.seller}</span>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
