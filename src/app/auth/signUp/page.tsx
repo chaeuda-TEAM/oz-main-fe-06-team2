@@ -8,18 +8,15 @@ import { SignupFormData, FormSchema } from '../schemas/SignUpSchema';
 import FormInput from '@/components/form/SignUpFormInput';
 import FormButton from '@/components/form/FormButton';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
+const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
 
 const LocalSignUpPage = () => {
   const router = useRouter();
-  // 이메일 인증버튼 비활성화
   const [emailVerificationSent, setEmailVerificationSent] = useState(false);
-  // 인증코드 검증버튼 비활성화
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  // 이메일 인증 버튼 클릭 후 문구
   const [verificationEmailMessage, setVerificationEmailMessage] = useState('');
-  // 인증버튼 확인 클릭 후 문구
   const [verificationCodeMessage, setVerificationCodeMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
@@ -63,7 +60,6 @@ const LocalSignUpPage = () => {
     },
   ];
 
-  // 이메일 인증코드 전송
   const sendEmailVerificationCode = async (): Promise<void> => {
     const email = getValues('email');
 
@@ -96,7 +92,6 @@ const LocalSignUpPage = () => {
     }
   };
 
-  // 이메일 인증코드 검증
   const verifyEmailVerificationCode = async (): Promise<void> => {
     const email = getValues('email');
     const verificationCode = getValues('email_verificationCode');
@@ -125,12 +120,12 @@ const LocalSignUpPage = () => {
     }
   };
 
-  // 최종 회원가입
   const onSubmit = async (data: SignupFormData): Promise<void> => {
     if (!isEmailVerified) {
       alert('이메일 인증을 완료해주세요.');
       return;
     }
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(`${BASE_URL}/api/users/signup`, {
@@ -154,10 +149,11 @@ const LocalSignUpPage = () => {
     <Suspense
       fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}
     >
-      <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
+      <div className="pt-9 pb-9 w-full h-full flex flex-col justify-center items-center">
+        <h1 className="text-2xl font-bold text-center text-gray-800">회원가입</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col w-[80%] sm:w-1/3 space-y-5"
+          className="flex flex-col w-full max-w-md p-6 space-y-5"
         >
           {/* 이메일 주소 인풋 */}
           <div className="flex flex-col space-y-1.5">
@@ -214,7 +210,6 @@ const LocalSignUpPage = () => {
             )}
           </div>
 
-          {/* 이메일, 인증번호 제외 인풋들 */}
           {inputField.map(item => (
             <FormInput
               key={item.id}
@@ -228,7 +223,9 @@ const LocalSignUpPage = () => {
             />
           ))}
 
-          <FormButton>회원가입</FormButton>
+          <FormButton type="submit" disabled={isSubmitting || !isEmailVerified}>
+            {isSubmitting ? '처리 중...' : '회원가입'}
+          </FormButton>
         </form>
       </div>
     </Suspense>

@@ -27,7 +27,7 @@ const SignIn = () => {
 
     if (response.success) {
       if (response.user) {
-        login(response.user);
+        login({ ...response.user, isSocialUser: false });
       }
       router.push('/');
     } else {
@@ -38,8 +38,8 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-full max-w-sm p-6">
+    <div className="flex w-full items-center justify-center">
+      <div className="w-full max-w-md p-6">
         <h1 className="text-2xl font-bold text-center text-gray-800">로그인</h1>
         <form className="mt-6" onSubmit={onSubmit}>
           <div className="mb-4">
@@ -67,7 +67,9 @@ const SignIn = () => {
             />
           </div>
           {errorMessages && <p className="mb-2 text-sm text-red-500">{errorMessages}</p>}
-          <FormButton>{loading ? '로그인 중...' : '로그인'}</FormButton>
+          <FormButton type="submit" disabled={loading}>
+            {loading ? '로그인 중...' : '로그인'}
+          </FormButton>
         </form>
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">

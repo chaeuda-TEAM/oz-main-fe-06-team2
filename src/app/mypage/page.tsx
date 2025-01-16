@@ -1,108 +1,110 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { sendWithdrawRequest } from '@/api/auth';
 import useAuthStore from '@/stores/authStore';
-import { useRouter } from 'next/navigation';
-import FormInput from '@/components/form/SocialSignUpFormInput';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SocialSignupFormData, SocialSignUpSchema } from '@/app/auth/schemas/SocialSignInSchema';
-import { useEffect } from 'react';
+import Profile from '../../components/mypage/Profile';
+import LikeProductsPage from '../../components/mypage/LikeProducts';
+import MyProductsPage from '../../components/mypage/MyProducts';
+import { Heart, House, Settings } from 'lucide-react';
+
+type PageView = 'Profile' | 'likeproducts' | 'myProductsPage';
 
 const MyPage = () => {
-  const { user, logout } = useAuthStore();
   const router = useRouter();
-
-  const {
-    register,
-    setValue,
-    formState: { errors },
-  } = useForm<SocialSignupFormData>({
-    resolver: zodResolver(SocialSignUpSchema),
-    defaultValues: {
-      email: '',
-      username: '',
-    },
-  });
-
-  const inputField = [
-    {
-      label: '이메일 주소',
-      id: 'email',
-      type: 'email',
-      name: 'email',
-      disabled: true,
-    },
-    {
-      label: '이름',
-      id: 'username',
-      type: 'text',
-      name: 'username',
-      disabled: true,
-    },
-    {
-      label: '휴대폰번호',
-      id: 'phone_number',
-      type: 'phone',
-      name: 'phone_number',
-      disabled: true,
-    },
-  ];
+  const searchParams = useSearchParams();
+  const { logout } = useAuthStore();
+  const [myPageView, setMyPageView] = useState<keyof typeof pageComponents>('Profile');
 
   useEffect(() => {
-    setValue('email', user?.email || '');
-    setValue('username', user?.username || '');
-    setValue('phone_number', user?.phone_number || '');
-  }, [user, setValue]);
-
-  const handleMyPageClick = () => {
-    if (user) {
-      router.push('/mypage/editMypage');
-      return;
+    const view = searchParams.get('view') as PageView;
+    if (view) {
+      setMyPageView(view);
+    } else {
+      const savedView = localStorage.getItem('myPageView') as PageView;
+      if (savedView) {
+        setMyPageView(savedView);
+      }
     }
+  }, [searchParams]);
+
+  useEffect(() => {
+    localStorage.setItem('myPageView', myPageView);
+  }, [myPageView]);
+
+  const pageComponents = {
+    Profile: <Profile />,
+    likeproducts: <LikeProductsPage />,
+    myProductsPage: <MyProductsPage />,
   };
 
-  const handleMyPostClick = () => {
-    router.push('/mypage/myproducts');
-  };
-
-  // 회원 탈퇴 요청 함수
   const handleWithdraw = async () => {
     const confirmed = confirm('정말로 회원 탈퇴를 진행하시겠습니까?');
     if (!confirmed) return;
-
     try {
-      await sendWithdrawRequest('Qq11@@');
-      console.log('회원 탈퇴 성공');
+      const withdrawResponse = await sendWithdrawRequest();
+
+      if (!withdrawResponse) {
+        console.log('탈퇴 에러');
+      }
+
+      const logoutResponse = await fetch(`/auth/logout/api`);
+
+      if (!logoutResponse.ok) {
+        console.log('에러');
+      }
+
       logout();
       router.push('/');
+      console.log('회원 탈퇴 성공');
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleViewChange = (view: PageView) => {
+    setMyPageView(view);
+    router.push(`/mypage?view=${view}`, { scroll: false });
+  };
+
   return (
-    <div className="pt-9 pb-9 w-full h-full flex justify-center items-center">
-      <div className="flex flex-col w-[80%] sm:w-1/3 space-y-5">
-        {inputField.map(item => (
-          <FormInput
-            key={item.id}
-            name={item.name as keyof SocialSignupFormData}
-            label={item.label}
-            id={item.id}
-            type={item.type}
-            register={register}
-            disabled={item.disabled}
-          />
-        ))}
-        <button onClick={handleMyPageClick} className="bg-kick w-full h-10 text-4 text-white">
-          정보 수정
-        </button>
-        <button className="float-end text-kick" onClick={handleWithdraw}>
-          회원 탈퇴
-        </button>
-        <button onClick={handleMyPostClick}>내 매물</button>
+    <div className="flex w-full h-full px-10 py-8">
+      <div className="border border-[#e5e7eb] w-[230px] flex justify-center px-3 py-10 rounded-md shadow-md">
+        <div className="flex flex-col justify-between items-center">
+          <ul className="space-y-6">
+            <li
+              onClick={() => handleViewChange('Profile')}
+              className="cursor-pointer flex gap-4 hover:text-kick"
+            >
+              <Settings />
+              계정 관리
+            </li>
+            <li
+              onClick={() => handleViewChange('likeproducts')}
+              className="cursor-pointer flex gap-4 hover:text-kick"
+            >
+              <Heart />
+              찜한 매물
+            </li>
+            <li
+              onClick={() => handleViewChange('myProductsPage')}
+              className="cursor-pointer flex gap-4 hover:text-kick"
+            >
+              <House />
+              나의 매물
+            </li>
+          </ul>
+          <span
+            onClick={handleWithdraw}
+            className="text-gray-400 text-sm cursor-pointer hover:text-kick"
+          >
+            회원 탈퇴
+          </span>
+        </div>
       </div>
+
+      <div className="flex justify-center items-center w-full">{pageComponents[myPageView]}</div>
     </div>
   );
 };

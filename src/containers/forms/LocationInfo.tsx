@@ -1,3 +1,4 @@
+import { MapPinHouse } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 declare global {
@@ -34,19 +35,71 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
   const [longitude, setLongitude] = useState<number>(0);
   const [addOld, setAddOld] = useState<string>('');
   const [addNew, setAddNew] = useState<string>('');
+  const [isNaverLoaded, setIsNaverLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-      script.async = true;
-      document.head.appendChild(script);
-    }
+    // Load Daum Postcode script
+    const loadDaumPostcode = () => {
+      const existingScript = document.querySelector('script[src*="postcode.v2.js"]');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+        script.async = true;
+        document.head.appendChild(script);
+      }
+    };
+
+    // Load Naver Maps script
+    const loadNaverMaps = () => {
+      const existingScript = document.querySelector('script[src*="openapi.map.naver.com"]');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src =
+          'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=YOUR_CLIENT_ID&submodules=geocoder';
+        script.async = true;
+        script.onload = () => setIsNaverLoaded(true);
+        document.head.appendChild(script);
+      } else {
+        setIsNaverLoaded(true);
+      }
+    };
+
+    loadDaumPostcode();
+    loadNaverMaps();
   }, []);
 
+  const openPostcodeSearch = () => {
+    if (!window.daum || !window.daum.Postcode) {
+      console.error('Daum Postcode is not loaded yet');
+      return;
+    }
+
+    const postcode = new window.daum.Postcode({
+      oncomplete: (data: PostcodeData) => {
+        if (addressRef.current && zonecodeRef.current) {
+          addressRef.current.value = data.roadAddress;
+          zonecodeRef.current.value = data.zonecode;
+          setAddOld(data.jibunAddress);
+          setAddNew(data.roadAddress);
+          console.log('Daum Postcode address data:', data); // Debugging
+
+          searchAddressToCoordinate(data.roadAddress);
+        }
+
+        console.log(addNew, addOld); // Debugging
+      },
+    });
+
+    postcode.open();
+  };
+
   const searchAddressToCoordinate = (address: string) => {
-    window.naver.maps.Service.geocode({ query: address }, (status, response) => {
+    if (!isNaverLoaded) {
+      console.error('Naver Maps API is not loaded yet');
+      return;
+    }
+
+    window.naver.maps.Service.geocode({ query: address }, (status: any, response: any) => {
       if (status === window.naver.maps.Service.Status.ERROR) {
         console.error('Error while fetching coordinates');
         return;
@@ -64,8 +117,15 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
       setLatitude(lat);
       setLongitude(lng);
 
-      const fullNewAddress = detailAddress ? `${addNew} ${detailAddress}` : addNew;
-      const fullOldAddress = detailAddress ? `${addOld} ${detailAddress}` : addOld;
+      const fullNewAddress = `${addNew} ${detailAddress || ''}`;
+      const fullOldAddress = `${addOld} ${detailAddress || ''}`;
+
+      console.log('Submitting address data:', {
+        add_new: fullNewAddress,
+        add_old: fullOldAddress,
+        latitude: lat,
+        longitude: lng,
+      });
 
       onSubmitData({
         add_new: fullNewAddress,
@@ -73,51 +133,37 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
         latitude: lat,
         longitude: lng,
       });
-
-      console.log(`Coordinates: lat=${lat}, lng=${lng}`);
     });
-  };
-
-  const openPostcodeSearch = () => {
-    if (!window.daum || !window.daum.Postcode) return;
-
-    const postcode = new window.daum.Postcode({
-      oncomplete: (data: PostcodeData) => {
-        if (addressRef.current && zonecodeRef.current) {
-          addressRef.current.value = data.roadAddress;
-          zonecodeRef.current.value = data.zonecode;
-          setAddOld(data.jibunAddress);
-          setAddNew(data.roadAddress);
-          searchAddressToCoordinate(data.roadAddress);
-        }
-      },
-    });
-
-    postcode.open();
   };
 
   const handleDetailAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDetailAddress = e.target.value;
     setDetailAddress(newDetailAddress);
 
-    if (addNew && addOld && latitude && longitude) {
-      const fullNewAddress = detailAddress ? `${addNew} ${detailAddress}` : addNew;
-      const fullOldAddress = detailAddress ? `${addOld} ${detailAddress}` : addOld;
+    let fullNewAddress = addNew;
+    let fullOldAddress = addOld;
 
-      onSubmitData({
-        add_new: fullNewAddress,
-        add_old: fullOldAddress,
-        latitude,
-        longitude,
-      });
+    if (newDetailAddress) {
+      fullNewAddress = `${addNew} ${newDetailAddress}`;
+      fullOldAddress = `${addOld} ${newDetailAddress}`;
+    } else {
+      fullNewAddress = addNew;
+      fullOldAddress = addOld;
     }
+
+    onSubmitData({
+      add_new: fullNewAddress,
+      add_old: fullOldAddress,
+      latitude,
+      longitude,
+    });
   };
 
   return (
     <div className="w-[500px]">
       <h2 className="text-lg font-semibold mb-4">위치 정보</h2>
       <div>
-        <label className="text-[0.95rem] flex-1">
+        <label className="text-[0.95rem] font-semibold text-gray-700 flex-1">
           주소
           <div className="flex items-center space-x-2">
             <input
@@ -130,9 +176,10 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
             <button
               type="button"
               onClick={openPostcodeSearch}
-              className="w-[120px] h-[37px] mb-2 text-[0.8rem] bg-gray-300"
+              className="w-[100px] h-[37px] mb-2 text-[0.8rem] bg-gray-300 flex justify-center items-center rounded-sm gap-2 hover:bg-gray-400"
             >
-              주소 검색하기
+              <MapPinHouse size={18} />
+              주소 검색
             </button>
           </div>
           <input
@@ -141,10 +188,10 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
             placeholder="주소를 입력해주세요."
             className="w-full border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
             readOnly
-          ></input>
+          />
         </label>
-        <label htmlFor="address2" className="text-[0.95rem]">
-          상세주소(선택)
+        <label htmlFor="address2" className="text-[0.95rem] font-semibold">
+          상세주소
           <input
             id="address2"
             type="text"
@@ -154,14 +201,6 @@ const LocationInfoForm: React.FC<LocationInfoFormProps> = ({ onSubmitData }) => 
             className="w-full border border-gray-300 px-4 py-2 mt-2 mb-4 text-[0.8rem]"
           />
         </label>
-        {/* <div className="mt-4 text-[0.9rem]">
-          <p>
-            <span className="font-semibold">위도:</span> {latitude}
-          </p>
-          <p>
-            <span className="font-semibold">경도:</span> {longitude}
-          </p>
-        </div> */}
       </div>
     </div>
   );

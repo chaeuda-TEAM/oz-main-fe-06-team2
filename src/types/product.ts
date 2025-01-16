@@ -2,10 +2,11 @@ export interface User {
   id: number;
   username: string;
   phone_number: string;
+  email: string;
 }
 
 export interface Product {
-  product_id: string;
+  product_id: number;
   user: User;
   images: string[];
   video: string | null;
@@ -58,4 +59,20 @@ export type MyProduct = {
   add_new: string;
   created_at: string;
   is_liked: boolean;
+};
+
+export type SearchProduct = {
+  product_id: number;
+  pro_title: string;
+  pro_price: number;
+  pro_type: string;
+  pro_supply_a: number;
+  latitude: number;
+  longitude: number;
+};
+
+export type NearbyProductsResponse = {
+  success: boolean;
+  message?: string;
+  products?: SearchProduct[];
 };

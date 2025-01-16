@@ -1,38 +1,83 @@
 'use client';
 
-import { useState } from 'react';
-import NaverMap from '@/components/NaverMap';
-import RegionFilterForm from '@/containers/forms/RegionFilter';
-import { ProductList } from './_compoenets/ProductList';
+import { useState, useEffect } from 'react';
 import { ProductDetailModal } from '../product/detail/[product_id]/modal';
 import { Location } from '@/types/product';
+import { fetchNearbyProducts } from '@/api/product';
+import SearchAndFilterMap from './_compoenets/SearchAndFilterMap';
+import { ProductList } from './_compoenets/ProductList';
+import { SecondSelectRegion } from '@/containers/forms/SelectRegion';
+
+interface Property {
+  id: number;
+  location: Location;
+  title: string;
+  price: number;
+}
 
 const SearchPage = () => {
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleRegionSelect = (location: Location) => {
-    setSelectedLocation(location);
+  const fetchProperties = async (location: Location) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetchNearbyProducts(location.latitude, location.longitude);
+      if (response.success && response.products) {
+        const formattedProperties = response.products.map(product => ({
+          id: product.product_id,
+          location: { latitude: product.latitude, longitude: product.longitude },
+          title: product.pro_title,
+          price: product.pro_price,
+        }));
+        setProperties(formattedProperties);
+        setSelectedLocation(location);
+      } else {
+        setError(response.message || '매물을 불러오는데 실패했습니다.');
+        setProperties([]);
+      }
+    } catch (err) {
+      setError('매물을 불러오는 중 오류가 발생했습니다.');
+      setProperties([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  useEffect(() => {
+    // Fetch properties with default location when component mounts
+    const defaultLocation = SecondSelectRegion.default[0];
+    fetchProperties({
+      latitude: defaultLocation.latitude,
+      longitude: defaultLocation.longitude,
+    });
+  }, []);
+
+  const handleRegionSelect = (location: Location) => {
+    fetchProperties(location);
   };
 
   return (
-    <div className="flex p-5">
+    <div className="flex w-full p-5">
       <div className="flex-1">
-        <RegionFilterForm onRegionSelect={handleRegionSelect} />
-        <NaverMap
-          topSearchInput={false}
-          initialCenter={{ lat: 37.5656, lng: 126.9769 }}
+        <SearchAndFilterMap
+          onRegionSelect={handleRegionSelect}
+          initialCenter={{
+            lat: selectedLocation?.latitude || 37.683834,
+            lng: selectedLocation?.longitude || 126.776557,
+          }}
           initialZoom={14}
-          searchQuery={searchQuery}
-          handleSearchChange={handleSearchChange}
+          properties={properties}
+          isLoading={isLoading}
         />
       </div>
       <div className="w-[25%] ml-[20px] flex items-center justify-center">
+        {error && <div className="text-red-500 mb-4">{error}</div>}
         {selectedProductId && (
           <ProductDetailModal
             productId={selectedProductId}
@@ -41,7 +86,13 @@ const SearchPage = () => {
           />
         )}
         {selectedLocation ? (
-          <ProductList location={selectedLocation} onProductClick={setSelectedProductId} />
+          isLoading ? (
+            <div>매물을 불러오는 중...</div>
+          ) : properties.length > 0 ? (
+            <ProductList location={selectedLocation} onProductClick={setSelectedProductId} />
+          ) : (
+            <div>이 지역에 매물이 없습니다.</div>
+          )
         ) : (
           <div>원하시는 지역의 매물을 검색하세요.</div>
         )}
