@@ -23,7 +23,7 @@ const SignIn = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const response = await sendLoginRequest(email, password);
+    const response = await sendLoginRequest(email, password); 
 
     if (response.success) {
       if (response.user) {

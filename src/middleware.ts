@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { sendRefreshTokenRequest } from '@/api/auth';
 import { jwtDecode } from 'jwt-decode';
+import { jwtDecryptAccessToken } from '@/utils/jwtDecryptAccessToken';
+import { jwtDecryptRefreshToken } from '@/utils/jwtDecryptRefreshToken';
 
 const PROTECTED_ROUTES = ['/create', '/chat', '/mypage'];
 const AUTH_ROUTES = ['/auth/signIn', '/auth/signUp'];
@@ -22,16 +24,16 @@ export const middleware = async (req: NextRequest) => {
     return NextResponse.next();
   }
 
-  const accessToken = req.cookies.get('accessToken')?.value;
-  const refreshToken = req.cookies.get('refreshToken')?.value;
+  const accessToken = await jwtDecryptAccessToken(req);
+  const refreshToken = await jwtDecryptRefreshToken(req);
 
   if (!accessToken && !refreshToken) {
     return NextResponse.redirect(new URL('/auth/signIn', req.url));
   }
-
+  
   try {
     if (accessToken) {
-      const decodedToken: { exp: number } = jwtDecode(accessToken);
+      const decodedToken: { exp: number } = jwtDecode(accessToken.token);
       const currentTime = Math.floor(Date.now() / 1000);
 
       if (decodedToken.exp > currentTime) {
@@ -40,7 +42,7 @@ export const middleware = async (req: NextRequest) => {
     }
 
     if (refreshToken) {
-      const refreshResponse = await sendRefreshTokenRequest(refreshToken);
+      const refreshResponse = await sendRefreshTokenRequest(refreshToken.token);
 
       if (refreshResponse.success && refreshResponse.tokens) {
         const response = NextResponse.next();

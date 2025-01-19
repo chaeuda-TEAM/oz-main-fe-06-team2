@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { EncryptJWT } from 'jose';
+import { jwtEncrypt } from '@/utils/jwtEncrypt';
 
-const DEV_API_URL = process.env.NEXT_PUBLIC_FRONT_URL;
-const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
+const DEV_API_URL = process.env.NEXT_PUBLIC_DEV_API_URL;
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +15,7 @@ export async function GET(req: NextRequest) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/kakao/callback?code=${code}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/kakao/callback/dev?code=${code}`,
       {
         method: 'GET',
         headers: {
@@ -33,35 +32,41 @@ export async function GET(req: NextRequest) {
     const data = await response.json();
 
     if (data.success) {
-      const jwt = await new EncryptJWT({
+      // 유저정보 암호화
+      const userPayload = {
         email: data.user.email,
         username: data.user.username,
         phone_number: data.user.phone_number,
-      })
-        .setProtectedHeader({ alg: 'dir', enc: 'A128CBC-HS256' })
-        .setIssuedAt()
-        .setExpirationTime('1h')
-        .encrypt(new TextEncoder().encode(JWT_SECRET));
+      };
+      const encryptedUserPayloadJwt = await jwtEncrypt(userPayload, '1h');
+
+      // 엑세스 토큰 암호화
+      const accessTokenPayload = { token: data.tokens.access };
+      const encryptedAccessTokenPayloadJwt = await jwtEncrypt(accessTokenPayload, '30m');
+
+      // 리프레시 토큰 암호화
+      const refreshTokenPayload = { token: data.tokens.refresh };
+      const encryptedRefreshTokenPayloadJwt = await jwtEncrypt(refreshTokenPayload, '7d');
 
       const redirectUrl = data.user.is_active
-        ? `${data.redirect_url}?user=${jwt}`
-        : `${DEV_API_URL}/auth/signUp/social?user=${jwt}`;
+        ? `${data.redirect_url}?user=${encryptedUserPayloadJwt}`
+        : `${DEV_API_URL}/auth/signUp/social?user=${encryptedUserPayloadJwt}`;
 
       const responseObj = NextResponse.redirect(redirectUrl);
 
       if (data.user.is_active) {
-        responseObj.cookies.set('accessToken', data.tokens.access, {
+        responseObj.cookies.set('accessToken', encryptedAccessTokenPayloadJwt, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
-          maxAge: 60 * 30, // 30분
+          maxAge: 60 * 30,
         });
 
-        responseObj.cookies.set('refreshToken', data.tokens.refresh, {
+        responseObj.cookies.set('refreshToken', encryptedRefreshTokenPayloadJwt, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
-          maxAge: 60 * 60 * 24 * 7, // 7일
+          maxAge: 60 * 60 * 24 * 7,
         });
       }
 

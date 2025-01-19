@@ -7,17 +7,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { EditMypageFormData, EditMypageSchema } from '@/app/auth/schemas/EditMypageSchema';
 import { useEffect, useState } from 'react';
 import FormButton from '@/components/form/FormButton';
-import useUpdateProfile from '@/hooks/useUpdateProfile';
-import useFetchProfile from '@/hooks/useFetchProfile';
-
-// interface EditProfileProps {
-//   handleToggle: () => void;
-// }
+import { sendUpdateProfileRequest } from '@/api/auth';
 
 const EditProfile = () => {
   const { login, user } = useAuthStore();
-  const { updateProfile } = useUpdateProfile();
-  const { getUpdateProfile } = useFetchProfile();
   const [isEditing, setIsEditing] = useState<boolean>(true);
 
   const {
@@ -80,15 +73,13 @@ const EditProfile = () => {
       const confirmed = confirm('회원 정보를 수정하시겠습니까?');
       if (!confirmed) return;
 
-      const result = await updateProfile(data);
+      const result = await sendUpdateProfileRequest(data)
       if (result.success) {
-        const result = await getUpdateProfile();
         login(
           user?.isSocialUser
             ? { ...result.user, isSocialUser: true }
             : { ...result.user, isSocialUser: false },
         );
-        // handleToggle();
         setIsEditing(false);
       }
     } catch (error) {

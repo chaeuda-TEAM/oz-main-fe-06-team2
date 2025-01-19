@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { jwtDecrypt } from '@/utils/jwtDecrypt';
 
 export async function GET() {
   const cookieStore = cookies();
@@ -9,5 +10,9 @@ export async function GET() {
     return NextResponse.json({ error: 'No token found' }, { status: 401 });
   }
 
-  return NextResponse.json({ accessToken: token.value });
+  const decryptedAccess = await jwtDecrypt(token.value);
+
+  if (decryptedAccess) {
+    return NextResponse.json({ accessToken: decryptedAccess });
+  }
 }
