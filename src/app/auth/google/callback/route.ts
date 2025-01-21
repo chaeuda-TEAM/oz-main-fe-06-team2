@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
         username: data.user.username,
         phone_number: data.user.phone_number,
       };
+
       const encryptedUserPayloadJwt = await jwtEncrypt(userPayload, '1h');
 
       // 엑세스 토큰 암호화
@@ -58,14 +59,14 @@ export async function GET(req: NextRequest) {
         responseObj.cookies.set('accessToken', encryptedAccessTokenPayloadJwt, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          sameSite: 'strict',
           maxAge: 60 * 30,
         });
 
         responseObj.cookies.set('refreshToken', encryptedRefreshTokenPayloadJwt, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          sameSite: 'strict',
           maxAge: 60 * 60 * 24 * 7,
         });
       }

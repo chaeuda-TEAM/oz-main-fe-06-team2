@@ -58,14 +58,14 @@ export async function GET(req: NextRequest) {
         responseObj.cookies.set('accessToken', encryptedAccessTokenPayloadJwt, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          sameSite: 'strict',
           maxAge: 60 * 30,
         });
 
         responseObj.cookies.set('refreshToken', encryptedRefreshTokenPayloadJwt, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          sameSite: 'strict',
           maxAge: 60 * 60 * 24 * 7,
         });
       }

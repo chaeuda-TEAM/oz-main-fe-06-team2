@@ -141,7 +141,7 @@ export const sendWithdrawRequest = async () => {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${decryptedAccess}`,
+            Authorization: `Bearer ${decryptedAccess.token}`,
           },
         },
       );

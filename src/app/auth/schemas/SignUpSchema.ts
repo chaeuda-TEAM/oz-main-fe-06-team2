@@ -6,9 +6,12 @@ export const FormSchema = z
       .string()
       .min(2, '이름은 최소 2자 이상이어야 합니다.')
       .max(30, '이름은 최대 30자까지만 허용됩니다.')
-      .regex(/^[^\p{Emoji_Presentation}\p{Symbol}\p{Punctuation}\s]*$/u, '이름에는 이모티콘, 기호, 공백이 포함될 수 없습니다.'),
+      .regex(
+        /^[^\p{Emoji_Presentation}\p{Symbol}\p{Punctuation}\s]*$/u,
+        '이름에는 이모티콘, 기호, 공백이 포함될 수 없습니다.',
+      ),
 
-      password: z
+    password: z
       .string()
       .min(6, '비밀번호는 최소 6자 이상이어야 합니다.')
       .max(20, '비밀번호는 최대 20자까지만 허용됩니다.')
@@ -30,16 +33,16 @@ export const FormSchema = z
       .min(6, '비밀번호는 최소 6자 이상이어야 합니다.')
       .max(20, '비밀번호는 최대 20자까지만 허용됩니다.'),
 
-    phone_number: z
-      .string()
-      .regex(/^01[0-9]\d{7,8}$/, '휴대폰 번호를 다시 입력해주세요.'),
+    phone_number: z.string().regex(/^01[0-9]\d{7,8}$/, '휴대폰 번호를 다시 입력해주세요.'),
 
     email: z
       .string()
       .email('유효한 이메일 주소를 입력해주세요.')
       .nonempty('이메일을 입력해주세요.'),
 
-    email_verificationCode: z.string().length(6, '인증번호를 정확히 입력해주세요.'),
+    email_verificationCode: z
+      .string()
+      .length(6, '인증번호를 정확히 입력해주세요.'),
   })
   .refine(data => data.password === data.password_confirm, {
     message: '비밀번호가 일치하지 않습니다.',
