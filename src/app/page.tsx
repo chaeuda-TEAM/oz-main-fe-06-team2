@@ -33,7 +33,7 @@ const Home = () => {
       if (userData) {
         const decryptedUserData = await jwtDecrypt(userData);
         if (decryptedUserData) {
-          login({...decryptedUserData, isSocialUser: true});
+          login({ ...decryptedUserData, isSocialUser: true });
         } else {
           console.error('사용자 정보를 복호화할 수 없습니다.');
         }
@@ -41,7 +41,7 @@ const Home = () => {
     };
 
     fetchDecryptedUser();
-  }, [userData]);
+  }, [login, userData]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -53,18 +53,18 @@ const Home = () => {
   };
 
   return (
-      <div className="relative w-full">
-        <NaverMap
-          topSearchInput={topSearchInput}
-          searchQuery={searchQuery}
-          handleSearchChange={handleSearchChange}
-        />
-        <SearchModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          handleSearchChange={handleSearchChange}
-        />
-      </div>
+    <div className="relative w-full">
+      <NaverMap
+        topSearchInput={topSearchInput}
+        searchQuery={searchQuery}
+        handleSearchChange={handleSearchChange}
+      />
+      <SearchModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        handleSearchChange={handleSearchChange}
+      />
+    </div>
   );
 };
 
