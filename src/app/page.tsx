@@ -28,6 +28,14 @@ const Home = () => {
   const searchParams = useSearchParams();
   const userData = searchParams.get('user');
 
+  const debounce = (func: (...args: any[]) => void, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
   useEffect(() => {
     const fetchDecryptedUser = async () => {
       if (userData) {
@@ -48,22 +56,14 @@ const Home = () => {
     setTopSearchInput(true);
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
   };
 
   return (
     <div className="relative w-full">
-      <NaverMap
-        topSearchInput={topSearchInput}
-        searchQuery={searchQuery}
-        handleSearchChange={handleSearchChange}
-      />
-      <SearchModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        handleSearchChange={handleSearchChange}
-      />
+      <NaverMap topSearchInput={topSearchInput} searchQuery={searchQuery} onSearch={handleSearch} />
+      <SearchModal isOpen={isModalOpen} onClose={handleCloseModal} onSearch={handleSearch} />
     </div>
   );
 };
